@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="main_margin">16dp</dimen>
+    <dimen name="small_margin">4dp</dimen>
+    <dimen name="textSize">22sp</dimen>
+    <dimen name="settings_title_textSize">22sp</dimen>
+    <dimen name="settings_textSize">16sp</dimen>
+    <dimen name="cornerRadius">16dp</dimen>
+    <dimen name="iconPadding">8dp</dimen>
+    <dimen name="padding_12">12dp</dimen>
+</resources>
