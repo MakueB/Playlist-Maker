@@ -2,14 +2,22 @@
 <resources>
     <dimen name="margin_16">16dp</dimen>
     <dimen name="margin_4">4dp</dimen>
-    <dimen name="textSize">22sp</dimen>
+    <dimen name="margin_6">6dp</dimen>
+    <dimen name="margin_8">8dp</dimen>
+    <dimen name="margin_10">10dp</dimen>
+    <dimen name="margin_12">10dp</dimen>
+    <dimen name="textSize_22">22sp</dimen>
+    <dimen name="textSize_16">16sp</dimen>
     <dimen name="settings_title_textSize">22sp</dimen>
     <dimen name="settings_textSize">16sp</dimen>
-    <dimen name="cornerRadius">16dp</dimen>
+    <dimen name="cornerRadius_8">8dp</dimen>
+    <dimen name="cornerRadius_16">16dp</dimen>
     <dimen name="padding_8">8dp</dimen>
+    <dimen name="padding_9">9dp</dimen>
     <dimen name="padding_10">10dp</dimen>
     <dimen name="padding_11">11dp</dimen>
     <dimen name="padding_12">12dp</dimen>
+    <dimen name="padding_14">14dp</dimen>
     <dimen name="padding_18">18dp</dimen>
     <dimen name="padding_19">19dp</dimen>
 </resources>

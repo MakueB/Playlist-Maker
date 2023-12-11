@@ -1,9 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SearchActivity">
+    android:orientation="vertical"
+    tools:ignore="ExtraText">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginEnd="6dp">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:theme="@style/SettingsIconStyle"
+            android:layout_marginStart="@dimen/margin_4"
+            android:layout_marginTop="@dimen/margin_4"
+            android:padding="@dimen/padding_12"
+            android:src="@drawable/light_modearrow_back" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/ToolbarStyle"
+            android:layout_gravity="center"
+            android:gravity="center_vertical"
+            android:paddingEnd="86dp"
+            android:paddingTop="@dimen/padding_14"
+            android:text="@string/search_button_text" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <LinearLayout
+        android:id="@+id/searchContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@drawable/rounded_edittext"
+        android:layout_marginHorizontal="@dimen/margin_16"
+        android:layout_marginVertical="@dimen/margin_8">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/editText"
+            android:background="@drawable/rounded_edittext"
+            android:hint="@string/search_button_text"
+            android:layout_marginEnd="30dp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/roundedEditText"
+            android:drawableStart="@drawable/search_iconsearch_ic"
+            android:layout_weight="1"
+            android:maxLines="1"
+            />
+
+        <ImageView
+            android:id="@+id/imageViewClear"
+            android:layout_width="wrap_content"
+            android:layout_height="32dp"
+            android:src="@drawable/baseline_clear_16"
+            style="@style/SearchIconStyle"
+            android:visibility="gone"/>
+    </LinearLayout>
+
+</LinearLayout>
