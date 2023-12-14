@@ -16,20 +16,21 @@ import androidx.core.content.ContextCompat.getSystemService
 
 class SearchActivity : AppCompatActivity() {
     private var text = TEXT_DEF
+    lateinit var editText: EditText
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
         val linearLayout = findViewById<LinearLayout>(R.id.searchContainer)
-        val editText = findViewById<EditText>(R.id.editText)
+        editText = findViewById<EditText>(R.id.editText)
         val clearButton = findViewById<ImageView>(R.id.imageViewClear)
         val backButton = findViewById<ImageView>(R.id.backArrow)
 
-        if (savedInstanceState != null){
+/*        if (savedInstanceState != null){
             text = savedInstanceState.getString(TEXT, TEXT_DEF)
             editText.setText(text)
             Log.d("my", "onRestoreInstanceState: Restored text - $text")
-        }
+        }*/
 
         editText.requestFocus()
         showKeyboard(editText)
@@ -62,6 +63,15 @@ class SearchActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT, text)
         Log.d("my", "onSaveInstanceState: Saved text - $text")
+    }
+
+    override fun onRestoreInstanceState(
+        savedInstanceState: Bundle,
+    ) {
+        super.onRestoreInstanceState(savedInstanceState)
+        text = savedInstanceState.getString(TEXT, TEXT_DEF)
+        editText.setText(text)
+        Log.d("my", "onRestoreInstanceState: Restored text - $text")
     }
 
     companion object {
