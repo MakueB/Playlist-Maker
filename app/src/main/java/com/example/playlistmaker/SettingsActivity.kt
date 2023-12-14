@@ -14,6 +14,7 @@ class SettingsActivity : AppCompatActivity() {
         val shareIV = findViewById<ImageView>(R.id.shareIV)
         val supportIV = findViewById<ImageView>(R.id.supportIV)
         val agreementIV = findViewById<ImageView>(R.id.agreementIV)
+        val backButton = findViewById<ImageView>(R.id.backArrow)
 
         shareIV.setOnClickListener {
             val message = getString(R.string.android_developer_course)
@@ -40,15 +41,10 @@ class SettingsActivity : AppCompatActivity() {
             val agreementUrl = getString(R.string.oferta_yandex_url)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
             startActivity(intent)
+        }
 
-// Проверяем, есть ли приложение, которое может обработать этот интент
-/*            if (intent.resolveActivity(packageManager) != null) {
-                // Запускаем интент
-                startActivity(intent)
-            } else {
-                // Выводим сообщение об ошибке
-                Toast.makeText(this, "Нет доступного браузера", Toast.LENGTH_SHORT).show()
-            }*/
+        backButton.setOnClickListener {
+            super.onBackPressed()
         }
     }
 }

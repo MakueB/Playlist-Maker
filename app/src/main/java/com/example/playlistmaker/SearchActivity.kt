@@ -23,6 +23,7 @@ class SearchActivity : AppCompatActivity() {
         val linearLayout = findViewById<LinearLayout>(R.id.searchContainer)
         val editText = findViewById<EditText>(R.id.editText)
         val clearButton = findViewById<ImageView>(R.id.imageViewClear)
+        val backButton = findViewById<ImageView>(R.id.backArrow)
 
         if (savedInstanceState != null){
             text = savedInstanceState.getString(TEXT, TEXT_DEF)
@@ -35,6 +36,10 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             editText.setText("")
+        }
+
+        backButton.setOnClickListener {
+            super.onBackPressed()
         }
 
         val textWatcher = object : TextWatcher {

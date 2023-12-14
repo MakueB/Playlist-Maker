@@ -4,53 +4,55 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:theme="@style/SettingsTheme"
     android:orientation="vertical"
     tools:ignore="ExtraText">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginEnd="6dp">
+        android:layout_marginEnd="6dp"
+        android:orientation="horizontal">
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/backArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:theme="@style/SettingsIconStyle"
             android:layout_marginStart="@dimen/margin_4"
             android:layout_marginTop="@dimen/margin_4"
             android:padding="@dimen/padding_12"
-            android:src="@drawable/light_modearrow_back" />
+            android:src="@drawable/light_modearrow_back"
+            android:theme="@style/SettingsBackArrowStyle" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            style="@style/ToolbarStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/ToolbarStyle"
             android:layout_gravity="center"
             android:gravity="center_vertical"
-            android:paddingEnd="86dp"
             android:paddingTop="@dimen/padding_10"
+            android:paddingEnd="86dp"
             android:text="@string/settings_title" />
-    </androidx.appcompat.widget.Toolbar>
+        </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="24dp">
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
 
         <androidx.appcompat.widget.AppCompatTextView
+            style="@style/SettingsTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SettingsTextViewStyle"
             android:paddingEnd="6dp"
-            android:text="@string/dark_theme"/>
+            android:text="@string/dark_theme" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/switchCompat"
+            style="@style/SwitchCompat"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/SwitchCompat" />
+            android:layout_height="wrap_content" />
     </FrameLayout>
 
     <FrameLayout
@@ -58,16 +60,16 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
+            style="@style/SettingsTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SettingsTextViewStyle"
-            android:text="@string/share"/>
+            android:text="@string/share" />
 
         <ImageView
             android:id="@+id/shareIV"
+            style="@style/SettingsIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SettingsIconStyle"
             android:src="@drawable/share" />
     </FrameLayout>
 
@@ -76,16 +78,16 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
+            style="@style/SettingsTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SettingsTextViewStyle"
-             android:text="@string/call_support"/>
+            android:text="@string/call_support" />
 
         <ImageView
             android:id="@+id/supportIV"
+            style="@style/SettingsIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SettingsIconStyle"
             android:src="@drawable/support" />
     </FrameLayout>
 
@@ -94,16 +96,16 @@
         android:layout_height="wrap_content">
 
         <androidx.appcompat.widget.AppCompatTextView
+            style="@style/SettingsTextViewStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            style="@style/SettingsTextViewStyle"
-            android:text="@string/user_agreement"/>
+            android:text="@string/user_agreement" />
 
         <ImageView
             android:id="@+id/agreementIV"
+            style="@style/SettingsIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/SettingsIconStyle"
             android:src="@drawable/arrow_forward" />
     </FrameLayout>
 </LinearLayout>
