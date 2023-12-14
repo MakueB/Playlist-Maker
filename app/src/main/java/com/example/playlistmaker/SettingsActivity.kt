@@ -1,10 +1,13 @@
 package com.example.playlistmaker
 
+import android.content.Context
 import android.content.Intent
+import android.content.pm.ResolveInfo
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Toast
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,13 +31,18 @@ class SettingsActivity : AppCompatActivity() {
         supportIV.setOnClickListener {
             val message = getString(R.string.support_message)
             val messageSubject = getString(R.string.support_message_subject)
+            val errorMessage = getString(R.string.error_message)
             val intent = Intent(Intent.ACTION_SENDTO).apply {
                 data = Uri.parse("mailto:")
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
                 putExtra(Intent.EXTRA_SUBJECT, messageSubject)
                 putExtra(Intent.EXTRA_TEXT, message)
             }
-            startActivity(intent)
+            try {
+                startActivity(intent)
+            } catch (e:Exception){
+                Toast.makeText(applicationContext, errorMessage, Toast.LENGTH_SHORT).show()
+            }
         }
 
         agreementIV.setOnClickListener {
