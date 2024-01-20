@@ -16,17 +16,17 @@ class MainActivity : AppCompatActivity() {
         val libraryButton = findViewById<MaterialButton>(R.id.media_button)
         val settingsButton = findViewById<MaterialButton>(R.id.settings_button)
 
-        searchButton.setOnClickListener{
+        searchButton.setOnClickListener {
             val searchIntent = Intent(this, SearchActivity::class.java)
             startActivity(searchIntent)
         }
 
-        libraryButton.setOnClickListener{
+        libraryButton.setOnClickListener {
             val libraryIntent = Intent(this, LibraryActivity::class.java)
             startActivity(libraryIntent)
         }
 
-        settingsButton.setOnClickListener{
+        settingsButton.setOnClickListener {
             val settingsActivity = Intent(this, SettingsActivity::class.java)
             startActivity(settingsActivity)
         }

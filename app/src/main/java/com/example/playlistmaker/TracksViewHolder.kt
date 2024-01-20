@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -16,19 +18,27 @@ class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     private val trackTimeTextView: TextView = itemView.findViewById(R.id.trackTimeTextView)
     private val artWorkImageView: ImageView = itemView.findViewById(R.id.artWorkImageView)
 
+    private fun convert(timeInMillis: Long) = SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
+
     fun bind (track: Track){
+        val cornersInPx = dpToPx(2f,itemView.context)
+
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
-        trackTimeTextView.text = track.trackTime
-        Glide.with(itemView)
-            .load(track.artworkUrl100)
-            .placeholder(R.drawable.placeholder)
-            .centerCrop()
-            .transform(RoundedCorners(dpToPx(2f,itemView.context)))
-            .into(artWorkImageView)
+        trackTimeTextView.text = convert(track.trackTimeMillis)
+
+        if (track.artworkUrl100.isNullOrEmpty())
+            artWorkImageView.setImageResource(R.drawable.placeholder)
+        else
+            Glide.with(itemView)
+                .load(track.artworkUrl100)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .transform(RoundedCorners(cornersInPx))
+                .into(artWorkImageView)
     }
 
-    fun dpToPx(dp: Float, context: Context): Int {
+    private fun dpToPx(dp: Float, context: Context): Int {
         return TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
             dp,

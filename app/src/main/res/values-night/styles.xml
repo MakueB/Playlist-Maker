@@ -106,4 +106,19 @@
         <item name="android:paddingHorizontal">@dimen/padding_12</item>
         <item name="android:paddingVertical">@dimen/padding_10</item>
     </style>
+
+    <style name="SearchSmthWrongTextView" parent="SettingsTheme">
+        <item name="android:textColor">@color/searchSmthWrong</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">@dimen/textSize_19</item>
+        <item name="android:fontFamily">y</item>
+        <item name="android:layout_marginTop">@dimen/margin_16</item>
+    </style>
+
+    <style name="TrackSmallTVStyle" parent="SearchTheme">
+        <item name="android:maxLines">1</item>
+        <item name="android:ellipsize">end</item>
+        <item name="android:textSize">11sp</item>
+        <item name="android:textColor">?attr/colorOnSecondary</item>
+    </style>
 </resources>
