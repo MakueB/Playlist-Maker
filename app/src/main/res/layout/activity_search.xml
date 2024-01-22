@@ -74,93 +74,100 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <ImageView
-        android:id="@+id/searchPlaceholder"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:layout_marginTop="102dp"
-        android:src="@drawable/nothing_found_light"
-        android:visibility="gone">
-
-    </ImageView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:paddingBottom="@dimen/padding_19"
-        android:layout_marginBottom="@dimen/margin_16">
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-        </TextView>
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/somethingWrongTexView"
-            style="@style/SearchSmthWrongTextView"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="6"
-            android:layout_gravity="center"
-            android:gravity="center"
-            tools:text="Ничего не нашлось"
-            android:paddingVertical="@dimen/margin_16">
-
-        </androidx.appcompat.widget.AppCompatTextView>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1">
-
-        </TextView>
-
-    </LinearLayout>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/margin_24"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:paddingVertical="102dp">
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="3">
-
-        </TextView>
-
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/refreshButton"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-
-            android:layout_weight="2"
-            android:background="@drawable/rounded_button"
-            android:backgroundTint="@color/background"
-            android:fontFamily="@font/ys_display_medium"
-            android:paddingVertical="4dp"
-            android:paddingStart="6dp"
-            android:paddingEnd="@dimen/padding_8"
-            android:text="@string/refresh"
-            android:textAllCaps="false"
-            android:textColor="@color/text"
-            android:textSize="@dimen/textSize_14"
+        <ImageView
+            android:id="@+id/searchPlaceholder"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:src="@drawable/nothing_found_light"
             android:visibility="gone">
 
-        </androidx.appcompat.widget.AppCompatButton>
+        </ImageView>
 
-        <TextView
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="3">
+            android:layout_marginBottom="@dimen/margin_16"
+            android:orientation="horizontal"
+            android:paddingBottom="@dimen/padding_19"
+            android:layout_gravity="center">
 
-        </TextView>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </TextView>
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/somethingWrongTexView"
+                style="@style/SearchSmthWrongTextView"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="6"
+                android:gravity="center"
+                android:paddingVertical="@dimen/margin_16"
+                tools:text="Ничего не нашлось">
+
+            </androidx.appcompat.widget.AppCompatTextView>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+            </TextView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/margin_24"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3">
+
+            </TextView>
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/refreshButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_weight="2"
+                android:background="@drawable/rounded_button"
+                android:backgroundTint="@color/background"
+                android:fontFamily="@font/ys_display_medium"
+                android:paddingVertical="4dp"
+                android:paddingStart="6dp"
+                android:paddingEnd="@dimen/padding_8"
+                android:text="@string/refresh"
+                android:textAllCaps="false"
+                android:textColor="@color/text"
+                android:textSize="@dimen/textSize_14"
+                android:visibility="gone">
+
+            </androidx.appcompat.widget.AppCompatButton>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="3">
+
+            </TextView>
+
+        </LinearLayout>
 
     </LinearLayout>
 

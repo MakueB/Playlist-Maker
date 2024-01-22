@@ -1,6 +1,6 @@
 package com.example.playlistmaker
 
 enum class PlaceholderIcon(val resourceId: Int) {
-    nothingFound(R.drawable.nothing_found_light),
-    noInternet(R.drawable.no_internet_light)
+    NOTHING_FOUND(R.drawable.nothing_found_light),
+    NO_INTERNET(R.drawable.no_internet_light)
 }

@@ -16,5 +16,7 @@
     <string name="support_email">iam@makievmisha.ru</string>
     <string name="error_message">Почтовый клиент не установлен. Установите приложение для отправки электронной почты.</string>
     <string name="nothing_found">Ничего не нашлось</string>
+    <string name="connection_issues">Проблемы со связью</string>
+    <string name="download_failed">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
 </resources>

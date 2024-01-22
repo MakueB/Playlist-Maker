@@ -1,8 +1,6 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import android.graphics.drawable.Drawable
-import android.graphics.drawable.Icon
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
@@ -16,7 +14,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import retrofit2.Call
@@ -55,43 +53,40 @@ class SearchActivity : AppCompatActivity() {
                         trackList.clear()
                         trackList.addAll(response.body()?.results!!)
                         adapter.notifyDataSetChanged()
-                        showPlaceholder(null)
-                        showMessage("", "")
-                        showButton(false)
+                        setPlaceholders(SearchStatus.SUCCESS)
                     } else {
-                        showPlaceholder(PlaceholderIcon.nothingFound)
-                        showMessage("Ничего не нашлось","")
-                        showButton(false)
-                        Log.d("y", response.body()?.results.toString())
+                        setPlaceholders(SearchStatus.NOTHING_FOUND)
                     }
                 } else {
-                    showPlaceholder(PlaceholderIcon.noInternet)
-                    showMessage("Проблемы со связью", "Загрузка не удалась. Проверьте подключение к интернету")
-                    showButton(true)
+                    setPlaceholders(SearchStatus.FAILURE)
                 }
             }
 
             override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
-                showPlaceholder(PlaceholderIcon.noInternet)
-                showMessage("Проблемы со связью", "Загрузка не удалась. Проверьте подключение к интернету")
-                showButton(true)
+                setPlaceholders(SearchStatus.FAILURE)
             }
         })
     }
 
-    private fun showButton(show: Boolean) {
-        if (show) {
-            refreshButton.visibility = View.VISIBLE
-        } else
-            refreshButton.visibility = View.GONE
-    }
-
-    private fun showPlaceholder(icon: PlaceholderIcon?) {
-        if (icon != null) {
-            placeHolderImage.setImageResource(icon.resourceId)
-            placeHolderImage.visibility = View.VISIBLE
-        } else
-            placeHolderImage.visibility = View.GONE
+    private fun setPlaceholders(status: SearchStatus){
+        when (status){
+            SearchStatus.SUCCESS -> {
+                placeHolderImage.isVisible = false
+                smthWrongMessage.isVisible = false
+                refreshButton.isVisible = false
+            }
+            SearchStatus.NOTHING_FOUND -> {
+                placeHolderImage.setImageResource(R.drawable.nothing_found_light)
+                placeHolderImage.visibility = View.VISIBLE
+                showMessage(getString(R.string.nothing_found),"")
+            }
+            SearchStatus.FAILURE -> {
+                placeHolderImage.setImageResource(R.drawable.no_internet_light)
+                placeHolderImage.visibility = View.VISIBLE
+                showMessage(getString(R.string.connection_issues),
+                    getString(R.string.download_failed))
+            }
+        }
     }
 
     private fun showMessage(text: String, additionalText: String) {
@@ -141,6 +136,8 @@ class SearchActivity : AppCompatActivity() {
 
         clearButton.setOnClickListener {
             editText.setText("")
+            trackList.clear()
+            adapter.notifyDataSetChanged()
         }
 
         backButton.setOnClickListener {
@@ -165,7 +162,6 @@ class SearchActivity : AppCompatActivity() {
             }
         }
         editText.addTextChangedListener(textWatcher)
-
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
