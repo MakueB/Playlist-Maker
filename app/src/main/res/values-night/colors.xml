@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="searchPlaceholderColor">#FFFFFFFF</color>
+    <color name="searchSmthWrong">#FFFFFFFF</color>
+    <color name="text">#1A1B22</color>
+    <color name="background">#FFFFFF</color>
+</resources>

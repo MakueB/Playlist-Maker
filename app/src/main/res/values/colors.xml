@@ -10,6 +10,8 @@
     <color name="YPTextGray">#AEAFB4</color>
     <color name="mainBackgroundColor">#3772E7</color>
     <color name="settingsBackgroundColor">#FFFFFF</color>
-
-
+    <color name="searchPlaceholderColor">#1A1B22</color>
+    <color name="searchSmthWrong">#1A1B22</color>
+    <color name="text">#FFFFFF</color>
+    <color name="background">#1A1B22</color>
 </resources>

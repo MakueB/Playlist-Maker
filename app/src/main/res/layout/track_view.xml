@@ -51,10 +51,7 @@
                 android:id="@+id/artistNameTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/YPTextGray"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textSize="11sp"
+                style="@style/TrackSmallTVStyle"
                 tools:text="The Beatles">
             </TextView>
 
@@ -70,10 +67,7 @@
                 android:id="@+id/trackTimeTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/YPTextGray"
-                android:maxLines="1"
-                android:ellipsize="end"
-                android:textSize="11sp"
+                style="@style/TrackSmallTVStyle"
                 tools:text="2:55">
             </TextView>
         </LinearLayout>

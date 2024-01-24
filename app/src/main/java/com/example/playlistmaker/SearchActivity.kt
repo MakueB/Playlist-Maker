@@ -3,56 +3,149 @@ package com.example.playlistmaker
 import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.text.Editable
-import android.text.Layout
 import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import androidx.core.content.ContextCompat.getSystemService
+import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private var text = TEXT_DEF
     lateinit var editText: EditText
+    lateinit var placeHolderImage: ImageView
+    lateinit var smthWrongMessage: TextView
+    lateinit var refreshButton: Button
+
+    private val iTunesBaseUrl = "https://itunes.apple.com"
+
+    private val retrofit = Retrofit.Builder()
+        .baseUrl(iTunesBaseUrl)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    private val iTunesService = retrofit.create(ITunesApi::class.java)
+
+    private val trackList = ArrayList<Track>()
+    private val adapter = TrackAdapter()
+
+    private fun search() {
+        val call = iTunesService.search(editText.text.toString()).enqueue(object : Callback<ITunesResponse> {
+            override fun onResponse(
+                call: Call<ITunesResponse>,
+                response: retrofit2.Response<ITunesResponse>
+            ) {
+                if (response.code() == 200){
+                    Log.d("y", response.body()?.results.toString())
+                    if (response.body()?.results?.isNotEmpty() == true){
+                        trackList.clear()
+                        trackList.addAll(response.body()?.results!!)
+                        adapter.notifyDataSetChanged()
+                        setPlaceholders(SearchStatus.SUCCESS)
+                    } else {
+                        setPlaceholders(SearchStatus.NOTHING_FOUND)
+                    }
+                } else {
+                    setPlaceholders(SearchStatus.FAILURE)
+                }
+            }
+
+            override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
+                setPlaceholders(SearchStatus.FAILURE)
+            }
+        })
+    }
+
+    private fun setPlaceholders(status: SearchStatus){
+        when (status){
+            SearchStatus.SUCCESS -> {
+                placeHolderImage.isVisible = false
+                smthWrongMessage.isVisible = false
+                refreshButton.isVisible = false
+            }
+            SearchStatus.NOTHING_FOUND -> {
+                placeHolderImage.setImageResource(R.drawable.nothing_found_light)
+                placeHolderImage.visibility = View.VISIBLE
+                showMessage(getString(R.string.nothing_found),"")
+            }
+            SearchStatus.FAILURE -> {
+                placeHolderImage.setImageResource(R.drawable.no_internet_light)
+                placeHolderImage.visibility = View.VISIBLE
+                showMessage(getString(R.string.connection_issues),
+                    getString(R.string.download_failed))
+            }
+        }
+    }
+
+    private fun showMessage(text: String, additionalText: String) {
+        if (text.isNotEmpty()) {
+            smthWrongMessage.visibility = View.VISIBLE
+            trackList.clear()
+            adapter.notifyDataSetChanged()
+            smthWrongMessage.text = text
+            if (additionalText.isNotEmpty()){
+                smthWrongMessage.text = "$text\n\n$additionalText"
+            }
+        } else
+            smthWrongMessage.visibility = View.GONE
+    }
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val trackList = TrackRepository.trackList
-
+        //val trackList = TrackRepository.trackList
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        val trackAdapter = TrackAdapter(trackList)
-        recyclerView.adapter = trackAdapter
+        adapter.tracks = trackList
+        recyclerView.adapter = adapter
 
         val linearLayout = findViewById<LinearLayout>(R.id.searchContainer)
         editText = findViewById<EditText>(R.id.editText)
         val clearButton = findViewById<ImageView>(R.id.imageViewClear)
         val backButton = findViewById<ImageView>(R.id.backArrow)
-
-/*        if (savedInstanceState != null){
-            text = savedInstanceState.getString(TEXT, TEXT_DEF)
-            editText.setText(text)
-            Log.d("my", "onRestoreInstanceState: Restored text - $text")
-        }*/
+        placeHolderImage = findViewById<ImageView>(R.id.searchPlaceholder)
+        smthWrongMessage = findViewById(R.id.somethingWrongTexView)
+        refreshButton = findViewById(R.id.refreshButton)
 
         editText.requestFocus()
         showKeyboard(editText)
 
+        editText.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                search()
+                true
+            }
+            false
+        }
+
         clearButton.setOnClickListener {
             editText.setText("")
+            trackList.clear()
+            adapter.notifyDataSetChanged()
         }
 
         backButton.setOnClickListener {
-            super.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        refreshButton.setOnClickListener {
+            search()
         }
 
         val textWatcher = object : TextWatcher {
