@@ -72,8 +72,8 @@
         <item name="android:textColor">@color/YPBlack</item>
         <item name="android:textSize">@dimen/textSize_16</item>
         <item name="android:gravity">center_vertical</item>
-        <item name="android:paddingVertical">@dimen/padding_10</item>
-        <item name="android:drawablePadding">@dimen/padding_10</item>
+        <item name="android:paddingVertical">@dimen/padding_12</item>
+        <item name="android:drawablePadding">@dimen/padding_12</item>
         <item name="android:maxLines">1</item>
         <item name="android:inputType">text</item>
         <item name="android:drawableTint">?attr/colorPrimary</item>

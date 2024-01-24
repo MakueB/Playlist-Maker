@@ -19,4 +19,5 @@
     <string name="connection_issues">Проблемы со связью</string>
     <string name="download_failed">Загрузка не удалась. Проверьте подключение к интернету</string>
     <string name="refresh">Обновить</string>
+
 </resources>

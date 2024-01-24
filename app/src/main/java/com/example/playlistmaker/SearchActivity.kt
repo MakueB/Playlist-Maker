@@ -24,10 +24,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     private var text = TEXT_DEF
-    lateinit var editText: EditText
-    lateinit var placeHolderImage: ImageView
-    lateinit var smthWrongMessage: TextView
-    lateinit var refreshButton: Button
+    private lateinit var editText: EditText
+    private lateinit var placeHolderImage: ImageView
+    private lateinit var smthWrongMessage: TextView
+    private lateinit var refreshButton: Button
 
     private val iTunesBaseUrl = "https://itunes.apple.com"
 
@@ -47,7 +47,7 @@ class SearchActivity : AppCompatActivity() {
                 call: Call<ITunesResponse>,
                 response: retrofit2.Response<ITunesResponse>
             ) {
-                if (response.code() == 200){
+                if (response.code() == resources.getInteger(R.integer.itunes_response_code_success)){
                     Log.d("y", response.body()?.results.toString())
                     if (response.body()?.results?.isNotEmpty() == true){
                         trackList.clear()

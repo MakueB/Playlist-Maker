@@ -1,13 +1,13 @@
 package com.example.playlistmaker
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.ResolveInfo
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Switch
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +18,9 @@ class SettingsActivity : AppCompatActivity() {
         val supportIV = findViewById<ImageView>(R.id.supportIV)
         val agreementIV = findViewById<ImageView>(R.id.agreementIV)
         val backButton = findViewById<ImageView>(R.id.backArrow)
+        val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
+
+        val sharedPrefs = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
 
         shareIV.setOnClickListener {
             val message = getString(R.string.android_developer_course)
@@ -52,7 +55,17 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         backButton.setOnClickListener {
-            super.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            (applicationContext as App).switchTheme(checked)
+            sharedPrefs.edit()
+                .putBoolean(THEME_KEY, checked)
+                .apply()
+
+            Toast.makeText(this, "Тема сохранена", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 }
