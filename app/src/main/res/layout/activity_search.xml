@@ -67,54 +67,112 @@
             android:visibility="gone" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recyclerView"
+    <LinearLayout
+        android:id="@+id/searchLinearLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-    </androidx.recyclerview.widget.RecyclerView>
-
-    <ImageView
-        android:id="@+id/searchPlaceholder"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_gravity="center"
-        android:src="@drawable/nothing_found_light"
-        android:layout_marginTop="102dp"
-        android:layout_marginBottom="@dimen/margin_16"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
         android:visibility="gone">
 
-    </ImageView>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.AppCompatTextView
-        android:id="@+id/somethingWrongTexView"
-        style="@style/SearchSmthWrongTextView"
-        android:layout_width="wrap_content"
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ImageView
+            android:id="@+id/searchPlaceholder"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="102dp"
+            android:layout_marginBottom="@dimen/margin_16"
+            android:src="@drawable/nothing_found_light"
+            android:visibility="gone">
+
+        </ImageView>
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/somethingWrongTexView"
+            style="@style/SearchSmthWrongTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="@dimen/margin_24"
+            android:gravity="center"
+            tools:text="Ничего не нашлось">
+
+        </androidx.appcompat.widget.AppCompatTextView>
+
+
+        <Button
+            android:id="@+id/refreshButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:backgroundTint="@color/background"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/refresh"
+            android:textAllCaps="false"
+            android:textColor="@color/text"
+            android:textFontWeight="500"
+            android:textSize="@dimen/textSize_14"
+            android:visibility="gone"
+            app:cornerRadius="54dp">
+
+        </Button>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/historyLinearLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:gravity="center"
-        tools:text="Ничего не нашлось"
-        android:layout_marginBottom="@dimen/margin_24">
+        android:orientation="vertical"
+        android:visibility="visible">
 
-    </androidx.appcompat.widget.AppCompatTextView>
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/youVeBeenSearching"
+            style="@style/SearchSmthWrongTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/margin_32"
+            android:layout_marginBottom="@dimen/margin_8"
+            android:gravity="center"
+            android:visibility="visible"
+            android:text="@string/you_ve_been_searching">
+
+        </androidx.appcompat.widget.AppCompatTextView>
 
 
-    <Button
-        android:id="@+id/refreshButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@color/background"
-        android:fontFamily="@font/ys_display_medium"
-        android:text="@string/refresh"
-        android:textAllCaps="false"
-        android:textColor="@color/text"
-        android:textFontWeight="500"
-        android:textSize="@dimen/textSize_14"
-        android:visibility="gone"
-        app:cornerRadius="54dp">
 
-    </Button>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/clearHistory"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:backgroundTint="@color/background"
+            android:fontFamily="@font/ys_display_medium"
+            android:text="@string/clear_history"
+            android:textAllCaps="false"
+            android:textColor="@color/text"
+            android:textFontWeight="500"
+            android:textSize="@dimen/textSize_14"
+            android:visibility="visible"
+            app:cornerRadius="54dp">
+
+        </Button>
+    </LinearLayout>
 
 
 </LinearLayout>

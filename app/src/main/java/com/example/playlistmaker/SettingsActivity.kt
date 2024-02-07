@@ -20,7 +20,7 @@ class SettingsActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backArrow)
         val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
 
-        val sharedPrefs = getSharedPreferences(PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
+        val app = application as App
 
         shareIV.setOnClickListener {
             val message = getString(R.string.android_developer_course)
@@ -59,9 +59,9 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
-            (applicationContext as App).switchTheme(checked)
-            sharedPrefs.edit()
-                .putBoolean(THEME_KEY, checked)
+            app.switchTheme(checked) // app - alias(псевдоним) для (application as App)
+            app.sharedPrefs.edit()
+                .putBoolean(Keys.THEME_KEY, checked)
                 .apply()
 
             Toast.makeText(this, "Тема сохранена", Toast.LENGTH_SHORT)
