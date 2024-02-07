@@ -6,12 +6,12 @@ import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
 
-    var darkTheme = false
+    private var darkTheme = false
     lateinit var  sharedPrefs: SharedPreferences
 
     override fun onCreate() {
         super.onCreate()
-        sharedPrefs = getSharedPreferences(Keys.PLAYLISTMAKER_PREFERENCES, MODE_PRIVATE)
+        sharedPrefs = getSharedPreferences(Keys.PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         switchTheme(sharedPrefs.getBoolean(Keys.THEME_KEY, false))
     }
 
