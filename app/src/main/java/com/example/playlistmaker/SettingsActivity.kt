@@ -1,13 +1,14 @@
 package com.example.playlistmaker
 
-import android.content.Context
 import android.content.Intent
-import android.content.pm.ResolveInfo
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ImageView
+import android.widget.Switch
 import android.widget.Toast
+import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.edit
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +19,9 @@ class SettingsActivity : AppCompatActivity() {
         val supportIV = findViewById<ImageView>(R.id.supportIV)
         val agreementIV = findViewById<ImageView>(R.id.agreementIV)
         val backButton = findViewById<ImageView>(R.id.backArrow)
+        val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
+
+        val app = application as App
 
         shareIV.setOnClickListener {
             val message = getString(R.string.android_developer_course)
@@ -52,7 +56,18 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         backButton.setOnClickListener {
-            super.onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+            app.switchTheme(checked) // app - alias(псевдоним) для (application as App)
+            app.sharedPrefs.edit {
+                putBoolean(Keys.THEME_KEY, checked)
+            }
+
+            val themeWasSavedMsg = getString(R.string.theme_was_saved)
+            Toast.makeText(this, themeWasSavedMsg, Toast.LENGTH_SHORT)
+                .show()
         }
     }
 }
