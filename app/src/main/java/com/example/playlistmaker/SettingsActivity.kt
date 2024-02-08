@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
+import androidx.core.content.edit
 
 class SettingsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,11 +61,12 @@ class SettingsActivity : AppCompatActivity() {
 
         themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
             app.switchTheme(checked) // app - alias(псевдоним) для (application as App)
-            app.sharedPrefs.edit()
-                .putBoolean(Keys.THEME_KEY, checked)
-                .apply()
+            app.sharedPrefs.edit {
+                putBoolean(Keys.THEME_KEY, checked)
+            }
 
-            Toast.makeText(this, "Тема сохранена", Toast.LENGTH_SHORT)
+            val themeWasSavedMsg = getString(R.string.theme_was_saved)
+            Toast.makeText(this, themeWasSavedMsg, Toast.LENGTH_SHORT)
                 .show()
         }
     }

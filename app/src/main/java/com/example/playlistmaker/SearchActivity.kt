@@ -140,10 +140,12 @@ class SearchActivity : AppCompatActivity() {
 
         val onTrackClickListener = OnTrackClickListener { track ->
             val trackWasSavedMessage = getString(R.string.track_was_saved)
+            val listContainsTrack = historyList.any { it.trackId == track.trackId }
 
             addTrackToHistoryList(track)
             searchHistory.saveToPrefs(historyList)
-            Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT).show()
+            if (!listContainsTrack)
+                Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT).show()
         }
 
         adapter = TrackAdapter(onTrackClickListener)
