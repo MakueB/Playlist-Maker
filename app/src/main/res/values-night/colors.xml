@@ -6,4 +6,6 @@
     <color name="background">#FFFFFF</color>
     <color name="labelText">#FFFFFF</color>
     <color name="textColor">#FFFFFF</color>
+    <color name="playerBackgroundColor">#1A1B22</color>
+    <color name="buttonFillColor">#FFFFFF</color>
 </resources>

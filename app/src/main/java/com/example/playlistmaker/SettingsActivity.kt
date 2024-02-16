@@ -9,21 +9,19 @@ import android.widget.Switch
 import android.widget.Toast
 import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.edit
+import com.example.playlistmaker.databinding.ActivitySettingsBinding
+
 
 class SettingsActivity : AppCompatActivity() {
+    private lateinit var binding:ActivitySettingsBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_settings)
-
-        val shareIV = findViewById<ImageView>(R.id.shareIV)
-        val supportIV = findViewById<ImageView>(R.id.supportIV)
-        val agreementIV = findViewById<ImageView>(R.id.agreementIV)
-        val backButton = findViewById<ImageView>(R.id.backArrow)
-        val themeSwitcher = findViewById<SwitchCompat>(R.id.themeSwitch)
+        binding = ActivitySettingsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val app = application as App
 
-        shareIV.setOnClickListener {
+        binding.shareIV.setOnClickListener {
             val message = getString(R.string.android_developer_course)
             val intent = Intent(Intent.ACTION_SEND).apply {
                 type = "text/plain"
@@ -32,7 +30,7 @@ class SettingsActivity : AppCompatActivity() {
             startActivity(Intent.createChooser(intent, null))
         }
 
-        supportIV.setOnClickListener {
+        binding.supportIV.setOnClickListener {
             val message = getString(R.string.support_message)
             val messageSubject = getString(R.string.support_message_subject)
             val errorMessage = getString(R.string.error_message)
@@ -49,17 +47,17 @@ class SettingsActivity : AppCompatActivity() {
             }
         }
 
-        agreementIV.setOnClickListener {
+        binding.agreementIV.setOnClickListener {
             val agreementUrl = getString(R.string.oferta_yandex_url)
             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(agreementUrl))
             startActivity(intent)
         }
 
-        backButton.setOnClickListener {
+        binding.backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        themeSwitcher.setOnCheckedChangeListener { switcher, checked ->
+        binding.themeSwitch.setOnCheckedChangeListener { switcher, checked ->
             app.switchTheme(checked) // app - alias(псевдоним) для (application as App)
             app.sharedPrefs.edit {
                 putBoolean(Keys.THEME_KEY, checked)

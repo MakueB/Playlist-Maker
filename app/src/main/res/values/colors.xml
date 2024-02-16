@@ -15,4 +15,6 @@
     <color name="text">#FFFFFF</color>
     <color name="background">#1A1B22</color>
     <color name="labelText">#AEAFB4</color>
+    <color name="playerBackgroundColor">#FFFFFF</color>
+    <color name="buttonFillColor">#1A1B22</color>
 </resources>
