@@ -153,7 +153,7 @@ class SearchActivity : AppCompatActivity() {
                 Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT).show()
 
             val audioPlayerActivityIntent = Intent(this, AudioPlayerActivity::class.java)
-            audioPlayerActivityIntent.putExtra(Keys.TRACK_KEY, track)
+            audioPlayerActivityIntent.putExtra(TRACK_KEY, track)
             startActivity(audioPlayerActivityIntent)
         }
 
@@ -301,6 +301,7 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val TEXT = "TEXT_DEF"
         const val TEXT_DEF = ""
+        const val TRACK_KEY = "track"
     }
 }
 

@@ -22,7 +22,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val track = intent.parcelable<Track>(Keys.TRACK_KEY)
+        val track = intent.parcelable<Track>(SearchActivity.TRACK_KEY)
         binding.apply {
             country.text = track?.country
             genre.text = track?.primaryGenreName
