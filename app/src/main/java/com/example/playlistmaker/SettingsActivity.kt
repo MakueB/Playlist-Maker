@@ -4,10 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.Switch
 import android.widget.Toast
-import androidx.appcompat.widget.SwitchCompat
 import androidx.core.content.edit
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 
@@ -57,7 +54,7 @@ class SettingsActivity : AppCompatActivity() {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        binding.themeSwitch.setOnCheckedChangeListener { switcher, checked ->
+        binding.themeSwitch.setOnCheckedChangeListener { _, checked ->
             app.switchTheme(checked) // app - alias(псевдоним) для (application as App)
             app.sharedPrefs.edit {
                 putBoolean(Keys.THEME_KEY, checked)

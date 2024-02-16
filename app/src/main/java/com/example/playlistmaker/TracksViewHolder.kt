@@ -27,7 +27,7 @@ class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
         artistNameTextView.text = track.artistName
         trackTimeTextView.text = convert(track.trackTimeMillis)
 
-        if (track.artworkUrl100.isNullOrEmpty())
+        if (track.artworkUrl100.isEmpty())
             artWorkImageView.setImageResource(R.drawable.placeholder)
         else
             Glide.with(itemView)

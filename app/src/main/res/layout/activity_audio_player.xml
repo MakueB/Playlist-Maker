@@ -15,7 +15,8 @@
         android:src="@drawable/light_modearrow_back"
         android:theme="@style/SettingsBackArrowStyle"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/topBorder" />
+        app:layout_constraintTop_toTopOf="@id/topBorder"
+        android:contentDescription="@string/previous_screen" />
 
 
     <androidx.constraintlayout.widget.Guideline
@@ -199,7 +200,8 @@
         app:layout_constraintBottom_toTopOf="@id/trackInfoBarrier"
         app:layout_constraintEnd_toStartOf="@id/playButton"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
-        app:layout_constraintStart_toEndOf="@id/leftBorder" />
+        app:layout_constraintStart_toEndOf="@id/leftBorder"
+        android:contentDescription="@string/add_to_playlist" />
 
     <ImageButton
         android:id="@+id/playButton"
@@ -209,7 +211,8 @@
         android:src="@drawable/buttonplay"
         app:layout_constraintBottom_toTopOf="@id/elapsedTime"
         app:layout_constraintEnd_toStartOf="@id/likeButton"
-        app:layout_constraintStart_toEndOf="@id/addButton" />
+        app:layout_constraintStart_toEndOf="@id/addButton"
+        android:contentDescription="@string/play" />
 
     <ImageButton
         android:id="@+id/likeButton"
@@ -221,7 +224,8 @@
         android:src="@drawable/buttonheart"
         app:layout_constraintBottom_toTopOf="@id/trackInfoBarrier"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toEndOf="@id/playButton" />
+        app:layout_constraintStart_toEndOf="@id/playButton"
+        android:contentDescription="@string/add_to_favorites" />
 
     <TextView
         android:id="@+id/elapsedTime"
