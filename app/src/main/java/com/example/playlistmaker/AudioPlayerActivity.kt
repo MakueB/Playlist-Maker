@@ -11,28 +11,11 @@ import android.view.View
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.CommonUtils.parcelable
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var binding: ActivityAudioPlayerBinding
-
-    private inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
-        SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
-        else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
-    }
-
-    private fun convert(timeInMillis: Long) =
-        SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
-
-    private fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            context.resources.displayMetrics
-        ).toInt()
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,12 +35,12 @@ class AudioPlayerActivity : AppCompatActivity() {
                 collectionName.text = track?.collectionName
             }
 
-            duration.text = convert(track?.trackTimeMillis ?: 0)
+            duration.text = CommonUtils.convert(track?.trackTimeMillis ?: 0)
             collectionNameTextView.text = track?.collectionName
             trackName.text = track?.trackName
         }
 
-        val cornersInPx = dpToPx(2f, this)
+        val cornersInPx = CommonUtils.dpToPx(2f, this)
 
         binding.apply {
             if (track?.artworkUrl100.isNullOrEmpty())

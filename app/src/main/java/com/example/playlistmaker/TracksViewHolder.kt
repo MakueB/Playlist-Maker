@@ -18,14 +18,12 @@ class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     private val trackTimeTextView: TextView = itemView.findViewById(R.id.trackTimeTextView)
     private val artWorkImageView: ImageView = itemView.findViewById(R.id.artWorkImageView)
 
-    private fun convert(timeInMillis: Long) = SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
-
     fun bind (track: Track){
-        val cornersInPx = dpToPx(2f,itemView.context)
+        val cornersInPx = CommonUtils.dpToPx(2f,itemView.context)
 
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
-        trackTimeTextView.text = convert(track.trackTimeMillis)
+        trackTimeTextView.text = CommonUtils.convert(track.trackTimeMillis)
 
         if (track.artworkUrl100.isEmpty())
             artWorkImageView.setImageResource(R.drawable.placeholder)
@@ -36,12 +34,5 @@ class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
                 .centerCrop()
                 .transform(RoundedCorners(cornersInPx))
                 .into(artWorkImageView)
-    }
-
-    private fun dpToPx(dp: Float, context: Context): Int {
-        return TypedValue.applyDimension(
-            TypedValue.COMPLEX_UNIT_DIP,
-            dp,
-            context.resources.displayMetrics).toInt()
     }
 }
