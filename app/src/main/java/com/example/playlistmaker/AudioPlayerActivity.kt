@@ -3,8 +3,11 @@ package com.example.playlistmaker
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
 import android.content.Context
+import android.content.Intent
+import android.os.Build.VERSION.SDK_INT
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import android.util.TypedValue
 import android.view.ViewTreeObserver
@@ -22,6 +25,11 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
+
+    inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
+        SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
+        else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
+    }
     private fun convert(timeInMillis: Long) =
         SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
 
@@ -51,7 +59,8 @@ class AudioPlayerActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backArrow)
         val collectionNameGroup = findViewById<Group>(R.id.albumGroup)
 
-        val track = intent.getParcelableExtra<Track>("track")
+        //val track = intent.getParcelableExtra<Track>("track")
+        val track = intent.parcelable<Track>("track")
 
         countryTextView.setText(track?.country) ?: ""
         genreTextView.setText(track?.primaryGenreName) ?: ""
