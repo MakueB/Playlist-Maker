@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.util.TypedValue
+import android.view.View
 import android.view.ViewTreeObserver
 import android.view.animation.LinearInterpolator
 import android.widget.ImageButton
@@ -21,15 +22,18 @@ import androidx.core.util.TypedValueCompat.dpToPx
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class AudioPlayerActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityAudioPlayerBinding
 
     inline fun <reified T : Parcelable> Intent.parcelable(key: String): T? = when {
         SDK_INT >= 33 -> getParcelableExtra(key, T::class.java)
         else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
     }
+
     private fun convert(timeInMillis: Long) =
         SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
 
@@ -43,52 +47,43 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_audio_player)
-
-        val countryTextView = findViewById<TextView>(R.id.country)
-        val genreTextView = findViewById<TextView>(R.id.genre)
-        val releaseDateTextView = findViewById<TextView>(R.id.releaseDate)
-        val collectionNameTextView = findViewById<TextView>(R.id.collectionName)
-        val durationTextView = findViewById<TextView>(R.id.duration)
-        val collectionNameBigTextView = findViewById<TextView>(R.id.collectionNameTextView)
-        val trackNameTextView = findViewById<TextView>(R.id.trackName)
-        val coverImageView = findViewById<ImageView>(R.id.cover)
-        val addButton = findViewById<ImageButton>(R.id.addButton)
-        val playButton = findViewById<ImageButton>(R.id.playButton)
-        val likeButton = findViewById<ImageButton>(R.id.likeButton)
-        val backButton = findViewById<ImageView>(R.id.backArrow)
-        val collectionNameGroup = findViewById<Group>(R.id.albumGroup)
+        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         val track = intent.parcelable<Track>(Keys.TRACK_KEY)
+        binding.apply {
+            country.setText(track?.country) ?: ""
+            genre.setText(track?.primaryGenreName) ?: ""
+            releaseDate.setText(track?.releaseDate?.substring(0, 4)) ?: ""
 
-        countryTextView.setText(track?.country) ?: ""
-        genreTextView.setText(track?.primaryGenreName) ?: ""
-        releaseDateTextView.setText(track?.releaseDate?.substring(0, 4)) ?: ""
+            if (track?.collectionName.isNullOrEmpty()) {
+                albumGroup.visibility = View.GONE
+            } else {
+                albumGroup.isVisible = true
+                collectionName.setText(track?.collectionName) ?: ""
+            }
 
-        if (!track?.collectionName.isNullOrEmpty()) {
-            collectionNameGroup.isVisible = true
+            duration.setText(convert(track?.trackTimeMillis ?: 0))
             collectionNameTextView.setText(track?.collectionName) ?: ""
-        } else {
-            collectionNameGroup.isVisible = false
+            trackName.setText(track?.trackName) ?: ""
         }
-        durationTextView.setText(convert(track?.trackTimeMillis ?: 0))
-        collectionNameBigTextView.setText(track?.collectionName) ?: ""
-        trackNameTextView.setText(track?.trackName) ?: ""
 
         val cornersInPx = dpToPx(2f, this)
 
-        if (track?.artworkUrl100.isNullOrEmpty())
-            coverImageView.setImageResource(R.drawable.placeholder)
-        else
-            Glide.with(applicationContext)
-                .load(track?.getCoverArtwork())
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .transform(RoundedCorners(cornersInPx))
-                .into(coverImageView)
+        binding.apply {
+            if (track?.artworkUrl100.isNullOrEmpty())
+                cover.setImageResource(R.drawable.placeholder)
+            else
+                Glide.with(applicationContext)
+                    .load(track?.getCoverArtwork())
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .transform(RoundedCorners(cornersInPx))
+                    .into(cover)
 
-        backButton.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            backArrow.setOnClickListener {
+                onBackPressedDispatcher.onBackPressed()
+            }
         }
     }
 }
