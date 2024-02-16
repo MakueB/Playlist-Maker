@@ -1,7 +1,7 @@
 package com.example.playlistmaker
 
 import android.content.Context
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -13,14 +13,17 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 const val ITUNES_BASE_URL = "https://itunes.apple.com"
 
@@ -71,7 +74,7 @@ class SearchActivity : AppCompatActivity() {
                 response: retrofit2.Response<ITunesResponse>
             ) {
                 if (response.code() == resources.getInteger(R.integer.itunes_response_code_success)) {
-                    Log.d("y", response.body()?.results.toString())
+                    Log.d("body", response.body()?.results.toString())
                     if (response.body()?.results?.isNotEmpty() == true) {
                         trackList.clear()
                         trackList.addAll(response.body()?.results!!)
@@ -82,10 +85,12 @@ class SearchActivity : AppCompatActivity() {
                     }
                 } else {
                     setPlaceholders(SearchStatus.FAILURE)
+                    Log.d("body", response.body()?.results.toString())
                 }
             }
 
             override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
+                Log.d("body", t.message.toString())
                 setPlaceholders(SearchStatus.FAILURE)
             }
         })
@@ -146,6 +151,10 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.saveToPrefs(historyList)
             if (!listContainsTrack)
                 Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT).show()
+
+            val audioPlayerActivityIntent = Intent(this, AudioPlayerActivity::class.java)
+            audioPlayerActivityIntent.putExtra("track", track)
+            startActivity(audioPlayerActivityIntent)
         }
 
         adapter = TrackAdapter(onTrackClickListener)

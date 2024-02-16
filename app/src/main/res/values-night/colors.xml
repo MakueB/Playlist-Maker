@@ -4,4 +4,6 @@
     <color name="searchSmthWrong">#FFFFFFFF</color>
     <color name="text">#1A1B22</color>
     <color name="background">#FFFFFF</color>
+    <color name="labelText">#FFFFFF</color>
+    <color name="textColor">#FFFFFF</color>
 </resources>
