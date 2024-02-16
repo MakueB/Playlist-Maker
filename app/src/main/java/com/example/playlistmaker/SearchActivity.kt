@@ -153,7 +153,7 @@ class SearchActivity : AppCompatActivity() {
                 Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT).show()
 
             val audioPlayerActivityIntent = Intent(this, AudioPlayerActivity::class.java)
-            audioPlayerActivityIntent.putExtra("track", track)
+            audioPlayerActivityIntent.putExtra(Keys.TRACK_KEY, track)
             startActivity(audioPlayerActivityIntent)
         }
 
