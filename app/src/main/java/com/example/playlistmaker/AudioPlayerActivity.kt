@@ -59,7 +59,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         val backButton = findViewById<ImageView>(R.id.backArrow)
         val collectionNameGroup = findViewById<Group>(R.id.albumGroup)
 
-        //val track = intent.getParcelableExtra<Track>("track")
         val track = intent.parcelable<Track>("track")
 
         countryTextView.setText(track?.country) ?: ""
