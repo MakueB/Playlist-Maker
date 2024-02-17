@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <queries></queries>
 
     <application
         android:name=".App"
@@ -15,20 +18,24 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
+            android:name=".AudioPlayerActivity"
+            android:exported="false"
+            android:theme="@style/SettingsTheme"/>
+        <activity
             android:name=".LibraryActivity"
             android:exported="false" />
         <activity
             android:name=".SearchActivity"
             android:exported="false"
-            android:theme="@style/SearchTheme"/>
+            android:theme="@style/SearchTheme" />
         <activity
             android:name=".SettingsActivity"
-            android:theme="@style/SettingsTheme"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/SettingsTheme" />
         <activity
             android:name=".MainActivity"
-            android:theme="@style/Theme.PlaylistMaker"
-            android:exported="true">
+            android:exported="true"
+            android:theme="@style/Theme.PlaylistMaker">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -36,7 +43,5 @@
             </intent-filter>
         </activity>
     </application>
-<queries>
 
-</queries>
 </manifest>

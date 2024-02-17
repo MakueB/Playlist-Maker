@@ -10,6 +10,7 @@
     <dimen name="margin_24">24dp</dimen>
     <dimen name="margin_32">32dp</dimen>
     <dimen name="textSize_11">11sp</dimen>
+    <dimen name="textSize_13">13sp</dimen>
     <dimen name="textSize_14">14sp</dimen>
     <dimen name="textSize_16">16sp</dimen>
     <dimen name="textSize_19">19sp</dimen>
