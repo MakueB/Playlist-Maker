@@ -40,7 +40,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             trackName.text = track?.trackName
         }
 
-        val cornersInPx = CommonUtils.dpToPx(2f, this)
+        val cornersInPx = CommonUtils.dpToPx(8f, this)
 
         binding.apply {
             if (track?.artworkUrl100.isNullOrEmpty())
