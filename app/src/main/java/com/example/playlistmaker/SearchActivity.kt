@@ -83,19 +83,22 @@ class SearchActivity : AppCompatActivity() {
                 response: retrofit2.Response<ITunesResponse>
             ) {
                 if (response.code() == resources.getInteger(R.integer.itunes_response_code_success)) {
-                    Log.d("body", response.body()?.results.toString())
+                    Log.d("body", response.body()?.results.toString() +
+                    "code " + response.code())
                     if (response.body()?.results?.isNotEmpty() == true) {
                         trackList.clear()
                         trackList.addAll(response.body()?.results!!)
                         adapter.notifyDataSetChanged()
                         setPlaceholders(SearchStatus.SUCCESS)
                     } else {
+                        Log.d("body", response.body()?.results.toString()
+                        + "code " + response.code())
                         setPlaceholders(SearchStatus.NOTHING_FOUND)
                     }
                 } else {
                     setPlaceholders(SearchStatus.FAILURE)
-                    Log.d("body", response.body()?.results.toString())
-                }
+                    Log.d("body", response.body()?.results.toString()
+                            + "code " + response.code())                }
             }
 
             override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
@@ -125,6 +128,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             SearchStatus.NOTHING_FOUND -> {
+                searchLinearLayout.isVisible = true
                 placeHolderImage.setImageResource(R.drawable.nothing_found_light)
                 placeHolderImage.visibility = View.VISIBLE
                 progressBar.isVisible = false
@@ -132,6 +136,7 @@ class SearchActivity : AppCompatActivity() {
             }
 
             SearchStatus.FAILURE -> {
+                searchLinearLayout.isVisible = true
                 placeHolderImage.setImageResource(R.drawable.no_internet_light)
                 placeHolderImage.visibility = View.VISIBLE
                 progressBar.isVisible = false

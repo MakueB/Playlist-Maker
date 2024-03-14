@@ -17,4 +17,6 @@
     <color name="labelText">#AEAFB4</color>
     <color name="playerBackgroundColor">#FFFFFF</color>
     <color name="buttonFillColor">#1A1B22</color>
+    <color name="pauseButtonBackground">#1A1B22</color>
+    <color name="pauseButtonForeground">#FFFFFF</color>
 </resources>

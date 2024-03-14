@@ -1,12 +1,11 @@
 package com.example.playlistmaker
 
-import android.content.Context
-import android.content.Intent
-import android.os.Build.VERSION.SDK_INT
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.TypedValue
+import android.os.Handler
+import android.os.Looper
+import android.util.Log
 import android.view.View
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -15,7 +14,71 @@ import com.example.playlistmaker.CommonUtils.parcelable
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
 
 class AudioPlayerActivity : AppCompatActivity() {
+    companion object {
+        private const val STATE_DEFAULT = 0
+        private const val STATE_PREPARED = 1
+        private const val STATE_PLAYING = 2
+        private const val STATE_PAUSED = 3
+
+        private const val DELAY = 1000L
+    }
+
+    private var playerState = STATE_DEFAULT
+    private var handler = Handler(Looper.getMainLooper())
+
     private lateinit var binding: ActivityAudioPlayerBinding
+    private var mediaPlayer = MediaPlayer()
+
+    private fun preparePlayer(track: Track?) {
+        mediaPlayer.apply {
+            setDataSource(track?.previewUrl)
+            prepareAsync()
+            setOnPreparedListener{
+                binding.playButton.isEnabled = true
+                playerState = STATE_PREPARED
+            }
+            setOnCompletionListener {
+                binding.playButton.setImageResource(R.drawable.button_play)
+                playerState = STATE_PREPARED
+                binding.elapsedTime.text = "00:00"
+            }
+        }
+    }
+
+    private fun startPlayer(){
+        mediaPlayer.start()
+        binding.playButton.setImageResource(R.drawable.button_pause)
+        playerState = STATE_PLAYING
+    }
+
+    private fun pausePlayer(){
+        mediaPlayer.pause()
+        binding.playButton.setImageResource(R.drawable.button_play)
+        playerState = STATE_PAUSED
+    }
+
+    private fun playBackControl(){
+        when (playerState) {
+            STATE_PLAYING -> {
+                pausePlayer()
+                handler.removeCallbacks(updateTimerTask())
+            }
+            STATE_PREPARED, STATE_PAUSED -> {
+                startPlayer()
+                handler.postDelayed(updateTimerTask(), DELAY)
+            }
+        }
+    }
+
+    private fun updateTimerTask(): Runnable = object : Runnable {
+        override fun run() {
+            if (playerState == STATE_PLAYING){
+                binding.elapsedTime.text = CommonUtils.convert(mediaPlayer.currentPosition.toLong())
+                handler.post(this)
+            }
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -23,6 +86,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val track = intent.parcelable<Track>(SearchActivity.TRACK_KEY)
+
         binding.apply {
             country.text = track?.country
             genre.text = track?.primaryGenreName
@@ -57,5 +121,26 @@ class AudioPlayerActivity : AppCompatActivity() {
                 onBackPressedDispatcher.onBackPressed()
             }
         }
+
+        binding.playButton.isEnabled = false
+
+        preparePlayer(track)
+
+        binding.playButton.setOnClickListener {
+            Log.d("Check", "is playing: " +
+                    mediaPlayer.isPlaying.toString()
+                    + " playerState: " + playerState)
+            playBackControl()
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        pausePlayer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mediaPlayer.release()
     }
 }
