@@ -3,6 +3,8 @@ package com.example.playlistmaker
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -11,6 +13,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -38,10 +41,15 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var youVeBeenSearchingMessage: TextView
     private lateinit var clearHistoryButton: Button
+    private lateinit var progressBar: ProgressBar
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
     private lateinit var searchHistory: SearchHistory
+
+    private var isClickAllowed = true
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRunnable = Runnable { search() }
 
     private val retrofit = Retrofit.Builder()
         .baseUrl(ITUNES_BASE_URL)
@@ -67,6 +75,8 @@ class SearchActivity : AppCompatActivity() {
 
 
     private fun search() {
+        setPlaceholders(SearchStatus.SEARCHING)
+
         iTunesService.search(editText.text.toString()).enqueue(object : Callback<ITunesResponse> {
             override fun onResponse(
                 call: Call<ITunesResponse>,
@@ -101,17 +111,30 @@ class SearchActivity : AppCompatActivity() {
                 placeHolderImage.isVisible = false
                 smthWrongMessage.isVisible = false
                 refreshButton.isVisible = false
+                progressBar.isVisible = false
+                searchLinearLayout.isVisible = true
+            }
+
+            SearchStatus.SEARCHING -> {
+                placeHolderImage.isVisible = false
+                smthWrongMessage.isVisible = false
+                refreshButton.isVisible = false
+                historyLinearLayout.isVisible = false
+                searchLinearLayout.isVisible = false
+                progressBar.isVisible = true
             }
 
             SearchStatus.NOTHING_FOUND -> {
                 placeHolderImage.setImageResource(R.drawable.nothing_found_light)
                 placeHolderImage.visibility = View.VISIBLE
+                progressBar.isVisible = false
                 showMessage(getString(R.string.nothing_found), "")
             }
 
             SearchStatus.FAILURE -> {
                 placeHolderImage.setImageResource(R.drawable.no_internet_light)
                 placeHolderImage.visibility = View.VISIBLE
+                progressBar.isVisible = false
                 showMessage(
                     getString(R.string.connection_issues),
                     getString(R.string.download_failed)
@@ -144,17 +167,20 @@ class SearchActivity : AppCompatActivity() {
         searchHistory = SearchHistory(sharedPreferences)
 
         val onTrackClickListener = OnTrackClickListener { track ->
-            val trackWasSavedMessage = getString(R.string.track_was_saved)
-            val listContainsTrack = historyList.any { it.trackId == track.trackId }
+            if (clickDebounce()) {
+                val trackWasSavedMessage = getString(R.string.track_was_saved)
+                val listContainsTrack = historyList.any { it.trackId == track.trackId }
 
-            addTrackToHistoryList(track)
-            searchHistory.saveToPrefs(historyList)
-            if (!listContainsTrack)
-                Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT).show()
+                addTrackToHistoryList(track)
+                searchHistory.saveToPrefs(historyList)
+                if (!listContainsTrack)
+                    Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT)
+                        .show()
 
-            val audioPlayerActivityIntent = Intent(this, AudioPlayerActivity::class.java)
-            audioPlayerActivityIntent.putExtra(TRACK_KEY, track)
-            startActivity(audioPlayerActivityIntent)
+                val audioPlayerActivityIntent = Intent(this, AudioPlayerActivity::class.java)
+                audioPlayerActivityIntent.putExtra(TRACK_KEY, track)
+                startActivity(audioPlayerActivityIntent)
+            }
         }
 
         adapter = TrackAdapter(onTrackClickListener)
@@ -181,6 +207,7 @@ class SearchActivity : AppCompatActivity() {
         historyLinearLayout = findViewById(R.id.historyLinearLayout)
         youVeBeenSearchingMessage = findViewById(R.id.youVeBeenSearching)
         clearHistoryButton = findViewById(R.id.clearHistory)
+        progressBar = findViewById(R.id.progressBar)
 
         showHistory()
 
@@ -195,13 +222,13 @@ class SearchActivity : AppCompatActivity() {
         editText.requestFocus()
         showKeyboard(editText)
 
-        editText.setOnEditorActionListener { _, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                search()
-                true
-            } else
-                false
-        }
+//        editText.setOnEditorActionListener { _, actionId, _ ->
+//            if (actionId == EditorInfo.IME_ACTION_DONE) {
+//                search()
+//                true
+//            } else
+//                false
+//        }
 
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && editText.text.isBlank()) {
@@ -242,6 +269,7 @@ class SearchActivity : AppCompatActivity() {
                 clearButton.isVisible = !s.isNullOrEmpty()
                 checkAndHideKeyboard(editText)
                 text = s.toString()
+                searchDebounce()
 
                 if (editText.hasFocus() && s?.isBlank() == true) {
                     historyLinearLayout.isVisible = true
@@ -298,10 +326,26 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    private fun clickDebounce() : Boolean {
+        val current = isClickAllowed
+        if (isClickAllowed) {
+            isClickAllowed = false
+            handler.postDelayed( {isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+        }
+        return current
+    }
+
+    private fun searchDebounce(){
+        handler.removeCallbacks(searchRunnable)
+        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
+    }
+
     companion object {
         const val TEXT = "TEXT_DEF"
         const val TEXT_DEF = ""
         const val TRACK_KEY = "track"
+        const val SEARCH_DEBOUNCE_DELAY = 2000L
+        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
 
