@@ -227,13 +227,6 @@ class SearchActivity : AppCompatActivity() {
         editText.requestFocus()
         showKeyboard(editText)
 
-//        editText.setOnEditorActionListener { _, actionId, _ ->
-//            if (actionId == EditorInfo.IME_ACTION_DONE) {
-//                search()
-//                true
-//            } else
-//                false
-//        }
 
         editText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && editText.text.isBlank()) {

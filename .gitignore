@@ -20,3 +20,5 @@ local.properties
 /jdks/
 /native/
 /gradle/wrapper/
+daemon
+daemon/8.6
