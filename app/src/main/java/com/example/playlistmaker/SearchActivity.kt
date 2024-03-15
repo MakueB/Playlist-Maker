@@ -83,26 +83,27 @@ class SearchActivity : AppCompatActivity() {
                 response: retrofit2.Response<ITunesResponse>
             ) {
                 if (response.code() == resources.getInteger(R.integer.itunes_response_code_success)) {
-                    Log.d("body", response.body()?.results.toString() +
-                    "code " + response.code())
+                    // #no-commit             Log.d("body", response.body()?.results.toString() +
+                    // #no-commit "code " + response.code())
                     if (response.body()?.results?.isNotEmpty() == true) {
                         trackList.clear()
                         trackList.addAll(response.body()?.results!!)
                         adapter.notifyDataSetChanged()
                         setPlaceholders(SearchStatus.SUCCESS)
                     } else {
-                        Log.d("body", response.body()?.results.toString()
-                        + "code " + response.code())
+// #no-commit                       Log.d("body", response.body()?.results.toString()
+// #no-commit                       + "code " + response.code())
                         setPlaceholders(SearchStatus.NOTHING_FOUND)
                     }
                 } else {
                     setPlaceholders(SearchStatus.FAILURE)
-                    Log.d("body", response.body()?.results.toString()
-                            + "code " + response.code())                }
+// #no-commit                   Log.d("body", response.body()?.results.toString()
+// #no-commit                            + "code " + response.code())
+                }
             }
 
             override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
-                Log.d("body", t.message.toString())
+                //Log.d("body", t.message.toString())
                 setPlaceholders(SearchStatus.FAILURE)
             }
         })

@@ -1,12 +1,12 @@
 package com.example.playlistmaker
 
 import android.media.MediaPlayer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -20,7 +20,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
 
-        private const val DELAY = 1000L
+        private const val DELAY_MILLIS = 1000L
     }
 
     private var playerState = STATE_DEFAULT
@@ -40,7 +40,7 @@ class AudioPlayerActivity : AppCompatActivity() {
             setOnCompletionListener {
                 binding.playButton.setImageResource(R.drawable.button_play)
                 playerState = STATE_PREPARED
-                binding.elapsedTime.text = "00:00"
+                binding.elapsedTime.text = getString(R.string.timer_default_value)
             }
         }
     }
@@ -61,16 +61,16 @@ class AudioPlayerActivity : AppCompatActivity() {
         when (playerState) {
             STATE_PLAYING -> {
                 pausePlayer()
-                handler.removeCallbacks(updateTimerTask())
+                handler.removeCallbacks(updateTimerTask)
             }
             STATE_PREPARED, STATE_PAUSED -> {
                 startPlayer()
-                handler.postDelayed(updateTimerTask(), DELAY)
+                handler.postDelayed(updateTimerTask, DELAY_MILLIS)
             }
         }
     }
 
-    private fun updateTimerTask(): Runnable = object : Runnable {
+    private val updateTimerTask: Runnable = object : Runnable {
         override fun run() {
             if (playerState == STATE_PLAYING){
                 binding.elapsedTime.text = CommonUtils.convert(mediaPlayer.currentPosition.toLong())
@@ -137,10 +137,18 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         pausePlayer()
+        handler.removeCallbacks(updateTimerTask)
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        handler.removeCallbacks(updateTimerTask)
         mediaPlayer.release()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        pausePlayer()
+        handler.removeCallbacks(updateTimerTask)
     }
 }

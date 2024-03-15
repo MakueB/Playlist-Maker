@@ -239,7 +239,7 @@
         app:layout_constraintEnd_toEndOf="@id/playButton"
         app:layout_constraintStart_toStartOf="@id/playButton"
         app:layout_constraintTop_toBottomOf="@id/addButton"
-        android:text="00:00" />
+        android:text="@string/timer_default_value" />
 
     <TextView
         android:id="@+id/collectionNameTextView"
