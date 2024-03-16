@@ -339,6 +339,11 @@ class SearchActivity : AppCompatActivity() {
         handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
     }
 
+    override fun onStop() {
+        super.onStop()
+        handler.removeCallbacks(searchRunnable)
+    }
+
     companion object {
         const val TEXT = "TEXT_DEF"
         const val TEXT_DEF = ""

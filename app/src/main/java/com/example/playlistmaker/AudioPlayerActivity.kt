@@ -127,9 +127,9 @@ class AudioPlayerActivity : AppCompatActivity() {
         preparePlayer(track)
 
         binding.playButton.setOnClickListener {
-            Log.d("Check", "is playing: " +
-                    mediaPlayer.isPlaying.toString()
-                    + " playerState: " + playerState)
+//            Log.d("Check", "is playing: " +
+//                    mediaPlayer.isPlaying.toString()
+//                    + " playerState: " + playerState)
             playBackControl()
         }
     }
@@ -137,18 +137,15 @@ class AudioPlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         pausePlayer()
-        handler.removeCallbacks(updateTimerTask)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        handler.removeCallbacks(updateTimerTask)
         mediaPlayer.release()
     }
 
     override fun onStop() {
         super.onStop()
-        pausePlayer()
         handler.removeCallbacks(updateTimerTask)
     }
 }
