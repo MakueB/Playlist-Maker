@@ -8,4 +8,6 @@
     <color name="textColor">#FFFFFF</color>
     <color name="playerBackgroundColor">#1A1B22</color>
     <color name="buttonFillColor">#FFFFFF</color>
+    <color name="pauseButtonBackground">#FFFFFF</color>
+    <color name="pauseButtonForeground">#1A1B22</color>
 </resources>
