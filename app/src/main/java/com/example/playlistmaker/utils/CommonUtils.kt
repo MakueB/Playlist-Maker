@@ -1,4 +1,4 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.utils
 
 import android.content.Context
 import android.content.Intent
@@ -14,7 +14,7 @@ object CommonUtils {
         else -> @Suppress("DEPRECATION") getParcelableExtra(key) as? T
     }
 
-    fun convert(timeInMillis: Long) =
+    fun formatMillisToMmSs(timeInMillis: Long) =
         SimpleDateFormat("mm:ss", Locale.getDefault()).format(timeInMillis)
 
     fun dpToPx(dp: Float, context: Context): Int {

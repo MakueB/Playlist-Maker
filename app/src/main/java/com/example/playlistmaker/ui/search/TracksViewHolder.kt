@@ -1,15 +1,14 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
-import android.content.Context
-import android.util.TypedValue
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import java.text.SimpleDateFormat
-import java.util.Locale
+import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.R
+import com.example.playlistmaker.domain.models.Track
 
 class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
 
@@ -19,11 +18,11 @@ class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
     private val artWorkImageView: ImageView = itemView.findViewById(R.id.artWorkImageView)
 
     fun bind (track: Track){
-        val cornersInPx = CommonUtils.dpToPx(2f,itemView.context)
+        val cornersInPx = CommonUtils.dpToPx(2f, itemView.context)
 
         trackNameTextView.text = track.trackName
         artistNameTextView.text = track.artistName
-        trackTimeTextView.text = CommonUtils.convert(track.trackTimeMillis)
+        trackTimeTextView.text = CommonUtils.formatMillisToMmSs(track.trackTimeMillis)
 
         if (track.artworkUrl100.isEmpty())
             artWorkImageView.setImageResource(R.drawable.placeholder)

@@ -1,29 +1,27 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.audioplayer
 
 import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.CommonUtils.parcelable
+import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.CommonUtils.parcelable
+import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.domain.models.Track
 
 class AudioPlayerActivity : AppCompatActivity() {
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-
-        private const val DELAY_MILLIS = 1000L
+        const val DELAY_MILLIS = 1000L
     }
 
-    private var playerState = STATE_DEFAULT
+    private var playerState = AudioPlayerState.DEFAULT
     private var handler = Handler(Looper.getMainLooper())
 
     private lateinit var binding: ActivityAudioPlayerBinding
@@ -35,11 +33,11 @@ class AudioPlayerActivity : AppCompatActivity() {
             prepareAsync()
             setOnPreparedListener{
                 binding.playButton.isEnabled = true
-                playerState = STATE_PREPARED
+                playerState = AudioPlayerState.PREPARED
             }
             setOnCompletionListener {
                 binding.playButton.setImageResource(R.drawable.button_play)
-                playerState = STATE_PREPARED
+                playerState = AudioPlayerState.PREPARED
                 binding.elapsedTime.text = getString(R.string.timer_default_value)
             }
         }
@@ -48,22 +46,22 @@ class AudioPlayerActivity : AppCompatActivity() {
     private fun startPlayer(){
         mediaPlayer.start()
         binding.playButton.setImageResource(R.drawable.button_pause)
-        playerState = STATE_PLAYING
+        playerState = AudioPlayerState.PLAYING
     }
 
     private fun pausePlayer(){
         mediaPlayer.pause()
         binding.playButton.setImageResource(R.drawable.button_play)
-        playerState = STATE_PAUSED
+        playerState = AudioPlayerState.PAUSED
     }
 
     private fun playBackControl(){
         when (playerState) {
-            STATE_PLAYING -> {
+            AudioPlayerState.PLAYING -> {
                 pausePlayer()
                 handler.removeCallbacks(updateTimerTask)
             }
-            STATE_PREPARED, STATE_PAUSED -> {
+            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED -> {
                 startPlayer()
                 handler.postDelayed(updateTimerTask, DELAY_MILLIS)
             }
@@ -72,8 +70,8 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private val updateTimerTask: Runnable = object : Runnable {
         override fun run() {
-            if (playerState == STATE_PLAYING){
-                binding.elapsedTime.text = CommonUtils.convert(mediaPlayer.currentPosition.toLong())
+            if (playerState == AudioPlayerState.PLAYING){
+                binding.elapsedTime.text = CommonUtils.formatMillisToMmSs(mediaPlayer.currentPosition.toLong())
                 handler.post(this)
             }
         }
@@ -99,7 +97,7 @@ class AudioPlayerActivity : AppCompatActivity() {
                 collectionName.text = track?.collectionName
             }
 
-            duration.text = CommonUtils.convert(track?.trackTimeMillis ?: 0)
+            duration.text = CommonUtils.formatMillisToMmSs(track?.trackTimeMillis ?: 0)
             collectionNameTextView.text = track?.collectionName
             trackName.text = track?.trackName
         }
@@ -127,9 +125,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         preparePlayer(track)
 
         binding.playButton.setOnClickListener {
-//            Log.d("Check", "is playing: " +
-//                    mediaPlayer.isPlaying.toString()
-//                    + " playerState: " + playerState)
             playBackControl()
         }
     }

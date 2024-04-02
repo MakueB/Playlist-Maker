@@ -1,13 +1,11 @@
-package com.example.playlistmaker
+package com.example.playlistmaker.ui.search
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
@@ -21,6 +19,15 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlistmaker.data.network.ITunesApi
+import com.example.playlistmaker.ITunesResponse
+import com.example.playlistmaker.Keys
+import com.example.playlistmaker.OnTrackClickListener
+import com.example.playlistmaker.R
+import com.example.playlistmaker.SearchHistory
+import com.example.playlistmaker.SearchStatus
+import com.example.playlistmaker.domain.models.Track
+import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Retrofit
@@ -291,7 +298,7 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT, text)
-        Log.d("my", "onSaveInstanceState: Saved text - $text")
+        //Log.d("my", "onSaveInstanceState: Saved text - $text")
     }
 
     override fun onRestoreInstanceState(
@@ -300,7 +307,7 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         text = savedInstanceState.getString(TEXT, TEXT_DEF)
         editText.setText(text)
-        Log.d("my", "onRestoreInstanceState: Restored text - $text")
+//        Log.d("my", "onRestoreInstanceState: Restored text - $text")
     }
 
 
