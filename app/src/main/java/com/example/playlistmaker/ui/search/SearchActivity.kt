@@ -27,7 +27,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.SearchHistory
 import com.example.playlistmaker.SearchStatus
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.audioplayer.AudioPlayerActivity
+import com.example.playlistmaker.ui.player.PlayerActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Retrofit
@@ -190,9 +190,9 @@ class SearchActivity : AppCompatActivity() {
                     Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT)
                         .show()
 
-                val audioPlayerActivityIntent = Intent(this, AudioPlayerActivity::class.java)
-                audioPlayerActivityIntent.putExtra(TRACK_KEY, track)
-                startActivity(audioPlayerActivityIntent)
+                val playerActivityIntent = Intent(this, PlayerActivity::class.java)
+                playerActivityIntent.putExtra(TRACK_KEY, track)
+                startActivity(playerActivityIntent)
             }
         }
 

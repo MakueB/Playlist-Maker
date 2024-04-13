@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/playerBackgroundColor"
-    tools:context=".ui.audioplayer.AudioPlayerActivity">
+    tools:context=".ui.player.PlayerActivity">
 
     <ImageView
         android:id="@+id/backArrow"
