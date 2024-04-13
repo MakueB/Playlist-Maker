@@ -1,12 +1,12 @@
-//package com.example.playlistmaker.data.search.network//package com.example.playlistmaker.data.network
-//
-//import com.example.playlistmaker.data.search.NetworkClient
-//import com.example.playlistmaker.data.search.dto.Response
-//import com.example.playlistmaker.data.search.dto.TrackSearchRequest
-//import com.example.playlistmaker.ui.search.ITUNES_BASE_URL
-//import retrofit2.Retrofit
-//import retrofit2.converter.gson.GsonConverterFactory
-//
+package com.example.playlistmaker.data.search.network//package com.example.playlistmaker.data.network
+
+import com.example.playlistmaker.data.search.NetworkClient
+import com.example.playlistmaker.data.search.dto.Response
+import com.example.playlistmaker.data.search.dto.TrackSearchRequest
+import com.example.playlistmaker.ui.search.ITUNES_BASE_URL
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+
 //class RetrofitNetworkClient : NetworkClient {
 //
 //    private val retrofit = Retrofit.Builder()
