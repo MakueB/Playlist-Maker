@@ -1,6 +1,4 @@
-package com.example.playlistmaker.data.dto
-
-import com.example.playlistmaker.domain.models.Track
+package com.example.playlistmaker.data.search.dto
 
 class TrackSearchResponse (
     val resulCount: Int,

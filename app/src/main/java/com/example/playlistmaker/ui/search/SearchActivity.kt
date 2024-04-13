@@ -19,13 +19,14 @@ import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.data.network.ITunesApi
+import com.example.playlistmaker.data.search.network.ITunesApi
 import com.example.playlistmaker.ITunesResponse
 import com.example.playlistmaker.Keys
 import com.example.playlistmaker.OnTrackClickListener
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SearchHistory
 import com.example.playlistmaker.SearchStatus
+import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.player.PlayerActivity
 import retrofit2.Call
@@ -38,17 +39,7 @@ const val ITUNES_BASE_URL = "https://itunes.apple.com"
 
 class SearchActivity : AppCompatActivity() {
     private var text = TEXT_DEF
-    private lateinit var editText: EditText
-    private lateinit var placeHolderImage: ImageView
-    private lateinit var smthWrongMessage: TextView
-    private lateinit var refreshButton: Button
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var searchLinearLayout: LinearLayout
-    private lateinit var historyLinearLayout: LinearLayout
-    private lateinit var historyRecyclerView: RecyclerView
-    private lateinit var youVeBeenSearchingMessage: TextView
-    private lateinit var clearHistoryButton: Button
-    private lateinit var progressBar: ProgressBar
+    private lateinit var binding: ActivitySearchBinding
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
@@ -84,7 +75,7 @@ class SearchActivity : AppCompatActivity() {
     private fun search() {
         setPlaceholders(SearchStatus.SEARCHING)
 
-        iTunesService.search(editText.text.toString()).enqueue(object : Callback<ITunesResponse> {
+        iTunesService.search(binding.editText.text.toString()).enqueue(object : Callback<ITunesResponse> {
             override fun onResponse(
                 call: Call<ITunesResponse>,
                 response: retrofit2.Response<ITunesResponse>
@@ -98,19 +89,14 @@ class SearchActivity : AppCompatActivity() {
                         adapter.notifyDataSetChanged()
                         setPlaceholders(SearchStatus.SUCCESS)
                     } else {
-// #no-commit                       Log.d("body", response.body()?.results.toString()
-// #no-commit                       + "code " + response.code())
                         setPlaceholders(SearchStatus.NOTHING_FOUND)
                     }
                 } else {
                     setPlaceholders(SearchStatus.FAILURE)
-// #no-commit                   Log.d("body", response.body()?.results.toString()
-// #no-commit                            + "code " + response.code())
                 }
             }
 
             override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
-                //Log.d("body", t.message.toString())
                 setPlaceholders(SearchStatus.FAILURE)
             }
         })
@@ -119,35 +105,35 @@ class SearchActivity : AppCompatActivity() {
     private fun setPlaceholders(status: SearchStatus) {
         when (status) {
             SearchStatus.SUCCESS -> {
-                placeHolderImage.isVisible = false
-                smthWrongMessage.isVisible = false
-                refreshButton.isVisible = false
-                progressBar.isVisible = false
-                searchLinearLayout.isVisible = true
+                binding.searchPlaceholder.isVisible = false
+                binding.somethingWrongTexView.isVisible = false
+                binding.refreshButton.isVisible = false
+                binding.progressBar.isVisible = false
+                binding.searchLinearLayout.isVisible = true
             }
 
             SearchStatus.SEARCHING -> {
-                placeHolderImage.isVisible = false
-                smthWrongMessage.isVisible = false
-                refreshButton.isVisible = false
-                historyLinearLayout.isVisible = false
-                searchLinearLayout.isVisible = false
-                progressBar.isVisible = true
+                binding.searchPlaceholder.isVisible = false
+                binding.somethingWrongTexView.isVisible = false
+                binding.refreshButton.isVisible = false
+                binding.historyLinearLayout.isVisible = false
+                binding.searchLinearLayout.isVisible = false
+                binding.progressBar.isVisible = true
             }
 
             SearchStatus.NOTHING_FOUND -> {
-                searchLinearLayout.isVisible = true
-                placeHolderImage.setImageResource(R.drawable.nothing_found_light)
-                placeHolderImage.visibility = View.VISIBLE
-                progressBar.isVisible = false
+                binding.searchLinearLayout.isVisible = true
+                binding.searchPlaceholder.setImageResource(R.drawable.nothing_found_light)
+                binding.searchPlaceholder.visibility = View.VISIBLE
+                binding.progressBar.isVisible = false
                 showMessage(getString(R.string.nothing_found), "")
             }
 
             SearchStatus.FAILURE -> {
-                searchLinearLayout.isVisible = true
-                placeHolderImage.setImageResource(R.drawable.no_internet_light)
-                placeHolderImage.visibility = View.VISIBLE
-                progressBar.isVisible = false
+                binding.searchLinearLayout.isVisible = true
+                binding.searchPlaceholder.setImageResource(R.drawable.no_internet_light)
+                binding.searchPlaceholder.visibility = View.VISIBLE
+                binding.progressBar.isVisible = false
                 showMessage(
                     getString(R.string.connection_issues),
                     getString(R.string.download_failed)
@@ -158,22 +144,22 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showMessage(text: String, additionalText: String) {
         if (text.isNotEmpty()) {
-            smthWrongMessage.visibility = View.VISIBLE
+            binding.somethingWrongTexView.visibility = View.VISIBLE
             trackList.clear()
             adapter.notifyDataSetChanged()
-            smthWrongMessage.text = text
+            binding.somethingWrongTexView.text = text
             if (additionalText.isNotEmpty()) {
-                smthWrongMessage.text = "$text\n\n$additionalText"
+                binding.somethingWrongTexView.text = "$text\n\n$additionalText"
             }
         } else
-            smthWrongMessage.visibility = View.GONE
+            binding.somethingWrongTexView.visibility = View.GONE
     }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        setContentView(R.layout.activity_search)
+        binding = ActivitySearchBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
 
         val sharedPreferences = getSharedPreferences(Keys.PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
@@ -199,91 +185,76 @@ class SearchActivity : AppCompatActivity() {
         adapter = TrackAdapter(onTrackClickListener)
         historyAdapter = TrackAdapter(onTrackClickListener)
 
-        recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
-
-        historyRecyclerView = findViewById(R.id.historyRecyclerView)
-        historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.historyRecyclerView.layoutManager = LinearLayoutManager(this)
 
         adapter.tracks = trackList
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
         historyAdapter.tracks = historyList
-        historyRecyclerView.adapter = historyAdapter
-
-        editText = findViewById(R.id.editText)
-        val clearButton = findViewById<ImageView>(R.id.imageViewClear)
-        val backButton = findViewById<ImageView>(R.id.backArrow)
-        placeHolderImage = findViewById(R.id.searchPlaceholder)
-        smthWrongMessage = findViewById(R.id.somethingWrongTexView)
-        refreshButton = findViewById(R.id.refreshButton)
-        searchLinearLayout = findViewById(R.id.searchLinearLayout)
-        historyLinearLayout = findViewById(R.id.historyLinearLayout)
-        youVeBeenSearchingMessage = findViewById(R.id.youVeBeenSearching)
-        clearHistoryButton = findViewById(R.id.clearHistory)
-        progressBar = findViewById(R.id.progressBar)
+        binding.historyRecyclerView.adapter = historyAdapter
 
         showHistory()
 
         if (historyList.isNotEmpty()) {
-            historyLinearLayout.visibility = View.VISIBLE
-            searchLinearLayout.visibility = View.GONE
+            binding.historyLinearLayout.visibility = View.VISIBLE
+            binding.searchLinearLayout.visibility = View.GONE
         } else {
-            historyLinearLayout.visibility = View.GONE
-            searchLinearLayout.visibility = View.VISIBLE
+            binding.historyLinearLayout.visibility = View.GONE
+            binding.searchLinearLayout.visibility = View.VISIBLE
         }
 
-        editText.requestFocus()
-        showKeyboard(editText)
+        binding.editText.requestFocus()
+        showKeyboard(binding.editText)
 
 
-        editText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && editText.text.isBlank()) {
-                historyLinearLayout.isVisible = true
-                searchLinearLayout.isVisible = false
+        binding.editText.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus && (binding.editText.text?.isBlank() == true)) {
+                binding.historyLinearLayout.isVisible = true
+                binding.searchLinearLayout.isVisible = false
                 showHistory()
             } else {
-                historyLinearLayout.isVisible = false
-                searchLinearLayout.isVisible = true
+                binding.historyLinearLayout.isVisible = false
+                binding.searchLinearLayout.isVisible = true
             }
         }
 
 
-        clearButton.setOnClickListener {
-            editText.setText("")
+        binding.imageViewClear.setOnClickListener {
+            binding.editText.setText("")
             trackList.clear()
             adapter.notifyDataSetChanged()
         }
 
-        backButton.setOnClickListener {
+        binding.backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
 
-        refreshButton.setOnClickListener {
+        binding.refreshButton.setOnClickListener {
             search()
         }
 
-        clearHistoryButton.setOnClickListener {
+        binding.clearHistory.setOnClickListener {
             historyList.clear()
             searchHistory.saveToPrefs(historyList)
             historyAdapter.notifyDataSetChanged()
-            historyLinearLayout.isVisible = false
-            searchLinearLayout.isVisible = true
+            binding.historyLinearLayout.isVisible = false
+            binding.searchLinearLayout.isVisible = true
         }
 
-        editText.addTextChangedListener(
+        binding.editText.addTextChangedListener(
             onTextChanged = {s, _, _, _ -> //s - charSequence
-                clearButton.isVisible = !s.isNullOrEmpty()
-                checkAndHideKeyboard(editText)
+                binding.imageViewClear.isVisible = !s.isNullOrEmpty()
+                checkAndHideKeyboard(binding.editText)
                 text = s.toString()
                 searchDebounce()
 
-                if (editText.hasFocus() && s?.isBlank() == true) {
-                    historyLinearLayout.isVisible = true
-                    searchLinearLayout.isVisible = false
+                if (binding.editText.hasFocus() && s?.isBlank() == true) {
+                    binding.historyLinearLayout.isVisible = true
+                    binding.searchLinearLayout.isVisible = false
                     showHistory()
                 } else {
-                    historyLinearLayout.isVisible = false
-                    searchLinearLayout.isVisible = true
+                    binding.historyLinearLayout.isVisible = false
+                    binding.searchLinearLayout.isVisible = true
                 }
             }
         )
@@ -306,10 +277,9 @@ class SearchActivity : AppCompatActivity() {
     ) {
         super.onRestoreInstanceState(savedInstanceState)
         text = savedInstanceState.getString(TEXT, TEXT_DEF)
-        editText.setText(text)
+        binding.editText.setText(text)
 //        Log.d("my", "onRestoreInstanceState: Restored text - $text")
     }
-
 
     private fun showKeyboard(editText: EditText) {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager

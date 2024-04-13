@@ -8,30 +8,26 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.R
+import com.example.playlistmaker.databinding.TrackViewBinding
 import com.example.playlistmaker.domain.models.Track
 
-class TracksViewHolder (itemView: View): RecyclerView.ViewHolder(itemView) {
-
-    private val trackNameTextView: TextView = itemView.findViewById(R.id.trackNameTextView)
-    private val artistNameTextView: TextView = itemView.findViewById(R.id.artistNameTextView)
-    private val trackTimeTextView: TextView = itemView.findViewById(R.id.trackTimeTextView)
-    private val artWorkImageView: ImageView = itemView.findViewById(R.id.artWorkImageView)
+class TracksViewHolder (private val binding: TrackViewBinding): RecyclerView.ViewHolder(binding.root) {
 
     fun bind (track: Track){
         val cornersInPx = CommonUtils.dpToPx(2f, itemView.context)
 
-        trackNameTextView.text = track.trackName
-        artistNameTextView.text = track.artistName
-        trackTimeTextView.text = CommonUtils.formatMillisToMmSs(track.trackTimeMillis)
+        binding.trackNameTextView.text = track.trackName
+        binding.artistNameTextView.text = track.artistName
+        binding.trackTimeTextView.text = CommonUtils.formatMillisToMmSs(track.trackTimeMillis)
 
         if (track.artworkUrl100.isEmpty())
-            artWorkImageView.setImageResource(R.drawable.placeholder)
+            binding.artWorkImageView.setImageResource(R.drawable.placeholder)
         else
             Glide.with(itemView)
                 .load(track.artworkUrl100)
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
                 .transform(RoundedCorners(cornersInPx))
-                .into(artWorkImageView)
+                .into(binding.artWorkImageView)
     }
 }
