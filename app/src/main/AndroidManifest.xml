@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
     <queries></queries>
@@ -18,22 +19,22 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".ui.player.PlayerActivity"
+            android:name=".ui.activities.player.PlayerActivity"
             android:exported="false"
             android:theme="@style/SettingsTheme"/>
         <activity
             android:name=".LibraryActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.search.SearchActivity"
+            android:name=".ui.activities.search.SearchActivity"
             android:exported="false"
             android:theme="@style/SearchTheme" />
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".ui.activities.settings.SettingsActivity"
             android:exported="false"
             android:theme="@style/SettingsTheme" />
         <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.activities.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PlaylistMaker">
             <intent-filter>

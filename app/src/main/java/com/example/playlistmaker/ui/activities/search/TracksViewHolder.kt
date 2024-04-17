@@ -1,8 +1,5 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.ui.activities.search
 
-import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -18,7 +15,7 @@ class TracksViewHolder (private val binding: TrackViewBinding): RecyclerView.Vie
 
         binding.trackNameTextView.text = track.trackName
         binding.artistNameTextView.text = track.artistName
-        binding.trackTimeTextView.text = CommonUtils.formatMillisToMmSs(track.trackTimeMillis)
+        binding.trackTimeTextView.text = track.trackDuration
 
         if (track.artworkUrl100.isEmpty())
             binding.artWorkImageView.setImageResource(R.drawable.placeholder)

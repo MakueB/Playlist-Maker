@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.player
+package com.example.playlistmaker.ui.activities.player
 
 import PlayerState
 import android.app.Application
@@ -18,7 +18,7 @@ import com.example.playlistmaker.utils.CommonUtils
 
 class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
     companion object {
-        const val DELAY_MILLIS = 1000L
+        const val DELAY_MILLIS = 500L
         fun getViewModelFactory(mediaPlayer: MediaPlayer): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 PlayerViewModel(mediaPlayer = mediaPlayer)
@@ -49,6 +49,7 @@ class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
             }
             setOnCompletionListener {
                 _playerState.value = PlayerState.PREPARED
+                _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
             }
         }
     }
@@ -90,5 +91,10 @@ class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
                 handler.postDelayed(this, DELAY_MILLIS)
             }
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        mediaPlayer.release()
     }
 }

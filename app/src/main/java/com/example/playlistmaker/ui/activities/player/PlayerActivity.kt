@@ -1,4 +1,4 @@
-package com.example.playlistmaker.ui.player
+package com.example.playlistmaker.ui.activities.player
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -12,7 +12,7 @@ import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.utils.CommonUtils.parcelable
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.ui.search.SearchActivity
+import com.example.playlistmaker.ui.activities.search.SearchActivity
 import com.example.playlistmaker.domain.models.Track
 
 class PlayerActivity : AppCompatActivity() {
@@ -42,7 +42,7 @@ class PlayerActivity : AppCompatActivity() {
                 collectionName.text = track?.collectionName
             }
 
-            duration.text = CommonUtils.formatMillisToMmSs(track?.trackTimeMillis ?: 0)
+            duration.text = track?.trackDuration ?: getString(R.string.timer_default_value)
             collectionNameTextView.text = track?.collectionName
             trackName.text = track?.trackName
         }
@@ -100,11 +100,6 @@ class PlayerActivity : AppCompatActivity() {
     override fun onPause() {
         super.onPause()
         viewModel.pausePlayer()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer.release()
     }
 
     override fun onStop() {

@@ -1,45 +1,45 @@
-package com.example.playlistmaker.ui.search
+package com.example.playlistmaker.ui.activities.search
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.example.playlistmaker.data.search.network.ITunesApi
-import com.example.playlistmaker.ITunesResponse
 import com.example.playlistmaker.Keys
 import com.example.playlistmaker.OnTrackClickListener
 import com.example.playlistmaker.R
 import com.example.playlistmaker.SearchHistory
-import com.example.playlistmaker.SearchStatus
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
-import com.example.playlistmaker.ui.player.PlayerActivity
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import com.example.playlistmaker.ui.activities.player.PlayerActivity
 
 
 const val ITUNES_BASE_URL = "https://itunes.apple.com"
 
 class SearchActivity : AppCompatActivity() {
+    companion object {
+        private const val TEXT = "TEXT_DEF"
+        private const val TEXT_DEF = ""
+        const val TRACK_KEY = "track"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
+
     private var text = TEXT_DEF
     private lateinit var binding: ActivitySearchBinding
+
+    private val viewModel: SearchViewModel by viewModels<SearchViewModel> {
+        SearchViewModel.getViewModelFactory(this.application)
+    }
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
@@ -47,14 +47,6 @@ class SearchActivity : AppCompatActivity() {
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
-    private val searchRunnable = Runnable { search() }
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(ITUNES_BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ITunesApi::class.java)
 
     private val trackList = mutableListOf<Track>()
     private val historyList = mutableListOf<Track>()
@@ -71,75 +63,56 @@ class SearchActivity : AppCompatActivity() {
         historyAdapter.notifyDataSetChanged()
     }
 
-
-    private fun search() {
-        setPlaceholders(SearchStatus.SEARCHING)
-
-        iTunesService.search(binding.editText.text.toString()).enqueue(object : Callback<ITunesResponse> {
-            override fun onResponse(
-                call: Call<ITunesResponse>,
-                response: retrofit2.Response<ITunesResponse>
-            ) {
-                if (response.code() == resources.getInteger(R.integer.itunes_response_code_success)) {
-                    // #no-commit             Log.d("body", response.body()?.results.toString() +
-                    // #no-commit "code " + response.code())
-                    if (response.body()?.results?.isNotEmpty() == true) {
-                        trackList.clear()
-                        trackList.addAll(response.body()?.results!!)
-                        adapter.notifyDataSetChanged()
-                        setPlaceholders(SearchStatus.SUCCESS)
-                    } else {
-                        setPlaceholders(SearchStatus.NOTHING_FOUND)
-                    }
-                } else {
-                    setPlaceholders(SearchStatus.FAILURE)
-                }
-            }
-
-            override fun onFailure(call: Call<ITunesResponse>, t: Throwable) {
-                setPlaceholders(SearchStatus.FAILURE)
-            }
-        })
+    fun render(state: TracksState) {
+        when (state) {
+            is TracksState.Loading -> showLoading()
+            is TracksState.Content -> showContent(state.tracks)
+            is TracksState.Error -> showError(state.errorMessage)
+            is TracksState.Empty -> showEmpty(state.message)
+        }
     }
 
-    private fun setPlaceholders(status: SearchStatus) {
-        when (status) {
-            SearchStatus.SUCCESS -> {
-                binding.searchPlaceholder.isVisible = false
-                binding.somethingWrongTexView.isVisible = false
-                binding.refreshButton.isVisible = false
-                binding.progressBar.isVisible = false
-                binding.searchLinearLayout.isVisible = true
-            }
+    private fun showLoading() {
+        binding.searchPlaceholder.isVisible = false
+        binding.somethingWrongTexView.isVisible = false
+        binding.refreshButton.isVisible = false
+        binding.historyLinearLayout.isVisible = false
+        binding.searchLinearLayout.isVisible = false
+        binding.progressBar.isVisible = true
+    }
 
-            SearchStatus.SEARCHING -> {
-                binding.searchPlaceholder.isVisible = false
-                binding.somethingWrongTexView.isVisible = false
-                binding.refreshButton.isVisible = false
-                binding.historyLinearLayout.isVisible = false
-                binding.searchLinearLayout.isVisible = false
-                binding.progressBar.isVisible = true
-            }
+    private fun showContent(tracks: List<Track>) {
+        binding.searchPlaceholder.isVisible = false
+        binding.somethingWrongTexView.isVisible = false
+        binding.refreshButton.isVisible = false
+        binding.progressBar.isVisible = false
+        binding.searchLinearLayout.isVisible = true
 
-            SearchStatus.NOTHING_FOUND -> {
-                binding.searchLinearLayout.isVisible = true
-                binding.searchPlaceholder.setImageResource(R.drawable.nothing_found_light)
-                binding.searchPlaceholder.visibility = View.VISIBLE
-                binding.progressBar.isVisible = false
-                showMessage(getString(R.string.nothing_found), "")
-            }
+        Log.d("AAAA", tracks.toString())
 
-            SearchStatus.FAILURE -> {
-                binding.searchLinearLayout.isVisible = true
-                binding.searchPlaceholder.setImageResource(R.drawable.no_internet_light)
-                binding.searchPlaceholder.visibility = View.VISIBLE
-                binding.progressBar.isVisible = false
-                showMessage(
-                    getString(R.string.connection_issues),
-                    getString(R.string.download_failed)
-                )
-            }
-        }
+        adapter.tracks.clear()
+        adapter.tracks.addAll(tracks)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun showError(errorMessage: String) {
+        binding.searchLinearLayout.isVisible = true
+        binding.searchPlaceholder.setImageResource(R.drawable.no_internet_light)
+        binding.searchPlaceholder.visibility = View.VISIBLE
+        binding.progressBar.isVisible = false
+        showMessage(
+            getString(R.string.connection_issues),
+            getString(R.string.download_failed)
+        )
+    }
+
+    private fun showEmpty(emptyMessage: String) {
+        binding.searchLinearLayout.isVisible = true
+        binding.searchPlaceholder.setImageResource(R.drawable.nothing_found_light)
+        binding.searchPlaceholder.visibility = View.VISIBLE
+        binding.historyLinearLayout.isVisible = false
+        binding.progressBar.isVisible = false
+        showMessage(getString(R.string.nothing_found), "")
     }
 
     private fun showMessage(text: String, additionalText: String) {
@@ -160,7 +133,6 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         val sharedPreferences = getSharedPreferences(Keys.PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
         searchHistory = SearchHistory(sharedPreferences)
@@ -230,7 +202,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.refreshButton.setOnClickListener {
-            search()
+            viewModel.search(binding.editText.text.toString())
         }
 
         binding.clearHistory.setOnClickListener {
@@ -242,11 +214,12 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.editText.addTextChangedListener(
-            onTextChanged = {s, _, _, _ -> //s - charSequence
+            onTextChanged = { s, _, _, _ -> //s - charSequence
                 binding.imageViewClear.isVisible = !s.isNullOrEmpty()
                 checkAndHideKeyboard(binding.editText)
-                text = s.toString()
-                searchDebounce()
+
+                if (s?.length ?: -1 > 1) //не начинать поиск при пустой строке ввода
+                    viewModel.searchDebounce(s.toString() ?: "")
 
                 if (binding.editText.hasFocus() && s?.isBlank() == true) {
                     binding.historyLinearLayout.isVisible = true
@@ -258,6 +231,17 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         )
+
+        viewModel.state.observe(this) { state ->
+            render(state)
+        }
+        viewModel.toastState.observe(this) {
+            showToast(it)
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun showHistory() {
@@ -269,7 +253,6 @@ class SearchActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(TEXT, text)
-        //Log.d("my", "onSaveInstanceState: Saved text - $text")
     }
 
     override fun onRestoreInstanceState(
@@ -278,7 +261,6 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         text = savedInstanceState.getString(TEXT, TEXT_DEF)
         binding.editText.setText(text)
-//        Log.d("my", "onRestoreInstanceState: Restored text - $text")
     }
 
     private fun showKeyboard(editText: EditText) {
@@ -302,31 +284,13 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun clickDebounce() : Boolean {
+    private fun clickDebounce(): Boolean {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed( {isClickAllowed = true}, CLICK_DEBOUNCE_DELAY)
+            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
-    }
-
-    private fun searchDebounce(){
-        handler.removeCallbacks(searchRunnable)
-        handler.postDelayed(searchRunnable, SEARCH_DEBOUNCE_DELAY)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        handler.removeCallbacks(searchRunnable)
-    }
-
-    companion object {
-        const val TEXT = "TEXT_DEF"
-        const val TEXT_DEF = ""
-        const val TRACK_KEY = "track"
-        const val SEARCH_DEBOUNCE_DELAY = 2000L
-        const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
 
