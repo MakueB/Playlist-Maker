@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.Keys
 import com.example.playlistmaker.OnTrackClickListener
 import com.example.playlistmaker.R
-import com.example.playlistmaker.SearchHistory
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.activities.player.PlayerActivity
@@ -43,25 +42,12 @@ class SearchActivity : AppCompatActivity() {
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
-    private lateinit var searchHistory: SearchHistory
 
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
 
     private val trackList = mutableListOf<Track>()
     private val historyList = mutableListOf<Track>()
-
-    private fun addTrackToHistoryList(track: Track) {
-        val trackId = track.trackId
-
-        historyList.removeIf { it.trackId == trackId }
-        historyList.add(0, track)
-
-        if (historyList.size > 10)
-            historyList.remove(historyList.lastOrNull())
-
-        historyAdapter.notifyDataSetChanged()
-    }
 
     fun render(state: TracksState) {
         when (state) {
@@ -135,15 +121,14 @@ class SearchActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val sharedPreferences = getSharedPreferences(Keys.PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPreferences)
 
         val onTrackClickListener = OnTrackClickListener { track ->
             if (clickDebounce()) {
                 val trackWasSavedMessage = getString(R.string.track_was_saved)
                 val listContainsTrack = historyList.any { it.trackId == track.trackId }
 
-                addTrackToHistoryList(track)
-                searchHistory.saveToPrefs(historyList)
+                viewModel.saveToHistory(track)
+                viewModel.saveToHistory(track)
                 if (!listContainsTrack)
                     Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT)
                         .show()
@@ -206,8 +191,7 @@ class SearchActivity : AppCompatActivity() {
         }
 
         binding.clearHistory.setOnClickListener {
-            historyList.clear()
-            searchHistory.saveToPrefs(historyList)
+            viewModel.clearHistory()
             historyAdapter.notifyDataSetChanged()
             binding.historyLinearLayout.isVisible = false
             binding.searchLinearLayout.isVisible = true
@@ -238,6 +222,10 @@ class SearchActivity : AppCompatActivity() {
         viewModel.toastState.observe(this) {
             showToast(it)
         }
+        viewModel.history.observe(this) {
+            historyAdapter.tracks = it.toMutableList()
+            historyAdapter.notifyDataSetChanged()
+        }
     }
 
     private fun showToast(message: String) {
@@ -246,7 +234,7 @@ class SearchActivity : AppCompatActivity() {
 
     private fun showHistory() {
         historyList.clear()
-        historyList.addAll(searchHistory.loadFromPrefs())
+        historyList.addAll(viewModel.getSearchHistory())
         adapter.notifyDataSetChanged()
     }
 
