@@ -7,7 +7,6 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.postDelayed
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -16,13 +15,13 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.Creator
-import com.example.playlistmaker.Keys
+import com.example.playlistmaker.utils.Keys
 import com.example.playlistmaker.R
+import com.example.playlistmaker.data.search.storage.SearchHistoryRepositoryImpl
+import com.example.playlistmaker.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.domain.api.TracksInteractor
 import com.example.playlistmaker.domain.models.Track
 import com.example.playlistmaker.ui.utils.SingleLiveEvent
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class SearchViewModel(application: Application) : AndroidViewModel(application) {
     companion object {
@@ -37,6 +36,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private val interactor: TracksInteractor = Creator.provideTracksInteractor(getApplication())
+    private val historyRepository:SearchHistoryRepository = SearchHistoryRepositoryImpl(application)
     private val handler = Handler(Looper.getMainLooper())
     private val sharedPreferences: SharedPreferences = application.getSharedPreferences(
         Keys.PLAYLIST_MAKER_PREFERENCES,
@@ -120,30 +120,16 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun saveToHistory(track: Track) {
-        val historyList = getSearchHistory().toMutableList()
-        historyList.removeAll { it.trackId == track.trackId }
-        historyList.add(0, track)
-
-        if (historyList.size > 10) {
-            historyList.removeLast()
-        }
-
-        sharedPreferences.edit().putString(Keys.SEARCH_HISTORY_KEY, Gson().toJson(historyList)).apply()
-        _history.value = historyList
+        historyRepository.saveToHistory(track)
     }
 
-    fun getSearchHistory(): List<Track> {
-        val history: MutableList<Track>? =
-            Gson().fromJson(
-                sharedPreferences.getString(Keys.SEARCH_HISTORY_KEY, null),
-                object : TypeToken<List<Track>>() {}.type
-            )
-        return if (!history.isNullOrEmpty()) history else mutableListOf()
+    fun getSearchHistory() : List<Track> {
+        val list = historyRepository.getSearchHistory()
+        _history.postValue(list)
+        return list
     }
     fun clearHistory() = {
-        val emptyList: List<Track> = emptyList()
-        sharedPreferences.edit().putString(Keys.SEARCH_HISTORY_KEY,
-            Gson().toJson(emptyList)).apply()
-        _history.value = emptyList
+        historyRepository.clearHistory()
+        _history.value = emptyList()
     }
 }

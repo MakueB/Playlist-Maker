@@ -15,8 +15,8 @@
 //import androidx.recyclerview.widget.LinearLayoutManager
 //import com.example.playlistmaker.data.search.network.ITunesApi
 //import com.example.playlistmaker.ITunesResponse
-//import com.example.playlistmaker.Keys
-//import com.example.playlistmaker.OnTrackClickListener
+//import com.example.playlistmaker.utils.Keys
+//import com.example.playlistmaker.domain.api.OnTrackClickListener
 //import com.example.playlistmaker.R
 //import com.example.playlistmaker.SearchHistory
 //import com.example.playlistmaker.databinding.ActivitySearchBinding

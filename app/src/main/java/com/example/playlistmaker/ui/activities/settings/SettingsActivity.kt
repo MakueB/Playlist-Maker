@@ -7,7 +7,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.content.edit
 import com.example.playlistmaker.App
-import com.example.playlistmaker.Keys
+import com.example.playlistmaker.utils.Keys
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 

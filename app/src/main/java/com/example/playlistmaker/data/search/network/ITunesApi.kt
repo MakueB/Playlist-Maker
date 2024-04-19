@@ -1,6 +1,5 @@
 package com.example.playlistmaker.data.search.network
 
-import com.example.playlistmaker.ITunesResponse
 import com.example.playlistmaker.data.search.dto.TrackSearchResponse
 import retrofit2.Call
 import retrofit2.http.GET

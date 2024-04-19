@@ -23,7 +23,7 @@
             android:exported="false"
             android:theme="@style/SettingsTheme"/>
         <activity
-            android:name=".LibraryActivity"
+            android:name=".ui.activities.sharing.LibraryActivity"
             android:exported="false" />
         <activity
             android:name=".ui.activities.search.SearchActivity"
