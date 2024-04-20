@@ -13,7 +13,6 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
             -1 -> {
                 Resource.Error("Проверьте подключение к интернету")
             }
-
             200 -> {
                 Resource.Success((response as TrackSearchResponse).results.map {
                     Track(
@@ -30,7 +29,6 @@ class TracksRepositoryImpl(private val networkClient: NetworkClient) : TracksRep
                     )
                 })
             }
-
             else -> {
                 Resource.Error("Ошибка сервера")
             }
