@@ -100,7 +100,7 @@
             android:text="@string/user_agreement" />
 
         <ImageView
-            android:id="@+id/agreementIV"
+            android:id="@+id/termsIV"
             style="@style/SettingsIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

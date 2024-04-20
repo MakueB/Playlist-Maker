@@ -1,10 +1,10 @@
 package com.example.playlistmaker
 import android.content.Context
-import com.example.playlistmaker.data.search.TracksRepositoryImpl
-import com.example.playlistmaker.data.search.network.RetrofitNetworkClient
-import com.example.playlistmaker.domain.api.TracksInteractor
-import com.example.playlistmaker.domain.api.TracksRepository
-import com.example.playlistmaker.domain.impl.TracksInteractorImpl
+import com.example.playlistmaker.search.data.TracksRepositoryImpl
+import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
+import com.example.playlistmaker.search.domain.api.TracksInteractor
+import com.example.playlistmaker.search.domain.api.TracksRepository
+import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
 
 object Creator {
     private fun getTracksRepository(context: Context) : TracksRepository {
