@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -44,89 +43,6 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private val trackList = mutableListOf<Track>()
-
-    private fun render(state: TracksState) {
-        when (state) {
-            is TracksState.Loading -> showLoading()
-            is TracksState.Content -> showContent(state.tracks)
-            is TracksState.History -> showHistory()
-            is TracksState.Error -> showError()
-            is TracksState.Empty -> showEmpty(getString(R.string.nothing_found))
-        }
-    }
-
-    private fun showLoading() {
-        binding.searchPlaceholder.isVisible = false
-        binding.somethingWrongTexView.isVisible = false
-        binding.refreshButton.isVisible = false
-        binding.historyLinearLayout.isVisible = false
-        binding.searchLinearLayout.isVisible = false
-        binding.progressBar.isVisible = true
-    }
-
-    private fun showContent(tracks: List<Track>) {
-        binding.historyLinearLayout.isVisible = false
-        binding.searchLinearLayout.isVisible = true
-
-        binding.searchPlaceholder.isVisible = false
-        binding.somethingWrongTexView.isVisible = false
-        binding.refreshButton.isVisible = false
-        binding.progressBar.isVisible = false
-
-        adapter.tracks.clear()
-        adapter.tracks.addAll(tracks)
-        adapter.notifyDataSetChanged()
-    }
-
-    private fun showHistory() {
-        binding.historyLinearLayout.isVisible = true
-        binding.searchLinearLayout.isVisible = false
-        binding.clearHistory.isVisible = true
-
-        binding.searchPlaceholder.isVisible = false
-        binding.somethingWrongTexView.isVisible = false
-        binding.refreshButton.isVisible = false
-        binding.progressBar.isVisible = false
-
-        viewModel.updateSearchHistory()
-        val history = viewModel.history.value ?: mutableListOf()
-        historyAdapter.tracks = history.toMutableList()
-        historyAdapter.notifyDataSetChanged()
-    }
-
-    private fun showError() {
-        binding.searchLinearLayout.isVisible = true
-        binding.searchPlaceholder.setImageResource(R.drawable.no_internet_light)
-        binding.searchPlaceholder.visibility = View.VISIBLE
-        binding.progressBar.isVisible = false
-        showMessage(
-            getString(R.string.connection_issues),
-            getString(R.string.download_failed)
-        )
-    }
-
-    private fun showEmpty(message: String) {
-        binding.searchLinearLayout.isVisible = true
-        binding.searchPlaceholder.setImageResource(R.drawable.nothing_found_light)
-        binding.searchPlaceholder.visibility = View.VISIBLE
-        binding.historyLinearLayout.isVisible = false
-        binding.progressBar.isVisible = false
-        showMessage(message, "")
-    }
-
-    private fun showMessage(text: String, additionalText: String) {
-        if (text.isNotEmpty()) {
-            binding.somethingWrongTexView.visibility = View.VISIBLE
-            trackList.clear()
-            adapter.notifyDataSetChanged()
-            binding.somethingWrongTexView.text = text
-            if (additionalText.isNotEmpty()) {
-                binding.somethingWrongTexView.text = "$text\n\n$additionalText"
-            }
-        } else
-            binding.somethingWrongTexView.visibility = View.GONE
-    }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -195,6 +111,7 @@ class SearchActivity : AppCompatActivity() {
             onTextChanged = { s, _, _, _ -> //s - charSequence
                 binding.imageViewClear.isVisible = !s.isNullOrEmpty()
                 //checkAndHideKeyboard(binding.editText)
+                text = s.toString()
 
                 if ((s?.length ?: -1) > 1) {//не начинать поиск при пустой строке ввода
                     viewModel.searchDebounce(s.toString())
@@ -216,7 +133,6 @@ class SearchActivity : AppCompatActivity() {
                 }
             }
         )
-
         binding.imageViewClear.setOnClickListener {
             binding.editText.setText("")
             trackList.clear()
@@ -228,7 +144,6 @@ class SearchActivity : AppCompatActivity() {
                 render(TracksState.Content(trackList))
             }
         }
-
         binding.backArrow.setOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
@@ -242,6 +157,88 @@ class SearchActivity : AppCompatActivity() {
             historyAdapter.notifyDataSetChanged()
             render(TracksState.Empty(getString(R.string.nothing_found)))
         }
+    }
+
+    private fun render(state: TracksState) {
+        when (state) {
+            is TracksState.Loading -> showLoading()
+            is TracksState.Content -> showContent(state.tracks)
+            is TracksState.History -> showHistory()
+            is TracksState.Error -> showError()
+            is TracksState.Empty -> showEmpty(getString(R.string.nothing_found))
+        }
+    }
+
+    private fun showLoading() {
+        binding.searchPlaceholder.isVisible = false
+        binding.somethingWrongTexView.isVisible = false
+        binding.refreshButton.isVisible = false
+        binding.historyLinearLayout.isVisible = false
+        binding.searchLinearLayout.isVisible = false
+        binding.progressBar.isVisible = true
+    }
+
+    private fun showContent(tracks: List<Track>) {
+        binding.historyLinearLayout.isVisible = false
+        binding.searchLinearLayout.isVisible = true
+
+        binding.searchPlaceholder.isVisible = false
+        binding.somethingWrongTexView.isVisible = false
+        binding.refreshButton.isVisible = false
+        binding.progressBar.isVisible = false
+
+        adapter.tracks.clear()
+        adapter.tracks.addAll(tracks)
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun showHistory() {
+        binding.historyLinearLayout.isVisible = true
+        binding.searchLinearLayout.isVisible = false
+        binding.clearHistory.isVisible = true
+
+        binding.searchPlaceholder.isVisible = false
+        binding.somethingWrongTexView.isVisible = false
+        binding.refreshButton.isVisible = false
+        binding.progressBar.isVisible = false
+
+        viewModel.updateSearchHistory()
+        val history = viewModel.history.value?.toMutableList() ?: mutableListOf()
+        historyAdapter.tracks = history
+        historyAdapter.notifyDataSetChanged()
+    }
+
+    private fun showError() {
+        binding.searchLinearLayout.isVisible = true
+        binding.searchPlaceholder.setImageResource(R.drawable.no_internet_light)
+        binding.searchPlaceholder.visibility = View.VISIBLE
+        binding.progressBar.isVisible = false
+        showMessage(
+            getString(R.string.connection_issues),
+            getString(R.string.download_failed)
+        )
+    }
+
+    private fun showEmpty(message: String) {
+        binding.searchLinearLayout.isVisible = true
+        binding.searchPlaceholder.setImageResource(R.drawable.nothing_found_light)
+        binding.searchPlaceholder.visibility = View.VISIBLE
+        binding.historyLinearLayout.isVisible = false
+        binding.progressBar.isVisible = false
+        showMessage(message, "")
+    }
+
+    private fun showMessage(text: String, additionalText: String) {
+        if (text.isNotEmpty()) {
+            binding.somethingWrongTexView.visibility = View.VISIBLE
+            trackList.clear()
+            adapter.notifyDataSetChanged()
+            binding.somethingWrongTexView.text = text
+            if (additionalText.isNotEmpty()) {
+                binding.somethingWrongTexView.text = "$text\n\n$additionalText"
+            }
+        } else
+            binding.somethingWrongTexView.visibility = View.GONE
     }
 
     private fun showToast(message: String) {
@@ -259,6 +256,12 @@ class SearchActivity : AppCompatActivity() {
         super.onRestoreInstanceState(savedInstanceState)
         text = savedInstanceState.getString(TEXT, TEXT_DEF)
         binding.editText.setText(text)
+        if (text.isNotBlank())
+            viewModel.searchDebounce(text + " ")
+        if (!viewModel.history.value.isNullOrEmpty() && text.isNullOrEmpty())
+            render(TracksState.History(viewModel.history.value ?: emptyList()))
+        else
+            render(TracksState.Content(trackList))
     }
 
     private fun showKeyboard(editText: EditText) {
