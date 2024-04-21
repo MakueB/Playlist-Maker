@@ -7,35 +7,37 @@ import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.AP
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.App
-import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.model.ThemeSettings
-import com.example.playlistmaker.sharing.domain.api.SharingRepository
+import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 
 class SettingsViewModel (
     application: Application,
-    private val settingsRepository: SettingsRepository,
-    private val sharingRepository: SharingRepository
+    private val settingsInteractor: SettingsInteractor,
+    private val sharingInteractor: SharingInteractor
 ) : AndroidViewModel(application) {
     companion object{
-        fun getViewModelFactory(settingsRepository: SettingsRepository, sharingRepository: SharingRepository) : ViewModelProvider.Factory =
+        fun getViewModelFactory(interactor: SettingsInteractor, sharingInteractor: SharingInteractor) : ViewModelProvider.Factory =
             viewModelFactory {
                 initializer {
-                    SettingsViewModel(this[APPLICATION_KEY] as Application, settingsRepository, sharingRepository)
+                    SettingsViewModel(
+                        this[APPLICATION_KEY] as Application,
+                        interactor, sharingInteractor)
                 }
             }
     }
     private val app by lazy { application as App }
     fun shareApp() {
-        sharingRepository.shareApp()
+        sharingInteractor.shareApp()
     }
     fun openTerms() {
-        sharingRepository.openTerms()
+        sharingInteractor.openTerms()
     }
     fun openSupport() {
-        sharingRepository.openSupport()
+        sharingInteractor.openSupport()
     }
     fun updateTheme(checked: Boolean) {
         app.switchTheme(checked)
-        settingsRepository.updateThemeSettings(ThemeSettings(checked))
+        settingsInteractor.updateThemeSettings(ThemeSettings(checked))
     }
 }

@@ -88,7 +88,8 @@ class SearchActivity : AppCompatActivity() {
         binding.refreshButton.isVisible = false
         binding.progressBar.isVisible = false
 
-        val history = viewModel.getSearchHistory()
+        viewModel.updateSearchHistory()
+        val history = viewModel.history.value ?: mutableListOf()
         historyAdapter.tracks = history.toMutableList()
         historyAdapter.notifyDataSetChanged()
     }
@@ -132,9 +133,6 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel.getSearchHistory()
-        Log.d("AAAAA", "history value init " + viewModel.history.value)
-
         val onTrackClickListener =  { track: Track ->
             if (clickDebounce()) {
                 val trackWasSavedMessage = getString(R.string.track_was_saved)
@@ -161,7 +159,9 @@ class SearchActivity : AppCompatActivity() {
 
         adapter.tracks = trackList
         binding.recyclerView.adapter = adapter
-        historyAdapter.tracks = viewModel.getSearchHistory().toMutableList()
+
+        viewModel.updateSearchHistory()
+        historyAdapter.tracks = viewModel.history.value?.toMutableList() ?: mutableListOf()
         binding.historyRecyclerView.adapter = historyAdapter
 
         binding.editText.requestFocus()
@@ -172,10 +172,10 @@ class SearchActivity : AppCompatActivity() {
 
         if (!viewModel.history.value.isNullOrEmpty()) {
             render(TracksState.History(viewModel.history.value ?: emptyList()))
-            Log.d("AAAAA", "on Create history value " + viewModel.history.value)
         }
-        else
+        else {
             render(TracksState.Content(trackList))
+        }
     }
 
     private fun setupObservers() {
@@ -186,13 +186,10 @@ class SearchActivity : AppCompatActivity() {
             showToast(it)
         }
         viewModel.history.observe(this) {
-            Log.d("AAAAA", "observe history value " + viewModel.history.value)
             historyAdapter.tracks = it.toMutableList()
             historyAdapter.notifyDataSetChanged()
-            Log.d("AAAAA", "observe historyAdapter value " + historyAdapter.tracks)
         }
     }
-.b
     private fun setupListeners() {
         binding.editText.addTextChangedListener(
             onTextChanged = { s, _, _, _ -> //s - charSequence
@@ -268,22 +265,6 @@ class SearchActivity : AppCompatActivity() {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
-
-//    private fun hideKeyboard(editText: EditText) {
-//        val inputMethodManager =
-//            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-//        inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
-//    }
-
-//    private fun checkAndHideKeyboard(editText: EditText) {
-//        val text = editText.text.toString().trim()
-//        // Если текст пуст, скрываем клавиатуру
-//        if (text.isEmpty()) {
-//            hideKeyboard(editText)
-//        } else {
-//            showKeyboard(editText)
-//        }
-//    }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed

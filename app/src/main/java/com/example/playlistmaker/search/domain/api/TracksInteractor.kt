@@ -8,4 +8,7 @@ interface TracksInteractor {
     interface TracksConsumer {
         fun consume(foundTracks: List<Track>?, errorMessage: String?)
     }
+    fun saveToHistory(track: Track)
+    fun getSearchHistory() : List<Track>
+    fun clearHistory()
 }

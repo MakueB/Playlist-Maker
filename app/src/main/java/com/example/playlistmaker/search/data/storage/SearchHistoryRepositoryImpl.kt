@@ -29,7 +29,7 @@ class SearchHistoryRepositoryImpl (private val application: Application) : Searc
                 sharedPreferences.getString(Keys.SEARCH_HISTORY_KEY, null),
                 object : TypeToken<List<Track>>() {}.type
             )
-        return if (!history.isNullOrEmpty()) history else mutableListOf()
+        return history ?: mutableListOf()
     }
 
     override fun clearHistory() {

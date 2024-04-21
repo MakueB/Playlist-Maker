@@ -11,10 +11,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.Creator
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
-import com.example.playlistmaker.search.data.storage.SearchHistoryRepositoryImpl
-import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 
@@ -30,9 +28,8 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
             }
     }
 
-    private val interactor: TracksInteractor = Creator.provideTracksInteractor(getApplication())
-    private val historyRepository: SearchHistoryRepository =
-        SearchHistoryRepositoryImpl(application)
+    private val interactor: TracksInteractor = Creator.provideTracksInteractor(getApplication(), getApplication())
+
     private val handler = Handler(Looper.getMainLooper())
 
     private val _state = MutableLiveData<TracksState>()
@@ -41,7 +38,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     private val _toastState = SingleLiveEvent<String>()
     val toastState: LiveData<String> = _toastState
 
-    private val _history = MutableLiveData<List<Track>>()
+    private val _history = MutableLiveData<List<Track>>().apply { interactor.getSearchHistory() }
     val history: LiveData<List<Track>> = _history
 
     private var lastTextSearch: String? = null
@@ -114,17 +111,17 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     fun saveToHistory(track: Track) {
-        historyRepository.saveToHistory(track)
+        interactor.saveToHistory(track)
+        updateSearchHistory()
     }
 
-    fun getSearchHistory(): List<Track> {
-        val list = historyRepository.getSearchHistory()
-        _history.postValue(list)
-        return list
+    fun updateSearchHistory() {
+        val list = interactor.getSearchHistory()
+        _history.value = list
     }
 
     fun clearHistory() {
-        historyRepository.clearHistory()
-        _history.value = emptyList()
+        interactor.clearHistory()
+        updateSearchHistory()
     }
 }
