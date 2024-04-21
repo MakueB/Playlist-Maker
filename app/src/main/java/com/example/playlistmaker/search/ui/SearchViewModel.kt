@@ -31,7 +31,8 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     private val interactor: TracksInteractor = Creator.provideTracksInteractor(getApplication())
-    private val historyRepository: SearchHistoryRepository = SearchHistoryRepositoryImpl(application)
+    private val historyRepository: SearchHistoryRepository =
+        SearchHistoryRepositoryImpl(application)
     private val handler = Handler(Looper.getMainLooper())
 
     private val _state = MutableLiveData<TracksState>()
@@ -108,16 +109,21 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
+    fun removeCallbacks() {
+        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
+    }
+
     fun saveToHistory(track: Track) {
         historyRepository.saveToHistory(track)
     }
 
-    fun getSearchHistory() : List<Track> {
+    fun getSearchHistory(): List<Track> {
         val list = historyRepository.getSearchHistory()
         _history.postValue(list)
         return list
     }
-    fun clearHistory()  {
+
+    fun clearHistory() {
         historyRepository.clearHistory()
         _history.value = emptyList()
     }

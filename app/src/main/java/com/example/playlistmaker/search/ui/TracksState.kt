@@ -9,6 +9,10 @@ sealed interface TracksState {
         val tracks: List<Track>
     ): TracksState
 
+    data class History(
+        val tracks: List<Track>
+    ): TracksState
+
     data class Error(
         val errorMessage: String
     ): TracksState

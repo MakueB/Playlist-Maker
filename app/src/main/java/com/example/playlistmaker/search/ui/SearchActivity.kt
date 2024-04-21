@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -15,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.playlistmaker.search.domain.api.OnTrackClickListener
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
@@ -46,14 +44,14 @@ class SearchActivity : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
 
     private val trackList = mutableListOf<Track>()
-    private val historyList = mutableListOf<Track>()
 
     private fun render(state: TracksState) {
         when (state) {
             is TracksState.Loading -> showLoading()
             is TracksState.Content -> showContent(state.tracks)
+            is TracksState.History -> showHistory()
             is TracksState.Error -> showError()
-            is TracksState.Empty -> showEmpty()
+            is TracksState.Empty -> showEmpty(getString(R.string.nothing_found))
         }
     }
 
@@ -67,17 +65,32 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showContent(tracks: List<Track>) {
+        binding.historyLinearLayout.isVisible = false
+        binding.searchLinearLayout.isVisible = true
+
         binding.searchPlaceholder.isVisible = false
         binding.somethingWrongTexView.isVisible = false
         binding.refreshButton.isVisible = false
         binding.progressBar.isVisible = false
-        binding.searchLinearLayout.isVisible = true
-
-        Log.d("AAAA", tracks.toString())
 
         adapter.tracks.clear()
         adapter.tracks.addAll(tracks)
         adapter.notifyDataSetChanged()
+    }
+
+    private fun showHistory() {
+        binding.historyLinearLayout.isVisible = true
+        binding.searchLinearLayout.isVisible = false
+        binding.clearHistory.isVisible = true
+
+        binding.searchPlaceholder.isVisible = false
+        binding.somethingWrongTexView.isVisible = false
+        binding.refreshButton.isVisible = false
+        binding.progressBar.isVisible = false
+
+        val history = viewModel.getSearchHistory()
+        historyAdapter.tracks = history.toMutableList()
+        historyAdapter.notifyDataSetChanged()
     }
 
     private fun showError() {
@@ -91,13 +104,13 @@ class SearchActivity : AppCompatActivity() {
         )
     }
 
-    private fun showEmpty() {
+    private fun showEmpty(message: String) {
         binding.searchLinearLayout.isVisible = true
         binding.searchPlaceholder.setImageResource(R.drawable.nothing_found_light)
         binding.searchPlaceholder.visibility = View.VISIBLE
         binding.historyLinearLayout.isVisible = false
         binding.progressBar.isVisible = false
-        showMessage(getString(R.string.nothing_found), "")
+        showMessage(message, "")
     }
 
     private fun showMessage(text: String, additionalText: String) {
@@ -119,13 +132,17 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val onTrackClickListener = OnTrackClickListener { track ->
+        viewModel.getSearchHistory()
+        Log.d("AAAAA", "history value init " + viewModel.history.value)
+
+        val onTrackClickListener =  { track: Track ->
             if (clickDebounce()) {
                 val trackWasSavedMessage = getString(R.string.track_was_saved)
-                val listContainsTrack = historyList.any { it.trackId == track.trackId }
+                val listContainsTrack =
+                    viewModel.history.value?.any { it.trackId == track.trackId } ?: false
 
                 viewModel.saveToHistory(track)
-                viewModel.saveToHistory(track)
+
                 if (!listContainsTrack)
                     Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT)
                         .show()
@@ -144,39 +161,75 @@ class SearchActivity : AppCompatActivity() {
 
         adapter.tracks = trackList
         binding.recyclerView.adapter = adapter
-        historyAdapter.tracks = historyList
+        historyAdapter.tracks = viewModel.getSearchHistory().toMutableList()
         binding.historyRecyclerView.adapter = historyAdapter
-
-        showHistory()
-
-        if (historyList.isNotEmpty()) {
-            binding.historyLinearLayout.visibility = View.VISIBLE
-            binding.searchLinearLayout.visibility = View.GONE
-        } else {
-            binding.historyLinearLayout.visibility = View.GONE
-            binding.searchLinearLayout.visibility = View.VISIBLE
-        }
 
         binding.editText.requestFocus()
         showKeyboard(binding.editText)
 
+        setupListeners()
+        setupObservers()
 
-        binding.editText.setOnFocusChangeListener { _, hasFocus ->
-            if (hasFocus && (binding.editText.text?.isBlank() == true)) {
-                binding.historyLinearLayout.isVisible = true
-                binding.searchLinearLayout.isVisible = false
-                showHistory()
-            } else {
-                binding.historyLinearLayout.isVisible = false
-                binding.searchLinearLayout.isVisible = true
-            }
+        if (!viewModel.history.value.isNullOrEmpty()) {
+            render(TracksState.History(viewModel.history.value ?: emptyList()))
+            Log.d("AAAAA", "on Create history value " + viewModel.history.value)
         }
+        else
+            render(TracksState.Content(trackList))
+    }
 
+    private fun setupObservers() {
+        viewModel.state.observe(this) { state ->
+            render(state)
+        }
+        viewModel.toastState.observe(this) {
+            showToast(it)
+        }
+        viewModel.history.observe(this) {
+            Log.d("AAAAA", "observe history value " + viewModel.history.value)
+            historyAdapter.tracks = it.toMutableList()
+            historyAdapter.notifyDataSetChanged()
+            Log.d("AAAAA", "observe historyAdapter value " + historyAdapter.tracks)
+        }
+    }
+.b
+    private fun setupListeners() {
+        binding.editText.addTextChangedListener(
+            onTextChanged = { s, _, _, _ -> //s - charSequence
+                binding.imageViewClear.isVisible = !s.isNullOrEmpty()
+                //checkAndHideKeyboard(binding.editText)
+
+                if ((s?.length ?: -1) > 1) {//не начинать поиск при пустой строке ввода
+                    viewModel.searchDebounce(s.toString())
+
+                    if ((binding.editText.hasFocus()
+                                && s?.isBlank() == true) && !viewModel.history.value.isNullOrEmpty()
+                    ) {
+                        viewModel.removeCallbacks()
+                        render(TracksState.History(viewModel.history.value ?: emptyList()))
+                    } else {
+                        render(TracksState.Content(trackList))
+                    }
+                } else {
+                    viewModel.removeCallbacks()
+                    if (!viewModel.history.value.isNullOrEmpty())
+                        render(TracksState.History(viewModel.history.value ?: emptyList()))
+                    else
+                        render(TracksState.Content(trackList))
+                }
+            }
+        )
 
         binding.imageViewClear.setOnClickListener {
             binding.editText.setText("")
             trackList.clear()
             adapter.notifyDataSetChanged()
+
+            if (!viewModel.history.value.isNullOrEmpty()) {
+                render(TracksState.History(viewModel.history.value ?: emptyList()))
+            } else {
+                render(TracksState.Content(trackList))
+            }
         }
 
         binding.backArrow.setOnClickListener {
@@ -190,49 +243,12 @@ class SearchActivity : AppCompatActivity() {
         binding.clearHistory.setOnClickListener {
             viewModel.clearHistory()
             historyAdapter.notifyDataSetChanged()
-            binding.historyLinearLayout.isVisible = false
-            binding.searchLinearLayout.isVisible = true
-        }
-
-        binding.editText.addTextChangedListener(
-            onTextChanged = { s, _, _, _ -> //s - charSequence
-                binding.imageViewClear.isVisible = !s.isNullOrEmpty()
-                checkAndHideKeyboard(binding.editText)
-
-                if ((s?.length ?: -1) > 1) //не начинать поиск при пустой строке ввода
-                    viewModel.searchDebounce(s.toString())
-
-                if (binding.editText.hasFocus() && s?.isBlank() == true) {
-                    binding.historyLinearLayout.isVisible = true
-                    binding.searchLinearLayout.isVisible = false
-                    showHistory()
-                } else {
-                    binding.historyLinearLayout.isVisible = false
-                    binding.searchLinearLayout.isVisible = true
-                }
-            }
-        )
-
-        viewModel.state.observe(this) { state ->
-            render(state)
-        }
-        viewModel.toastState.observe(this) {
-            showToast(it)
-        }
-        viewModel.history.observe(this) {
-            historyAdapter.tracks = it.toMutableList()
-            historyAdapter.notifyDataSetChanged()
+            render(TracksState.Empty(getString(R.string.nothing_found)))
         }
     }
 
     private fun showToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun showHistory() {
-        historyList.clear()
-        historyList.addAll(viewModel.getSearchHistory())
-        adapter.notifyDataSetChanged()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -253,21 +269,21 @@ class SearchActivity : AppCompatActivity() {
         inputMethodManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    private fun hideKeyboard(editText: EditText) {
-        val inputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
-        inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
-    }
+//    private fun hideKeyboard(editText: EditText) {
+//        val inputMethodManager =
+//            getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+//        inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
+//    }
 
-    private fun checkAndHideKeyboard(editText: EditText) {
-        val text = editText.text.toString().trim()
-        // Если текст пуст, скрываем клавиатуру
-        if (text.isEmpty()) {
-            hideKeyboard(editText)
-        } else {
-            showKeyboard(editText)
-        }
-    }
+//    private fun checkAndHideKeyboard(editText: EditText) {
+//        val text = editText.text.toString().trim()
+//        // Если текст пуст, скрываем клавиатуру
+//        if (text.isEmpty()) {
+//            hideKeyboard(editText)
+//        } else {
+//            showKeyboard(editText)
+//        }
+//    }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
