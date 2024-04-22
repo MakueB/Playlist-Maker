@@ -6,10 +6,8 @@ import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.settings.domain.model.EmailData
 import com.example.playlistmaker.sharing.data.ExternalNavigator
 
-class SharingRepositoryImpl(
-    private val context: Context,
-    private val externalNavigator: ExternalNavigator
-) : SharingRepository {
+class SharingRepositoryImpl(private val context: Context) : SharingRepository {
+    private val externalNavigator: ExternalNavigator = ExternalNavigatorImpl(context)
     override fun shareApp() {
         externalNavigator.shareLink(getShareAppLink())
     }

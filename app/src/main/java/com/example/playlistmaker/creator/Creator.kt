@@ -18,8 +18,6 @@ import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
 import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
-import com.example.playlistmaker.sharing.data.ExternalNavigator
-import com.example.playlistmaker.sharing.data.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.sharing.data.impl.SharingRepositoryImpl
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 import com.example.playlistmaker.sharing.domain.api.SharingRepository
@@ -46,20 +44,13 @@ object Creator {
         return SettingsInteractorImpl(getSettingsRepository(sharedPreferences))
     }
 
-    private fun getSharingRepository(
-        context: Context,
-        externalNavigator: ExternalNavigator
-    ): SharingRepository {
-        return SharingRepositoryImpl(context, externalNavigator)
+    private fun getSharingRepository( context: Context): SharingRepository {
+        return SharingRepositoryImpl(context)
     }
 
-    private fun getExternalNavigator(context: Context): ExternalNavigator {
-        return ExternalNavigatorImpl(context)
-    }
 
     fun provideSharingInteractor(context: Context): SharingInteractor {
-        val externalNavigator = getExternalNavigator(context)
-        return SharingInteractorImpl(getSharingRepository(context, externalNavigator))
+        return SharingInteractorImpl(getSharingRepository(context))
     }
 
     private fun getPlayerRepository(): PlayerRepository {
