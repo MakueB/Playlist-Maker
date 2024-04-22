@@ -3,6 +3,10 @@ package com.example.playlistmaker.creator
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.playlistmaker.player.data.PlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.api.PlayerInteractor
+import com.example.playlistmaker.player.domain.api.PlayerRepository
+import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
 import com.example.playlistmaker.search.data.storage.SearchHistoryRepositoryImpl
@@ -22,31 +26,47 @@ import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 
 object Creator {
-    private fun getTracksRepository(context: Context) : TracksRepository {
+    private fun getTracksRepository(context: Context): TracksRepository {
         return TracksRepositoryImpl(RetrofitNetworkClient(context))
     }
-    private fun getHistoryRepository(application: Application) : SearchHistoryRepository {
+
+    private fun getHistoryRepository(application: Application): SearchHistoryRepository {
         return SearchHistoryRepositoryImpl(application)
     }
-    fun provideTracksInteractor(context: Context, application: Application) : TracksInteractor {
+
+    fun provideTracksInteractor(context: Context, application: Application): TracksInteractor {
         return TracksInteractorImpl(getTracksRepository(context), getHistoryRepository(application))
     }
 
-    private fun getSettingsRepository(sharedPreferences: SharedPreferences) : SettingsRepository {
+    private fun getSettingsRepository(sharedPreferences: SharedPreferences): SettingsRepository {
         return SettingsRepositoryImpl(sharedPreferences)
     }
-    fun provideSettingsInteractor(sharedPreferences: SharedPreferences) : SettingsInteractor {
+
+    fun provideSettingsInteractor(sharedPreferences: SharedPreferences): SettingsInteractor {
         return SettingsInteractorImpl(getSettingsRepository(sharedPreferences))
     }
 
-    private fun getSharingRepository(context: Context, externalNavigator: ExternalNavigator) : SharingRepository {
+    private fun getSharingRepository(
+        context: Context,
+        externalNavigator: ExternalNavigator
+    ): SharingRepository {
         return SharingRepositoryImpl(context, externalNavigator)
     }
-    private fun getExternalNavigator(context: Context) : ExternalNavigator {
+
+    private fun getExternalNavigator(context: Context): ExternalNavigator {
         return ExternalNavigatorImpl(context)
     }
-    fun provideSharingInteractor(context: Context) : SharingInteractor {
+
+    fun provideSharingInteractor(context: Context): SharingInteractor {
         val externalNavigator = getExternalNavigator(context)
         return SharingInteractorImpl(getSharingRepository(context, externalNavigator))
+    }
+
+    private fun getPlayerRepository(): PlayerRepository {
+        return PlayerRepositoryImpl()
+    }
+
+    fun providePlayerInteractor() : PlayerInteractor {
+        return PlayerInteractorImpl(getPlayerRepository())
     }
 }

@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
 import androidx.lifecycle.LiveData
@@ -9,15 +8,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 
-class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
+class PlayerViewModel (private val interactor: PlayerInteractor) : ViewModel() {
     companion object {
         const val DELAY_MILLIS = 500L
-        fun getViewModelFactory(mediaPlayer: MediaPlayer): ViewModelProvider.Factory = viewModelFactory {
+        fun getViewModelFactory(interactor: PlayerInteractor): ViewModelProvider.Factory = viewModelFactory {
             initializer {
-                PlayerViewModel(mediaPlayer = mediaPlayer)
+                PlayerViewModel(interactor)
             }
         }
     }
@@ -37,26 +37,19 @@ class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
         _playerState.value = PlayerState.DEFAULT
     }
     fun preparePlayer(track: Track?) {
-        mediaPlayer.apply {
-            setDataSource(track?.previewUrl)
-            prepareAsync()
-            setOnPreparedListener{
-                _playerState.value = PlayerState.PREPARED
-            }
-            setOnCompletionListener {
-                _playerState.value = PlayerState.PREPARED
-                _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
-            }
-        }
+        interactor.preparePlayer(track,
+            {_playerState.value = PlayerState.PREPARED},
+            {_playerState.value = PlayerState.PREPARED
+            _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)})
     }
 
     fun startPlayer(){
-        mediaPlayer.start()
+        interactor.startPlayer()
         _playerState.value = PlayerState.PLAYING
     }
 
     fun pausePlayer(){
-        mediaPlayer.pause()
+        interactor.pausePlayer()
         _playerState.value = PlayerState.PAUSED
     }
 
@@ -83,7 +76,7 @@ class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
     private val updateTimerTask: Runnable = object : Runnable {
         override fun run() {
             if (_playerState.value == PlayerState.PLAYING){
-                _elapsedTime.value = CommonUtils.formatMillisToMmSs(mediaPlayer.currentPosition.toLong())
+                _elapsedTime.value = CommonUtils.formatMillisToMmSs(interactor.getCurrentPosition())
                 handler.postDelayed(this, DELAY_MILLIS)
             }
         }
@@ -91,6 +84,6 @@ class PlayerViewModel (private val mediaPlayer: MediaPlayer) : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        mediaPlayer.release()
+        interactor.release()
     }
 }

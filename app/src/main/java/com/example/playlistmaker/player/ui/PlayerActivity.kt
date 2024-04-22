@@ -1,6 +1,5 @@
 package com.example.playlistmaker.player.ui
 
-import android.media.MediaPlayer
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -11,17 +10,17 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.utils.CommonUtils.parcelable
 import com.example.playlistmaker.R
+import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.search.domain.models.Track
 
 class PlayerActivity : AppCompatActivity() {
     private val viewModel: PlayerViewModel by viewModels<PlayerViewModel> {
-        PlayerViewModel.getViewModelFactory(mediaPlayer)
+        PlayerViewModel.getViewModelFactory(Creator.providePlayerInteractor())
     }
 
     private lateinit var binding: ActivityPlayerBinding
-    private var mediaPlayer = MediaPlayer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
