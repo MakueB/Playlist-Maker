@@ -255,7 +255,7 @@ class SearchActivity : AppCompatActivity() {
         binding.editText.setText(text)
         if (text.isNotBlank())
             viewModel.searchDebounce("$text ")
-        if (!viewModel.history.value.isNullOrEmpty() && text.isNullOrEmpty())
+        if (!viewModel.history.value.isNullOrEmpty() && text.isEmpty())
             render(TracksState.History(viewModel.history.value ?: emptyList()))
         else
             render(TracksState.Content(trackList))

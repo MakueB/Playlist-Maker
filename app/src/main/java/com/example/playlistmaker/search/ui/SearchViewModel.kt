@@ -1,24 +1,17 @@
 package com.example.playlistmaker.search.ui
 
 import android.app.Application
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchViewModel(private val interactor: TracksInteractor, private val context: Context) : ViewModel() {
+class SearchViewModel(private val interactor: TracksInteractor, private val application: Application) : AndroidViewModel(application) {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
@@ -54,7 +47,7 @@ class SearchViewModel(private val interactor: TracksInteractor, private val cont
                     errorMessage != null -> {
                         renderState(
                             TracksState.Error(
-                                errorMessage = context.getString(R.string.download_failed)
+                                errorMessage = application.getString(R.string.download_failed)
                             )
                         )
                         showToast(errorMessage)
@@ -63,7 +56,7 @@ class SearchViewModel(private val interactor: TracksInteractor, private val cont
                     tracks.isEmpty() -> {
                         renderState(
                             TracksState.Empty(
-                                message = context.getString(R.string.nothing_found)
+                                message = application.getString(R.string.nothing_found)
                             )
                         )
                     }
