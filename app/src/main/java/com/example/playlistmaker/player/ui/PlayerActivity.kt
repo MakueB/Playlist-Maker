@@ -14,11 +14,10 @@ import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.search.ui.SearchActivity
 import com.example.playlistmaker.search.domain.models.Track
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
-    private val viewModel: PlayerViewModel by viewModels<PlayerViewModel> {
-        PlayerViewModel.getViewModelFactory(Creator.providePlayerInteractor())
-    }
+    private val viewModel by viewModel<PlayerViewModel>()
 
     private lateinit var binding: ActivityPlayerBinding
 

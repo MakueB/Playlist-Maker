@@ -1,6 +1,7 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
+import android.media.MediaPlayer
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -45,5 +46,4 @@ val dataModule = module {
     single <ExternalNavigator> {
         ExternalNavigatorImpl(get())
     }
-
 }

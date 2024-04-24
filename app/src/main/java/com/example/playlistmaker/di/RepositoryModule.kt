@@ -1,5 +1,7 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.player.data.PlayerRepositoryImpl
+import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.storage.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
@@ -25,5 +27,9 @@ val repositoryModule = module {
 
     single<SharingRepository> {
         SharingRepositoryImpl(get(), get())
+    }
+
+    factory  <PlayerRepository> {
+        PlayerRepositoryImpl()
     }
 }

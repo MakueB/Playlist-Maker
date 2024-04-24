@@ -15,12 +15,6 @@ import com.example.playlistmaker.utils.CommonUtils
 class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     companion object {
         const val DELAY_MILLIS = 500L
-        fun getViewModelFactory(interactor: PlayerInteractor): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    PlayerViewModel(interactor)
-                }
-            }
     }
 
     private val handler = Handler(Looper.getMainLooper())
@@ -89,7 +83,7 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     override fun onCleared() {
-        super.onCleared()
         interactor.release()
+        super.onCleared()
     }
 }

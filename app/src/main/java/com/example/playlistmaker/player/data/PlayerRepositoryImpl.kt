@@ -1,11 +1,13 @@
 package com.example.playlistmaker.player.data
 
 import android.media.MediaPlayer
+import android.util.Log
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.search.domain.models.Track
 
-class PlayerRepositoryImpl : PlayerRepository {
+class PlayerRepositoryImpl(): PlayerRepository {
     private val mediaPlayer: MediaPlayer = MediaPlayer()
+
     override fun preparePlayer(track: Track?, onPrepared: () -> Unit, onComplete: () -> Unit) {
         mediaPlayer.apply {
             setDataSource(track?.previewUrl)
@@ -34,5 +36,4 @@ class PlayerRepositoryImpl : PlayerRepository {
     override fun release() {
         mediaPlayer.release()
     }
-
 }
