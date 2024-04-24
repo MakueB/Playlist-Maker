@@ -8,7 +8,6 @@ import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -17,6 +16,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivitySearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 const val ITUNES_BASE_URL = "https://itunes.apple.com"
@@ -31,10 +31,7 @@ class SearchActivity : AppCompatActivity() {
 
     private var text = TEXT_DEF
     private lateinit var binding: ActivitySearchBinding
-
-    private val viewModel: SearchViewModel by viewModels<SearchViewModel> {
-        SearchViewModel.getViewModelFactory()
-    }
+    private val viewModel: SearchViewModel by viewModel ()
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
@@ -49,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val onTrackClickListener =  { track: Track ->
+        val onTrackClickListener = { track: Track ->
             if (clickDebounce()) {
                 val trackWasSavedMessage = getString(R.string.track_was_saved)
                 val listContainsTrack =
@@ -88,8 +85,7 @@ class SearchActivity : AppCompatActivity() {
 
         if (!viewModel.history.value.isNullOrEmpty()) {
             render(TracksState.History(viewModel.history.value ?: emptyList()))
-        }
-        else {
+        } else {
             render(TracksState.Content(trackList))
         }
     }
@@ -106,6 +102,7 @@ class SearchActivity : AppCompatActivity() {
             historyAdapter.notifyDataSetChanged()
         }
     }
+
     private fun setupListeners() {
         binding.editText.addTextChangedListener(
             onTextChanged = { s, _, _, _ -> //s - charSequence
@@ -257,7 +254,7 @@ class SearchActivity : AppCompatActivity() {
         text = savedInstanceState.getString(TEXT, TEXT_DEF)
         binding.editText.setText(text)
         if (text.isNotBlank())
-            viewModel.searchDebounce(text + " ")
+            viewModel.searchDebounce("$text ")
         if (!viewModel.history.value.isNullOrEmpty() && text.isNullOrEmpty())
             render(TracksState.History(viewModel.history.value ?: emptyList()))
         else

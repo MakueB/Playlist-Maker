@@ -24,17 +24,6 @@ import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 
 object Creator {
-    private fun getTracksRepository(context: Context): TracksRepository {
-        return TracksRepositoryImpl(RetrofitNetworkClient(context))
-    }
-
-    private fun getHistoryRepository(application: Application): SearchHistoryRepository {
-        return SearchHistoryRepositoryImpl(application)
-    }
-
-    fun provideTracksInteractor(context: Context, application: Application): TracksInteractor {
-        return TracksInteractorImpl(getTracksRepository(context), getHistoryRepository(application))
-    }
 
     private fun getSettingsRepository(sharedPreferences: SharedPreferences): SettingsRepository {
         return SettingsRepositoryImpl(sharedPreferences)

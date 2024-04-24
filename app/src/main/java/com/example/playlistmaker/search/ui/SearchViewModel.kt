@@ -1,12 +1,14 @@
 package com.example.playlistmaker.search.ui
 
 import android.app.Application
+import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewmodel.initializer
@@ -16,19 +18,11 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchViewModel(application: Application) : AndroidViewModel(application) {
+class SearchViewModel(private val interactor: TracksInteractor, private val context: Context) : ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
-        fun getViewModelFactory(): ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    SearchViewModel(this[APPLICATION_KEY] as Application)
-                }
-            }
     }
-
-    private val interactor: TracksInteractor = Creator.provideTracksInteractor(getApplication(), getApplication())
 
     private val handler = Handler(Looper.getMainLooper())
 
@@ -60,7 +54,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                     errorMessage != null -> {
                         renderState(
                             TracksState.Error(
-                                errorMessage = getApplication<Application>().getString(R.string.download_failed)
+                                errorMessage = context.getString(R.string.download_failed)
                             )
                         )
                         showToast(errorMessage)
@@ -69,7 +63,7 @@ class SearchViewModel(application: Application) : AndroidViewModel(application) 
                     tracks.isEmpty() -> {
                         renderState(
                             TracksState.Empty(
-                                message = getApplication<Application>().getString(R.string.nothing_found)
+                                message = context.getString(R.string.nothing_found)
                             )
                         )
                     }

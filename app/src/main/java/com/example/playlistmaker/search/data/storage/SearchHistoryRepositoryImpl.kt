@@ -1,6 +1,5 @@
 package com.example.playlistmaker.search.data.storage
 
-import android.app.Application
 import android.content.SharedPreferences
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.models.Track
@@ -8,9 +7,7 @@ import com.example.playlistmaker.utils.Keys
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl (private val application: Application) : SearchHistoryRepository {
-    private val sharedPreferences: SharedPreferences = application.getSharedPreferences(
-        Keys.PLAYLIST_MAKER_PREFERENCES, Application.MODE_PRIVATE)
+class SearchHistoryRepositoryImpl (private val gson: Gson, private val sharedPreferences: SharedPreferences) : SearchHistoryRepository {
     override fun saveToHistory(track: Track) {
         val historyList = getSearchHistory().toMutableList()
         historyList.removeAll { it.trackId == track.trackId }
@@ -20,12 +17,12 @@ class SearchHistoryRepositoryImpl (private val application: Application) : Searc
             historyList.removeLast()
         }
 
-        sharedPreferences.edit().putString(Keys.SEARCH_HISTORY_KEY, Gson().toJson(historyList)).apply()
+        sharedPreferences.edit().putString(Keys.SEARCH_HISTORY_KEY, gson.toJson(historyList)).apply()
     }
 
     override fun getSearchHistory() : List<Track> {
         val history: MutableList<Track>? =
-            Gson().fromJson(
+            gson.fromJson(
                 sharedPreferences.getString(Keys.SEARCH_HISTORY_KEY, null),
                 object : TypeToken<List<Track>>() {}.type
             )
@@ -36,6 +33,6 @@ class SearchHistoryRepositoryImpl (private val application: Application) : Searc
         val emptyList: List<Track> = emptyList()
         sharedPreferences.edit().putString(
             Keys.SEARCH_HISTORY_KEY,
-            Gson().toJson(emptyList)).apply()
+            gson.toJson(emptyList)).apply()
     }
 }
