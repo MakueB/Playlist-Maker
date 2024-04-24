@@ -2,10 +2,7 @@ package com.example.playlistmaker.settings.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import androidx.activity.viewModels
 import com.example.playlistmaker.App
-import com.example.playlistmaker.creator.Creator
-import com.example.playlistmaker.utils.Keys
 import com.example.playlistmaker.databinding.ActivitySettingsBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
