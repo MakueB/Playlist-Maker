@@ -8,6 +8,11 @@ import com.example.playlistmaker.search.data.storage.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.ui.ITUNES_BASE_URL
 import com.example.playlistmaker.settings.data.SettingsRepositoryImpl
+import com.example.playlistmaker.settings.domain.api.SettingsRepository
+import com.example.playlistmaker.sharing.data.ExternalNavigator
+import com.example.playlistmaker.sharing.data.impl.ExternalNavigatorImpl
+import com.example.playlistmaker.sharing.data.impl.SharingRepositoryImpl
+import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.utils.Keys
 import com.google.gson.Gson
 import org.koin.android.ext.koin.androidContext
@@ -41,7 +46,8 @@ val dataModule = module {
         RetrofitNetworkClient(get(), get())
     }
 
-//    single {
-//        SettingsRepositoryImpl(get())
-//    }
+    single <ExternalNavigator> {
+        ExternalNavigatorImpl(get())
+    }
+
 }

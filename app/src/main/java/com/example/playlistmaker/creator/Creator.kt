@@ -16,24 +16,6 @@ import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import com.example.playlistmaker.sharing.domain.impl.SharingInteractorImpl
 
 object Creator {
-
-    private fun getSettingsRepository(sharedPreferences: SharedPreferences): SettingsRepository {
-        return SettingsRepositoryImpl(sharedPreferences)
-    }
-
-    fun provideSettingsInteractor(sharedPreferences: SharedPreferences): SettingsInteractor {
-        return SettingsInteractorImpl(getSettingsRepository(sharedPreferences))
-    }
-
-    private fun getSharingRepository( context: Context): SharingRepository {
-        return SharingRepositoryImpl(context)
-    }
-
-
-    fun provideSharingInteractor(context: Context): SharingInteractor {
-        return SharingInteractorImpl(getSharingRepository(context))
-    }
-
     private fun getPlayerRepository(): PlayerRepository {
         return PlayerRepositoryImpl()
     }

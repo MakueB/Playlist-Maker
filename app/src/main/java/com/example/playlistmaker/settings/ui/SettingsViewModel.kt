@@ -16,16 +16,7 @@ class SettingsViewModel (
     private val settingsInteractor: SettingsInteractor,
     private val sharingInteractor: SharingInteractor
 ) : AndroidViewModel(application) {
-    companion object{
-        fun getViewModelFactory(interactor: SettingsInteractor, sharingInteractor: SharingInteractor) : ViewModelProvider.Factory =
-            viewModelFactory {
-                initializer {
-                    SettingsViewModel(
-                        this[APPLICATION_KEY] as Application,
-                        interactor, sharingInteractor)
-                }
-            }
-    }
+
     private val app by lazy { application as App }
     fun shareApp() {
         sharingInteractor.shareApp()

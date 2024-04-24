@@ -15,5 +15,4 @@ class SharingInteractorImpl (private val repository: SharingRepository) : Sharin
     override fun openSupport() {
         repository.openSupport()
     }
-
 }
