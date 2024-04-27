@@ -6,18 +6,8 @@ import android.net.NetworkCapabilities
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.dto.Response
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
-import com.example.playlistmaker.search.ui.ITUNES_BASE_URL
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient(private val context: Context) : NetworkClient {
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(ITUNES_BASE_URL)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-
-    private val iTunesService = retrofit.create(ITunesApi::class.java)
+class RetrofitNetworkClient(private val context: Context, private val iTunesService: ITunesApi) : NetworkClient {
     override fun sendRequest(dto: Any): Response {
         if (isConnected() == false) {
             return Response().apply { responseCode = -1 }
