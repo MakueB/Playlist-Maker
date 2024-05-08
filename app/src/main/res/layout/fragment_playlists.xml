@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@color/playerBackgroundColor"
+    tools:context=".library.ui.FavoritesFragment">
+
+    <Button
+        android:id="@+id/clearHistory"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/background"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/new_playlist"
+        android:textAllCaps="false"
+        android:textColor="@color/text"
+        android:textFontWeight="500"
+        android:textSize="@dimen/textSize_14"
+        android:visibility="visible"
+        app:cornerRadius="54dp">
+
+    </Button>
+
+    <ImageView
+        android:id="@+id/searchPlaceholder"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="46dp"
+        android:layout_marginBottom="@dimen/margin_16"
+        android:src="@drawable/nothing_found_light">
+
+    </ImageView>
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/somethingWrongTexView"
+        style="@style/SearchSmthWrongTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/margin_24"
+        android:gravity="center"
+        android:textSize="@dimen/textSize_19"
+        android:text="@string/no_playlists"
+        android:ellipsize="none"
+        android:maxLines="2">
+
+    </com.google.android.material.textview.MaterialTextView>
+
+</LinearLayout>

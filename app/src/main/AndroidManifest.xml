@@ -5,7 +5,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <queries></queries>
+    <queries />
 
     <application
         android:name=".App"
@@ -19,12 +19,12 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
+            android:name=".library.ui.LibraryActivity"
+            android:exported="false" />
+        <activity
             android:name=".player.ui.PlayerActivity"
             android:exported="false"
-            android:theme="@style/SettingsTheme"/>
-        <activity
-            android:name=".LibraryActivity"
-            android:exported="false" />
+            android:theme="@style/SettingsTheme" />
         <activity
             android:name=".search.ui.SearchActivity"
             android:exported="false"

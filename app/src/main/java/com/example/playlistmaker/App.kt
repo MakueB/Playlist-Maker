@@ -2,6 +2,7 @@ package com.example.playlistmaker
 
 import android.app.Application
 import android.content.SharedPreferences
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,8 +29,12 @@ class App : Application() {
         }
 
         sharedPrefs = getSharedPreferences(Keys.PLAYLIST_MAKER_PREFERENCES, MODE_PRIVATE)
-        _darkThemeEnabled.value = sharedPrefs.getBoolean(Keys.THEME_KEY, false)
-        switchTheme(_darkThemeEnabled.value ?: false)
+        if (sharedPrefs.contains(Keys.THEME_KEY)) {
+            _darkThemeEnabled.value = sharedPrefs.getBoolean(Keys.THEME_KEY, false)
+            switchTheme(_darkThemeEnabled.value ?: false)
+        } else {
+            setThemeOnFirstRun()
+        }
     }
 
     fun switchTheme(darkThemeEnabled: Boolean) {
@@ -41,5 +46,15 @@ class App : Application() {
                 AppCompatDelegate.MODE_NIGHT_NO
             }
         )
+    }
+
+    fun setThemeOnFirstRun(){
+        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES){
+            _darkThemeEnabled.value = true
+            switchTheme(true)
+        } else {
+            _darkThemeEnabled.value = false
+            switchTheme(false)
+        }
     }
 }
