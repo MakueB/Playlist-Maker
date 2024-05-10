@@ -23,13 +23,27 @@ class LibraryActivity : AppCompatActivity() {
             insets
         }
 
-        val trackId = intent.getIntExtra("trackId", -1) ?: -1
-        val playlist = intent.getIntExtra("playlistId", -1) ?: -1
+        val trackId = intent.getIntExtra("trackId", -1)
+        val playlist = intent.getIntExtra("playlistId", -1) //сюда данные нужно будет получать по-другому
 
-        binding.viewPager.adapter = LibraryViewPagerAdapter()
+        binding.viewPager.adapter = LibraryViewPagerAdapter(supportFragmentManager, lifecycle, trackId, playlist)
+
+        tabMediator = TabLayoutMediator(binding.libraryTabLayout, binding.viewPager) { tab, position ->
+            when (position) {
+                0 -> tab.text = getString(R.string.favorite_tracks)
+                1 -> tab.text = getString(R.string.playlists)
+            }
+        }
+
+        tabMediator.attach()
 
         binding.libraryToolbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        tabMediator.detach()
     }
 }

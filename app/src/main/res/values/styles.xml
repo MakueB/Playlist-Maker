@@ -153,6 +153,8 @@
         <item name="android:paddingBottom">@dimen/padding_8</item>
         <item name="android:layout_marginHorizontal">@dimen/margin_4</item>
         <item name="android:layout_marginVertical">@dimen/margin_4</item>
+        <item name="titleMarginStart">1dp</item>
+        <item name="contentInsetStartWithNavigation">1dp</item>
 
     </style>
 
@@ -167,4 +169,13 @@
         <item name="tabIndicatorColor">@color/background</item>
     </style>
 
+    <style name="FragmentPlaylistButtonStyle" parent="ShapeAppearanceOverlay.Material3.Button">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:fontWeight">@integer/font_weight_500</item>
+        <item name="android:textSize">@dimen/textSize_14</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/text</item>
+        <item name="android:backgroundTint">@color/buttonFillColor</item>
+        <item name="cornerRadius">54dp</item>
+    </style>
 </resources>

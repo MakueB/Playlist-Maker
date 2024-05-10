@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.library.domain.Playlist
 
-class PlaylistsViewModel(private val playlist: Playlist): ViewModel()  {
+class PlaylistsViewModel(private val playlist: Int): ViewModel()  {
     private val _playlistLiveData = MutableLiveData<Playlist>()
     val playlistLiveData: LiveData<Playlist> = _playlistLiveData
 }
