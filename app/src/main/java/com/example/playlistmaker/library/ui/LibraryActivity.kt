@@ -23,10 +23,10 @@ class LibraryActivity : AppCompatActivity() {
             insets
         }
 
-        val trackId = intent.getStringExtra("trackId") ?: ""
-        val playlist = intent.getStringExtra("playlist") ?: ""
+        val trackId = intent.getIntExtra("trackId", -1) ?: -1
+        val playlist = intent.getIntExtra("playlistId", -1) ?: -1
 
-        //binding.viewPager.adapter
+        binding.viewPager.adapter = LibraryViewPagerAdapter()
 
         binding.libraryToolbar.setNavigationOnClickListener {
             finish()

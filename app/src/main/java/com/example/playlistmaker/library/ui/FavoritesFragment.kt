@@ -7,25 +7,26 @@ import android.view.View
 import android.view.ViewGroup
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 class FavoritesFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    companion object {
+        private const val TRACK_ID = "track_id"
+        @JvmStatic
+        fun newInstance(trackId: Int) =
+            FavoritesFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(TRACK_ID, trackId)
+                }
+            }
+    }
 
     private lateinit var binding: FragmentFavoritesBinding
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+    private val favoritesViewModel: FavoritesViewModel by viewModel {
+        parametersOf(requireArguments().getInt(TRACK_ID))
     }
 
     override fun onCreateView(
@@ -39,16 +40,10 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        favoritesViewModel.trackLiveData.observe(viewLifecycleOwner) {
+            //в следующем спринте?
+        }
     }
 
-    companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            FavoritesFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
+
 }
