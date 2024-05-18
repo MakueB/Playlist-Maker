@@ -2,7 +2,6 @@ package com.example.playlistmaker.player.ui
 
 import android.os.Bundle
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import com.bumptech.glide.Glide
@@ -10,9 +9,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.utils.CommonUtils.parcelable
 import com.example.playlistmaker.R
-import com.example.playlistmaker.creator.Creator
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.search.ui.SearchActivity
+import com.example.playlistmaker.search.ui.SearchFragment
 import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -26,7 +24,7 @@ class PlayerActivity : AppCompatActivity() {
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val track = intent.parcelable<Track>(SearchActivity.TRACK_KEY)
+        val track = intent.parcelable<Track>(SearchFragment.TRACK_KEY)
 
         binding.apply {
             country.text = track?.country

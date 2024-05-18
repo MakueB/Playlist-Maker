@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:theme="@style/SearchTheme"
+    android:background="@color/playerBackgroundColor"
     tools:ignore="ExtraText">
 
     <androidx.appcompat.widget.Toolbar
@@ -14,15 +15,6 @@
         android:layout_marginEnd="6dp"
         android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/backArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/margin_4"
-            android:layout_marginTop="@dimen/margin_4"
-            android:padding="@dimen/padding_12"
-            android:src="@drawable/light_modearrow_back"
-            android:theme="@style/SettingsBackArrowStyle" />
 
         <androidx.appcompat.widget.AppCompatTextView
             style="@style/ToolbarStyle"
@@ -63,6 +55,7 @@
             style="@style/SearchIconStyle"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
+            android:contentDescription="@null"
             android:src="@drawable/baseline_clear_16"
             android:visibility="gone" />
     </LinearLayout>
@@ -94,6 +87,7 @@
             android:id="@+id/searchPlaceholder"
             android:layout_width="120dp"
             android:layout_height="120dp"
+            android:contentDescription="@null"
             android:layout_gravity="center"
             android:layout_marginTop="102dp"
             android:layout_marginBottom="@dimen/margin_16"

@@ -1,19 +1,22 @@
-package com.example.playlistmaker.search.ui
+                                                                                                                 package com.example.playlistmaker.search.ui
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.ActivitySearchBinding
+import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.player.ui.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +24,7 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 
 const val ITUNES_BASE_URL = "https://itunes.apple.com"
 
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
     companion object {
         private const val TEXT = "TEXT_DEF"
         private const val TEXT_DEF = ""
@@ -30,7 +33,8 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private var text = TEXT_DEF
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel ()
 
     private lateinit var adapter: TrackAdapter
@@ -41,10 +45,17 @@ class SearchActivity : AppCompatActivity() {
 
     private val trackList = mutableListOf<Track>()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         val onTrackClickListener = { track: Track ->
             if (clickDebounce()) {
@@ -55,10 +66,10 @@ class SearchActivity : AppCompatActivity() {
                 viewModel.saveToHistory(track)
 
                 if (!listContainsTrack)
-                    Toast.makeText(this@SearchActivity, trackWasSavedMessage, Toast.LENGTH_SHORT)
+                    Toast.makeText(requireContext(), trackWasSavedMessage, Toast.LENGTH_SHORT)
                         .show()
 
-                val playerActivityIntent = Intent(this, PlayerActivity::class.java)
+                val playerActivityIntent = Intent(requireContext(), PlayerActivity::class.java)
                 playerActivityIntent.putExtra(TRACK_KEY, track)
                 startActivity(playerActivityIntent)
             }
@@ -67,8 +78,8 @@ class SearchActivity : AppCompatActivity() {
         adapter = TrackAdapter(onTrackClickListener)
         historyAdapter = TrackAdapter(onTrackClickListener)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(this)
-        binding.historyRecyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         adapter.tracks = trackList
         binding.recyclerView.adapter = adapter
@@ -91,13 +102,13 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(this) { state ->
+        viewModel.state.observe(viewLifecycleOwner) { state ->
             render(state)
         }
-        viewModel.toastState.observe(this) {
+        viewModel.toastState.observe(viewLifecycleOwner) {
             showToast(it)
         }
-        viewModel.history.observe(this) {
+        viewModel.history.observe(viewLifecycleOwner) {
             historyAdapter.tracks = it.toMutableList()
             historyAdapter.notifyDataSetChanged()
         }
@@ -140,9 +151,6 @@ class SearchActivity : AppCompatActivity() {
             } else {
                 render(TracksState.Content(trackList))
             }
-        }
-        binding.backArrow.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
         }
 
         binding.refreshButton.setOnClickListener {
@@ -239,7 +247,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -247,22 +255,22 @@ class SearchActivity : AppCompatActivity() {
         outState.putString(TEXT, text)
     }
 
-    override fun onRestoreInstanceState(
-        savedInstanceState: Bundle,
-    ) {
-        super.onRestoreInstanceState(savedInstanceState)
-        text = savedInstanceState.getString(TEXT, TEXT_DEF)
-        binding.editText.setText(text)
-        if (text.isNotBlank())
-            viewModel.searchDebounce("$text ")
-        if (!viewModel.history.value.isNullOrEmpty() && text.isEmpty())
-            render(TracksState.History(viewModel.history.value ?: emptyList()))
-        else
-            render(TracksState.Content(trackList))
-    }
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
 
+        if (savedInstanceState != null) {
+            text = savedInstanceState.getString(TEXT, TEXT_DEF)
+            binding.editText.setText(text)
+            if (text.isNotBlank())
+                viewModel.searchDebounce("$text ")
+            if (!viewModel.history.value.isNullOrEmpty() && text.isEmpty())
+                render(TracksState.History(viewModel.history.value ?: emptyList()))
+            else
+                render(TracksState.Content(trackList))
+        }
+    }
     private fun showKeyboard(editText: EditText) {
-        val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
@@ -273,6 +281,11 @@ class SearchActivity : AppCompatActivity() {
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
 

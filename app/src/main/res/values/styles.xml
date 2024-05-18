@@ -178,4 +178,18 @@
         <item name="android:backgroundTint">@color/buttonFillColor</item>
         <item name="cornerRadius">54dp</item>
     </style>
+
+    // Main Activity
+    <style name="BottomNavMenuStyle" parent="Widget.Material3.BottomNavigationView">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:fontWeight">@integer/font_weight_500</item>
+        <item name="android:textSize">@dimen/textSize_14</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/textColor</item>
+        <item name="itemTextColor">@color/textColor</item>
+        <item name="itemIconTint">@color/textColor</item>
+        <item name="android:backgroundTint">@color/playerBackgroundColor</item>
+        <item name="cornerRadius">54dp</item>
+    </style>
+
 </resources>

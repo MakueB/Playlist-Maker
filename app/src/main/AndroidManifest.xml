@@ -26,7 +26,7 @@
             android:exported="false"
             android:theme="@style/SettingsTheme" />
         <activity
-            android:name=".search.ui.SearchActivity"
+            android:name=".search.ui.SearchFragment"
             android:exported="false"
             android:theme="@style/SearchTheme" />
         <activity
@@ -36,7 +36,8 @@
         <activity
             android:name=".main.ui.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlaylistMaker">
+            android:windowSoftInputMode="adjustNothing"
+            android:theme="@style/SettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
