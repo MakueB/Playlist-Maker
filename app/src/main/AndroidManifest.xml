@@ -19,7 +19,7 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".library.ui.LibraryActivity"
+            android:name=".library.ui.LibraryFragment"
             android:exported="false" />
         <activity
             android:name=".player.ui.PlayerActivity"

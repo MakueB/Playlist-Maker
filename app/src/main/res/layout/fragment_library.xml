@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/playerBackgroundColor"
-    tools:context=".library.ui.LibraryActivity">
+    tools:context=".library.ui.LibraryFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
@@ -46,7 +46,6 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/topBorder"
-        app:navigationIcon="@drawable/light_modearrow_back"
         app:title="@string/library" />
 
     <com.google.android.material.tabs.TabLayout

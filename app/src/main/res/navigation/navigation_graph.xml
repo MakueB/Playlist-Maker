@@ -10,4 +10,9 @@
         android:name="com.example.playlistmaker.search.ui.SearchFragment"
         android:label="SearchFragment"
         tools:layout="@layout/fragment_search"/>
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="com.example.playlistmaker.library.ui.LibraryFragment"
+        android:label="fragment_library"
+        tools:layout="@layout/fragment_library" />
 </navigation>
