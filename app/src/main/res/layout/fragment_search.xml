@@ -22,7 +22,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_vertical"
-            android:paddingTop="@dimen/padding_14"
             android:paddingEnd="86dp"
             android:text="@string/search_button_text" />
     </androidx.appcompat.widget.Toolbar>

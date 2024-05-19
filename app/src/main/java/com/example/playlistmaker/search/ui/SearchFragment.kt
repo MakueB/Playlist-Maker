@@ -1,7 +1,6 @@
                                                                                                                  package com.example.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,21 +13,20 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.player.ui.PlayerActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-const val ITUNES_BASE_URL = "https://itunes.apple.com"
+                                                                                                                 const val ITUNES_BASE_URL = "https://itunes.apple.com"
 
 class SearchFragment : Fragment() {
     companion object {
         private const val TEXT = "TEXT_DEF"
         private const val TEXT_DEF = ""
-        const val TRACK_KEY = "track"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
@@ -69,9 +67,8 @@ class SearchFragment : Fragment() {
                     Toast.makeText(requireContext(), trackWasSavedMessage, Toast.LENGTH_SHORT)
                         .show()
 
-                val playerActivityIntent = Intent(requireContext(), PlayerActivity::class.java)
-                playerActivityIntent.putExtra(TRACK_KEY, track)
-                startActivity(playerActivityIntent)
+                val action = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(track)
+                findNavController().navigate(action)
             }
         }
 
@@ -116,9 +113,8 @@ class SearchFragment : Fragment() {
 
     private fun setupListeners() {
         binding.editText.addTextChangedListener(
-            onTextChanged = { s, _, _, _ -> //s - charSequence
+            onTextChanged = { s, _, _, _ ->
                 binding.imageViewClear.isVisible = !s.isNullOrEmpty()
-                //checkAndHideKeyboard(binding.editText)
                 text = s.toString()
 
                 if ((s?.length ?: -1) > 1) {//не начинать поиск при пустой строке ввода

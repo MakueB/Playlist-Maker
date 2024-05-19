@@ -11,7 +11,7 @@
         android:title="@string/library" />
 
     <item
-        android:id="@+id/helpFragment"
+        android:id="@+id/settingsFragment"
         android:icon="@drawable/settings_inactive"
         android:title="@string/settings_button_text" />
 </menu>

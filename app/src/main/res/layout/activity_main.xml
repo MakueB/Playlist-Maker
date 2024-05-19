@@ -60,6 +60,4 @@
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
         app:menu="@menu/bottom_nav_menu"
         />
-
-
 </androidx.constraintlayout.widget.ConstraintLayout>

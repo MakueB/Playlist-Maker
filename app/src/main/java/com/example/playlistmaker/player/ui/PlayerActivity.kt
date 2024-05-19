@@ -4,53 +4,55 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.navigation.navArgs
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.utils.CommonUtils
-import com.example.playlistmaker.utils.CommonUtils.parcelable
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
-import com.example.playlistmaker.search.ui.SearchFragment
-import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.CommonUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
+
+
     private val viewModel by viewModel<PlayerViewModel>()
 
     private lateinit var binding: ActivityPlayerBinding
+
+    private val args by navArgs<PlayerActivityArgs>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val track = intent.parcelable<Track>(SearchFragment.TRACK_KEY)
+        val track = args.track
 
         binding.apply {
-            country.text = track?.country
-            genre.text = track?.primaryGenreName
-            releaseDate.text = track?.releaseDate?.substring(0, 4)
+            country.text = track.country
+            genre.text = track.primaryGenreName
+            releaseDate.text = track.releaseDate?.substring(0, 4)
 
-            if (track?.collectionName.isNullOrEmpty()) {
+            if (track.collectionName.isNullOrEmpty()) {
                 albumGroup.visibility = View.GONE
             } else {
                 albumGroup.isVisible = true
-                collectionName.text = track?.collectionName
+                collectionName.text = track.collectionName
             }
 
-            duration.text = track?.trackDuration ?: getString(R.string.timer_default_value)
-            collectionNameTextView.text = track?.collectionName
-            trackName.text = track?.trackName
+            duration.text = track.trackDuration
+            collectionNameTextView.text = track.collectionName
+            trackName.text = track.trackName
         }
 
         val cornersInPx = CommonUtils.dpToPx(8f, this)
 
         binding.apply {
-            if (track?.artworkUrl100.isNullOrEmpty())
+            if (track.artworkUrl100.isEmpty())
                 cover.setImageResource(R.drawable.placeholder)
             else
                 Glide.with(applicationContext)
-                    .load(track?.getCoverArtwork())
+                    .load(track.getCoverArtwork())
                     .placeholder(R.drawable.placeholder)
                     .centerCrop()
                     .transform(RoundedCorners(cornersInPx))
