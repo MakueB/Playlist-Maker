@@ -42,6 +42,7 @@
         style="@style/LibraryToolbarStyle"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
+        app:contentInsetStart="0dp"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -54,7 +55,7 @@
         android:layout_height="wrap_content"
         style="@style/LibraryTabLayoutStyle"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/library_toolbar">
 
         <com.google.android.material.tabs.TabItem

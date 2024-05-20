@@ -35,6 +35,8 @@ class SearchViewModel(private val interactor: TracksInteractor, private val appl
     }
 
     fun search(query: String) {
+        renderState(TracksState.Loading)
+
         interactor.search(query, object : TracksInteractor.TracksConsumer {
             override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
                 val tracks = mutableListOf<Track>()
