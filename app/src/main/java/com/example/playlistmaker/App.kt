@@ -32,14 +32,4 @@ class App : Application() {
 
         settingsRepository.setDarkThemeEnabled(settingsRepository.isDarkThemeEnabled())
     }
-
-//    private fun setThemeOnFirstRun(){
-//        if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES){
-//            _darkThemeEnabled.value = true
-//            switchTheme(true)
-//        } else {
-//            _darkThemeEnabled.value = false
-//            switchTheme(false)
-//        }
-//    }
 }

@@ -156,7 +156,7 @@ class SearchFragment : Fragment() {
         binding.clearHistory.setOnClickListener {
             viewModel.clearHistory()
             historyAdapter.notifyDataSetChanged()
-            render(TracksState.Empty(getString(R.string.nothing_found)))
+            render(TracksState.Empty(R.string.nothing_found))
         }
     }
 

@@ -1,17 +1,16 @@
 package com.example.playlistmaker.search.ui
 
-import android.app.Application
 import android.os.Handler
 import android.os.Looper
 import android.os.SystemClock
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 
-class SearchViewModel(private val interactor: TracksInteractor, private val application: Application) : AndroidViewModel(application) {
+class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
         private val SEARCH_REQUEST_TOKEN = Any()
@@ -36,43 +35,42 @@ class SearchViewModel(private val interactor: TracksInteractor, private val appl
 
     fun search(query: String) {
         renderState(TracksState.Loading)
+            interactor.search(query, object : TracksInteractor.TracksConsumer {
+                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
+                    val tracks = mutableListOf<Track>()
 
-        interactor.search(query, object : TracksInteractor.TracksConsumer {
-            override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                val tracks = mutableListOf<Track>()
+                    if (foundTracks != null) {
+                        tracks.addAll(foundTracks)
+                    }
 
-                if (foundTracks != null) {
-                    tracks.addAll(foundTracks)
+                    when {
+                        errorMessage != null -> {
+                            renderState(
+                                TracksState.Error(
+                                    errorMessage = R.string.download_failed
+                                )
+                            )
+                            showToast(errorMessage)
+                        }
+
+                        tracks.isEmpty() -> {
+                            renderState(
+                                TracksState.Empty(
+                                    message = R.string.nothing_found
+                                )
+                            )
+                        }
+
+                        else -> {
+                            renderState(
+                                TracksState.Content(
+                                    tracks = tracks
+                                )
+                            )
+                        }
+                    }
                 }
-
-                when {
-                    errorMessage != null -> {
-                        renderState(
-                            TracksState.Error(
-                                errorMessage = application.getString(R.string.download_failed)
-                            )
-                        )
-                        showToast(errorMessage)
-                    }
-
-                    tracks.isEmpty() -> {
-                        renderState(
-                            TracksState.Empty(
-                                message = application.getString(R.string.nothing_found)
-                            )
-                        )
-                    }
-
-                    else -> {
-                        renderState(
-                            TracksState.Content(
-                                tracks = tracks
-                            )
-                        )
-                    }
-                }
-            }
-        })
+            })
     }
 
     fun searchDebounce(text: String) {
