@@ -1,19 +1,15 @@
 package com.example.playlistmaker.settings.ui
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
-import com.example.playlistmaker.App
+import androidx.lifecycle.ViewModel
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.model.ThemeSettings
 import com.example.playlistmaker.sharing.domain.api.SharingInteractor
 
 class SettingsViewModel (
-    application: Application,
     private val settingsInteractor: SettingsInteractor,
     private val sharingInteractor: SharingInteractor
-) : AndroidViewModel(application) {
+) : ViewModel() {
 
-    private val app by lazy { application as App }
     fun shareApp() {
         sharingInteractor.shareApp()
     }
@@ -24,7 +20,7 @@ class SettingsViewModel (
         sharingInteractor.openSupport()
     }
     fun updateTheme(checked: Boolean) {
-        app.switchTheme(checked)
+        settingsInteractor.setDarkThemeEnabled(checked)
         settingsInteractor.updateThemeSettings(ThemeSettings(checked))
     }
 }
