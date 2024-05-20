@@ -21,7 +21,7 @@ class PlaylistsFragment  : Fragment() {
         }
     }
 
-    private val PlaylistsViewModel: PlaylistsViewModel by viewModel {
+    private val playlistsViewModel: PlaylistsViewModel by viewModel {
         parametersOf(requireArguments().getInt(PLAYLIST_ID))
     }
 
@@ -30,7 +30,7 @@ class PlaylistsFragment  : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentPlaylistsBinding.inflate(inflater,container, false)
         return binding.root
     }
@@ -38,7 +38,7 @@ class PlaylistsFragment  : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        PlaylistsViewModel.playlistLiveData.observe(viewLifecycleOwner) {
+        playlistsViewModel.playlistLiveData.observe(viewLifecycleOwner) {
             //в следующем спринте?
         }
     }

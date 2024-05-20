@@ -5,9 +5,6 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
@@ -41,7 +38,7 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
             })
     }
 
-    fun startPlayer() {
+    private fun startPlayer() {
         interactor.startPlayer()
         _playerState.value = PlayerState.PLAYING
     }

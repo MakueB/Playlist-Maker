@@ -48,7 +48,7 @@ class App : Application() {
         )
     }
 
-    fun setThemeOnFirstRun(){
+    private fun setThemeOnFirstRun(){
         if (resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES){
             _darkThemeEnabled.value = true
             switchTheme(true)

@@ -1,6 +1,7 @@
 package com.example.playlistmaker.main.ui
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.NavOptions
@@ -20,7 +21,18 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        binding.bottomNavigationView.setOnNavigationItemSelectedListener { item ->
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (navController.currentDestination?.id == navController.graph.startDestinationId) {
+                    showExitConfirmationDialog()
+                } else {
+                    navController.navigateUp()
+                }
+            }
+
+        })
+
+        binding.bottomNavigationView.setOnItemSelectedListener { item ->
             val navOptions = NavOptions.Builder()
                 .setEnterAnim(R.anim.fade_in)
                 .setExitAnim(R.anim.hold)
@@ -46,18 +58,15 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
-
-
     private fun showExitConfirmationDialog() {
         AlertDialog.Builder(this)
-            .setTitle("Подтверждение выхода")
-            .setMessage("Вы действительно хотите выйти?")
-            .setPositiveButton("Да") { dialog, _ ->
+            .setTitle(R.string.exit_confirmation)
+            .setMessage(R.string.are_you_sure_you_want_to_exit)
+            .setPositiveButton(R.string.yes) { dialog, _ ->
                 dialog.dismiss()
                 finish()
             }
-            .setNegativeButton("Нет") { dialog, _ ->
+            .setNegativeButton(R.string.no) { dialog, _ ->
                 dialog.dismiss()
             }
             .create()

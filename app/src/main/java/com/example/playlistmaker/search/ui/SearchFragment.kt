@@ -1,4 +1,4 @@
-                                                                                                                 package com.example.playlistmaker.search.ui
+package com.example.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
@@ -21,7 +21,7 @@ import com.example.playlistmaker.search.domain.models.Track
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-                                                                                                                 const val ITUNES_BASE_URL = "https://itunes.apple.com"
+const val ITUNES_BASE_URL = "https://itunes.apple.com"
 
 class SearchFragment : Fragment() {
     companion object {
@@ -33,7 +33,7 @@ class SearchFragment : Fragment() {
     private var text = TEXT_DEF
     private var _binding: FragmentSearchBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: SearchViewModel by viewModel ()
+    private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
@@ -265,8 +265,10 @@ class SearchFragment : Fragment() {
                 render(TracksState.Content(trackList))
         }
     }
+
     private fun showKeyboard(editText: EditText) {
-        val inputMethodManager = requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        val inputMethodManager =
+            requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
