@@ -27,7 +27,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingEnd="6dp"
-            android:text="@string/dark_theme" />
+            android:text="@string/dark_theme"
+            tools:ignore="RtlSymmetry" />
 
         <androidx.appcompat.widget.SwitchCompat
             android:id="@+id/themeSwitch"
