@@ -12,18 +12,11 @@
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        style="@style/LibraryToolbarStyle"
         app:contentInsetStart="0dp"
-        android:orientation="horizontal">
-
-
-        <androidx.appcompat.widget.AppCompatTextView
-            style="@style/ToolbarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:gravity="center_vertical"
-            android:paddingEnd="86dp"
-            android:text="@string/search_button_text" />
+        android:gravity="top"
+        app:title="@string/search_button_text"
+        >
     </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout

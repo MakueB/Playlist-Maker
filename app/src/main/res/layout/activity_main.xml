@@ -51,10 +51,13 @@
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.07"
         style="@style/BottomNavMenuStyle"
+        app:itemPaddingBottom="0dp"
         app:layout_constraintBottom_toTopOf="@id/bottomBorder"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toEndOf="@id/rightBorder"
+        app:itemIconSize="24dp"
         app:menu="@menu/bottom_nav_menu"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

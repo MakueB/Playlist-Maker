@@ -118,6 +118,7 @@
         <item name="android:textFontWeight">@integer/font_weight_500</item>
         <item name="android:textSize">@dimen/textSize_22</item>
         <item name="titleTextColor">@color/textColor</item>
+        <item name="android:layout_gravity">top</item>
         <item name="titleMarginStart">0dp</item>
         <item name="contentInsetStartWithNavigation">0dp</item>
 
@@ -155,8 +156,7 @@
         <item name="itemIconTint">@color/bottom_navigation_selector</item>
         <item name="itemActiveIndicatorStyle">@color/playerBackgroundColor</item>
         <item name="android:background">@color/playerBackgroundColor</item>
-        <item name="android:paddingVertical">2dp</item>
-        <item name="itemIconSize">24dp</item>
+<!--        <item name="itemIconSize">24dp</item>-->
         <item name="itemRippleColor">@color/playerBackgroundColor</item>
     </style>
 </resources>
