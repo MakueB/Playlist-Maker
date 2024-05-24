@@ -135,9 +135,6 @@
         <item name="itemIconTint">@color/bottom_navigation_selector</item>
         <item name="itemActiveIndicatorStyle">@color/playerBackgroundColor</item>
         <item name="android:background">@color/playerBackgroundColor</item>
-        <item name="android:paddingVertical">2dp</item>
-        <item name="itemIconSize">24dp</item>
-        <item name="itemRippleColor">@color/playerBackgroundColor</item>
     </style>
 
 </resources>
