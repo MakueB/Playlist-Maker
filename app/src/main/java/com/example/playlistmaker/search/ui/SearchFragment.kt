@@ -2,8 +2,6 @@ package com.example.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
+import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.delay
@@ -41,8 +40,8 @@ class SearchFragment : Fragment() {
 
     private lateinit var onTrackClickDebounce: (Track) -> Unit
 
-    private lateinit var adapter: TrackAdapter
-    private lateinit var historyAdapter: TrackAdapter
+    private var adapter: TrackAdapter? = null
+    private var historyAdapter: TrackAdapter? = null
 
     private var isClickAllowed = true
 
@@ -75,17 +74,23 @@ class SearchFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        adapter = TrackAdapter(onTrackClickDebounce)
-        historyAdapter = TrackAdapter(onTrackClickDebounce)
+        adapter = TrackAdapter { track: Track ->
+            (activity as MainActivity).animateBottomNavigationView()
+            onTrackClickDebounce(track)
+        }
+        historyAdapter = TrackAdapter { track: Track ->
+            (activity as MainActivity).animateBottomNavigationView()
+            onTrackClickDebounce(track)
+        }
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
 
-        adapter.tracks = trackList
+        adapter?.tracks = trackList
         binding.recyclerView.adapter = adapter
 
         viewModel.updateSearchHistory()
-        historyAdapter.tracks = viewModel.history.value?.toMutableList() ?: mutableListOf()
+        historyAdapter?.tracks = viewModel.history.value?.toMutableList() ?: mutableListOf()
         binding.historyRecyclerView.adapter = historyAdapter
 
         binding.editText.requestFocus()
@@ -109,8 +114,8 @@ class SearchFragment : Fragment() {
             showToast(it)
         }
         viewModel.history.observe(viewLifecycleOwner) {
-            historyAdapter.tracks = it.toMutableList()
-            historyAdapter.notifyDataSetChanged()
+            historyAdapter?.tracks = it.toMutableList()
+            historyAdapter?.notifyDataSetChanged()
         }
     }
 
@@ -126,13 +131,11 @@ class SearchFragment : Fragment() {
                     if ((binding.editText.hasFocus()
                                 && s?.isBlank() == true) && !viewModel.history.value.isNullOrEmpty()
                     ) {
-                        viewModel.removeCallbacks()
                         render(TracksState.History(viewModel.history.value ?: emptyList()))
                     } else {
                         render(TracksState.Content(trackList))
                     }
                 } else {
-                    viewModel.removeCallbacks()
                     if (!viewModel.history.value.isNullOrEmpty())
                         render(TracksState.History(viewModel.history.value ?: emptyList()))
                     else
@@ -143,7 +146,7 @@ class SearchFragment : Fragment() {
         binding.imageViewClear.setOnClickListener {
             binding.editText.setText("")
             trackList.clear()
-            adapter.notifyDataSetChanged()
+            adapter?.notifyDataSetChanged()
 
             if (!viewModel.history.value.isNullOrEmpty()) {
                 render(TracksState.History(viewModel.history.value ?: emptyList()))
@@ -158,7 +161,7 @@ class SearchFragment : Fragment() {
 
         binding.clearHistory.setOnClickListener {
             viewModel.clearHistory()
-            historyAdapter.notifyDataSetChanged()
+            historyAdapter?.notifyDataSetChanged()
             render(TracksState.Empty(R.string.nothing_found))
         }
     }
@@ -191,9 +194,9 @@ class SearchFragment : Fragment() {
         binding.refreshButton.isVisible = false
         binding.progressBar.isVisible = false
 
-        adapter.tracks.clear()
-        adapter.tracks.addAll(tracks)
-        adapter.notifyDataSetChanged()
+        adapter?.tracks?.clear()
+        adapter?.tracks?.addAll(tracks)
+        adapter?.notifyDataSetChanged()
     }
 
     private fun showHistory() {
@@ -208,8 +211,8 @@ class SearchFragment : Fragment() {
 
         viewModel.updateSearchHistory()
         val history = viewModel.history.value?.toMutableList() ?: mutableListOf()
-        historyAdapter.tracks = history
-        historyAdapter.notifyDataSetChanged()
+        historyAdapter?.tracks = history
+        historyAdapter?.notifyDataSetChanged()
     }
 
     private fun showError() {
@@ -236,7 +239,7 @@ class SearchFragment : Fragment() {
         if (text.isNotEmpty()) {
             binding.somethingWrongTexView.visibility = View.VISIBLE
             trackList.clear()
-            adapter.notifyDataSetChanged()
+            adapter?.notifyDataSetChanged()
             binding.somethingWrongTexView.text = text
             if (additionalText.isNotEmpty()) {
                 binding.somethingWrongTexView.text = "$text\n\n$additionalText"
@@ -275,20 +278,24 @@ class SearchFragment : Fragment() {
         inputMethodManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
 
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(CLICK_DEBOUNCE_DELAY)
-                isClickAllowed = true
-            }
-        }
-        return current
-    }
+//    private fun clickDebounce(): Boolean {
+//        val current = isClickAllowed
+//        if (isClickAllowed) {
+//            isClickAllowed = false
+//            viewLifecycleOwner.lifecycleScope.launch {
+//                delay(CLICK_DEBOUNCE_DELAY)
+//                isClickAllowed = true
+//            }
+//        }
+//        return current
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        adapter = null
+        historyAdapter = null
+        binding.recyclerView.adapter = null
+        binding.historyRecyclerView.adapter = null
         _binding = null
     }
 }

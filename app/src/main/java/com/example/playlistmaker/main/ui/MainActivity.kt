@@ -1,9 +1,11 @@
 package com.example.playlistmaker.main.ui
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.isVisible
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -20,6 +22,13 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
+
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            when (destination.id) {
+                R.id.playerActivity -> binding.bottomNavigationView.visibility = View.GONE
+                else -> binding.bottomNavigationView.visibility = View.VISIBLE
+            }
+        }
 
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
@@ -58,6 +67,11 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    override fun onResume() {
+        super.onResume()
+        binding.bottomNavigationView.isVisible = true
+    }
     private fun showExitConfirmationDialog() {
         AlertDialog.Builder(this)
             .setTitle(R.string.exit_confirmation)
@@ -71,5 +85,8 @@ class MainActivity : AppCompatActivity() {
             }
             .create()
             .show()
+    }
+    fun animateBottomNavigationView() {
+        binding.bottomNavigationView.visibility = View.GONE
     }
 }
