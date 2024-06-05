@@ -99,9 +99,4 @@ class PlayerActivity : AppCompatActivity() {
         super.onPause()
         viewModel.pausePlayer()
     }
-
-    override fun onStop() {
-        super.onStop()
-        viewModel.stopUpdateTimer()
-    }
 }
