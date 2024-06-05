@@ -13,4 +13,12 @@ class SettingsInteractorImpl (private val settingsRepository: SettingsRepository
         settingsRepository.updateThemeSettings(settings)
     }
 
+    override fun isDarkThemeEnabled(): Boolean {
+        return settingsRepository.isDarkThemeEnabled()
+    }
+
+    override fun setDarkThemeEnabled(enabled: Boolean) {
+        settingsRepository.setDarkThemeEnabled(enabled)
+    }
+
 }

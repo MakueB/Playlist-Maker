@@ -12,9 +12,9 @@
         android:id="@+id/artWorkImageView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@null"
         android:layout_gravity="center_vertical"
         android:paddingVertical="@dimen/padding_8"
-        android:paddingStart="@dimen/padding_12"
         android:src="@drawable/art_work">
 
     </ImageView>
@@ -60,6 +60,7 @@
                 android:id="@+id/separatorImageView"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                android:contentDescription="@null"
                 android:src="@drawable/icdot"
                 android:layout_gravity="center"
                 app:tint="@color/white">
@@ -79,10 +80,10 @@
     <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@null"
         android:src="@drawable/arrow_forward"
         android:layout_gravity="center"
         android:layout_marginVertical="@dimen/margin_12"
-        android:layout_marginEnd="@dimen/margin_12"
         app:tint="@color/white">
     </ImageView>
 

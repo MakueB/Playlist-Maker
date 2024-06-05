@@ -19,24 +19,25 @@
         android:theme="@style/Theme.PlaylistMaker"
         tools:targetApi="31">
         <activity
-            android:name=".library.ui.LibraryActivity"
+            android:name=".library.ui.LibraryFragment"
             android:exported="false" />
         <activity
             android:name=".player.ui.PlayerActivity"
             android:exported="false"
             android:theme="@style/SettingsTheme" />
         <activity
-            android:name=".search.ui.SearchActivity"
+            android:name=".search.ui.SearchFragment"
             android:exported="false"
             android:theme="@style/SearchTheme" />
         <activity
-            android:name=".settings.ui.SettingsActivity"
+            android:name=".settings.ui.SettingsFragment"
             android:exported="false"
             android:theme="@style/SettingsTheme" />
         <activity
             android:name=".main.ui.MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.PlaylistMaker">
+            android:windowSoftInputMode="adjustNothing"
+            android:theme="@style/SettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

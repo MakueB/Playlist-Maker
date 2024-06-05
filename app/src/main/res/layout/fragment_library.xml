@@ -2,12 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     style="@style/SettingsTheme"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/playerBackgroundColor"
-    tools:context=".library.ui.LibraryActivity">
+    tools:context=".library.ui.LibraryFragment">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/leftBorder"
@@ -42,20 +41,20 @@
         style="@style/LibraryToolbarStyle"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        app:layout_constraintHorizontal_bias="1.0"
+        android:gravity="top"
+        app:contentInsetStart="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topBorder"
-        app:navigationIcon="@drawable/light_modearrow_back"
+        app:layout_constraintTop_toTopOf="parent"
         app:title="@string/library" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/library_TabLayout"
+        style="@style/LibraryTabLayoutStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/LibraryTabLayoutStyle"
         app:layout_constraintEnd_toStartOf="@+id/rightBorder"
-        app:layout_constraintStart_toStartOf="@+id/leftBorder"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/library_toolbar">
 
         <com.google.android.material.tabs.TabItem
@@ -74,9 +73,9 @@
         android:id="@+id/viewPager"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/library_TabLayout"
-        app:layout_constraintStart_toEndOf="@id/leftBorder"
+        app:layout_constraintBottom_toTopOf="@id/bottomBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintBottom_toTopOf="@id/bottomBorder"/>
+        app:layout_constraintStart_toEndOf="@id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@id/library_TabLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

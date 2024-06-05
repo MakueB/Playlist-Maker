@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <integer name="itunes_response_code_success">200</integer>
     <integer name="font_weight_500">500</integer>
     <integer name="font_weight_400">400</integer>
 </resources>

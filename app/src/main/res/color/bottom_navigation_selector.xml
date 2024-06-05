@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Состояние нажатия -->
+    <item android:color="@color/nav_item_color_selected" android:state_checked="true"/>
+    <item android:color="@color/nav_item_color_normal" android:state_checked="false"/>
+    <item android:color="@color/nav_item_background_color_selected" android:state_checked="true"/>
+    <item android:color="@color/playerBackgroundColor" android:state_checked="false"/>
+    <!-- Состояние выбранности -->
+<!--    <item android:color="@color/selected_color" android:state_checked="true"/>-->
+<!--    &lt;!&ndash; Состояние фокусировки &ndash;&gt;-->
+<!--    <item android:color="@color/focused_color" android:state_focused="true"/>-->
+<!--    &lt;!&ndash; Состояние обычное &ndash;&gt;-->
+<!--    <item android:color="@color/normal_color"/>-->
+</selector>
