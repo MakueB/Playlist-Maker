@@ -44,10 +44,19 @@
         app:layout_constraintTop_toBottomOf="@id/topBorder"
         app:layout_constraintStart_toEndOf="@id/leftBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"
+        app:layout_constraintBottom_toTopOf="@id/divider"
         android:name="androidx.navigation.fragment.NavHostFragment"
         app:navGraph="@navigation/navigation_graph"
         app:defaultNavHost="true"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/divider_color"
+        app:layout_constraintBottom_toTopOf="@id/bottom_navigation_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation_view"
