@@ -13,11 +13,15 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -35,11 +39,12 @@ class SearchFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
 
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
+
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
 
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
 
     private val trackList = mutableListOf<Track>()
 
@@ -55,25 +60,23 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val onTrackClickListener = { track: Track ->
-            if (clickDebounce()) {
-                val trackWasSavedMessage = getString(R.string.track_was_saved)
-                val listContainsTrack =
-                    viewModel.history.value?.any { it.trackId == track.trackId } ?: false
+        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track: Track ->
+            val trackWasSavedMessage = getString(R.string.track_was_saved)
+            val listContainsTrack =
+                viewModel.history.value?.any { it.trackId == track.trackId } ?: false
 
-                viewModel.saveToHistory(track)
+            viewModel.saveToHistory(track)
 
-                if (!listContainsTrack)
-                    Toast.makeText(requireContext(), trackWasSavedMessage, Toast.LENGTH_SHORT)
-                        .show()
+            if (!listContainsTrack)
+                Toast.makeText(requireContext(), trackWasSavedMessage, Toast.LENGTH_SHORT)
+                    .show()
 
-                val action = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(track)
-                findNavController().navigate(action)
-            }
+            val action = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(track)
+            findNavController().navigate(action)
         }
 
-        adapter = TrackAdapter(onTrackClickListener)
-        historyAdapter = TrackAdapter(onTrackClickListener)
+        adapter = TrackAdapter(onTrackClickDebounce)
+        historyAdapter = TrackAdapter(onTrackClickDebounce)
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())
@@ -276,7 +279,10 @@ class SearchFragment : Fragment() {
         val current = isClickAllowed
         if (isClickAllowed) {
             isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(CLICK_DEBOUNCE_DELAY)
+                isClickAllowed = true
+            }
         }
         return current
     }
