@@ -1,22 +1,20 @@
 package com.example.playlistmaker.search.ui
 
-import android.os.Handler
-import android.os.Looper
-import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     companion object {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
     }
-
-    private val handler = Handler(Looper.getMainLooper())
 
     private val _state = MutableLiveData<TracksState>()
     val state: LiveData<TracksState> = _state
@@ -28,6 +26,8 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     val history: LiveData<List<Track>> = _history
 
     private var lastTextSearch: String? = null
+
+    private var searchJob: Job? = null
 
     fun showToast(message: String) {
         _toastState.postValue(message)
@@ -78,23 +78,16 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
             return
 
         this.lastTextSearch = text
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
-        val searchRunnable = Runnable { search(text) }
-        val postTime = SystemClock.uptimeMillis() + SEARCH_DEBOUNCE_DELAY
-        handler.postAtTime(searchRunnable, SEARCH_REQUEST_TOKEN, postTime)
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_DELAY)
+            search(text)
+        }
     }
 
     private fun renderState(state: TracksState) {
         _state.postValue(state)
-    }
-
-    override fun onCleared() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
-    }
-
-    fun removeCallbacks() {
-        handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
     }
 
     fun saveToHistory(track: Track) {
