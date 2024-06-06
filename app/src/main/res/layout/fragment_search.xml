@@ -34,7 +34,7 @@
             android:layout_marginEnd="30dp"
             android:layout_weight="1"
             android:background="@drawable/rounded_edittext"
-            android:drawableStart="@drawable/search_iconsearch_ic"
+            android:drawableStart="@drawable/search"
             android:hint="@string/search_button_text"
             android:imeOptions="actionDone"
             android:maxLines="1"
@@ -44,9 +44,9 @@
             android:id="@+id/imageViewClear"
             style="@style/SearchIconStyle"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:contentDescription="@null"
-            android:src="@drawable/baseline_clear_16"
+            android:src="@drawable/clear"
             android:visibility="gone" />
     </LinearLayout>
 

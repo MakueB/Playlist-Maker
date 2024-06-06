@@ -11,6 +11,7 @@
     <color name="searchSmthWrong">#1A1B22</color>
     <color name="text">#FFFFFF</color>
     <color name="background">#1A1B22</color>
+    <color name="edit_text_background">#E6E8EB</color>
     <color name="labelText">#AEAFB4</color>
     <color name="playerBackgroundColor">#FFFFFF</color>
     <color name="buttonFillColor">#1A1B22</color>

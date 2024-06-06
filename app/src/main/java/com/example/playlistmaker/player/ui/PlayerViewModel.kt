@@ -35,6 +35,7 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
         interactor.preparePlayer(track,
             { _playerState.value = PlayerState.PREPARED },
             {
+                timerJob?.cancel()
                 _playerState.value = PlayerState.PREPARED
                 _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
             })
@@ -51,10 +52,6 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
         timerJob?.cancel()
         _playerState.value = PlayerState.PAUSED
     }
-
-//    fun stopUpdateTimer() {
-//        handler.removeCallbacks(updateTimerTask)
-//    }
 
     fun playBackControl() {
         when (_playerState.value) {
@@ -73,6 +70,7 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     private fun startTimer() {
+        timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (_playerState.value == PlayerState.PLAYING) {
                 delay(DELAY_MILLIS)
@@ -80,15 +78,6 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
             }
         }
     }
-
-//    private val updateTimerTask: Runnable = object : Runnable {
-//        override fun run() {
-//            if (_playerState.value == PlayerState.PLAYING) {
-//                _elapsedTime.value = CommonUtils.formatMillisToMmSs(interactor.getCurrentPosition())
-//                handler.postDelayed(this, DELAY_MILLIS)
-//            }
-//        }
-//    }
 
     override fun onCleared() {
         interactor.release()
