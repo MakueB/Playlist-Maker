@@ -19,8 +19,6 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -42,8 +40,6 @@ class SearchFragment : Fragment() {
 
     private var adapter: TrackAdapter? = null
     private var historyAdapter: TrackAdapter? = null
-
-    private var isClickAllowed = true
 
     private val trackList = mutableListOf<Track>()
 
@@ -277,18 +273,6 @@ class SearchFragment : Fragment() {
             requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
         inputMethodManager?.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
     }
-
-//    private fun clickDebounce(): Boolean {
-//        val current = isClickAllowed
-//        if (isClickAllowed) {
-//            isClickAllowed = false
-//            viewLifecycleOwner.lifecycleScope.launch {
-//                delay(CLICK_DEBOUNCE_DELAY)
-//                isClickAllowed = true
-//            }
-//        }
-//        return current
-//    }
 
     override fun onDestroyView() {
         super.onDestroyView()

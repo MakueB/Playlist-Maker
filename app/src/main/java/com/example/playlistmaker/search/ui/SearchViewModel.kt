@@ -7,8 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
@@ -27,62 +26,69 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
 
     private var lastTextSearch: String? = null
 
-    private var searchJob: Job? = null
+    private val trackSearchDebounce =
+        debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
+            search(changedText)
+        }
 
-    fun showToast(message: String) {
+    private fun showToast(message: String) {
         _toastState.postValue(message)
     }
 
     fun search(query: String) {
-        renderState(TracksState.Loading)
-            interactor.search(query, object : TracksInteractor.TracksConsumer {
-                override fun consume(foundTracks: List<Track>?, errorMessage: String?) {
-                    val tracks = mutableListOf<Track>()
+        if (query.isNotEmpty()) {
 
-                    if (foundTracks != null) {
-                        tracks.addAll(foundTracks)
+            renderState(TracksState.Loading)
+
+            viewModelScope.launch {
+                interactor
+                    .search(query)
+                    .collect { pair ->
+                        processResult(pair.first, pair.second)
                     }
+            }
+        }
+    }
 
-                    when {
-                        errorMessage != null -> {
-                            renderState(
-                                TracksState.Error(
-                                    errorMessage = R.string.download_failed
-                                )
-                            )
-                            showToast(errorMessage)
-                        }
+    private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
+        val tracks = mutableListOf<Track>()
 
-                        tracks.isEmpty() -> {
-                            renderState(
-                                TracksState.Empty(
-                                    message = R.string.nothing_found
-                                )
-                            )
-                        }
+        if (foundTracks != null) {
+            tracks.addAll(foundTracks)
+        }
 
-                        else -> {
-                            renderState(
-                                TracksState.Content(
-                                    tracks = tracks
-                                )
-                            )
-                        }
-                    }
-                }
-            })
+        when {
+            errorMessage != null -> {
+                renderState(
+                    TracksState.Error(
+                        errorMessage = R.string.download_failed
+                    )
+                )
+                showToast(errorMessage)
+            }
+
+            tracks.isEmpty() -> {
+                renderState(
+                    TracksState.Empty(
+                        message = R.string.nothing_found
+                    )
+                )
+            }
+
+            else -> {
+                renderState(
+                    TracksState.Content(
+                        tracks = tracks
+                    )
+                )
+            }
+        }
     }
 
     fun searchDebounce(text: String) {
-        if (lastTextSearch == text)
-            return
-
-        this.lastTextSearch = text
-
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_DELAY)
-            search(text)
+        if (lastTextSearch != text) {
+            lastTextSearch = text
+            trackSearchDebounce(text)
         }
     }
 
