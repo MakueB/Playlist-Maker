@@ -25,5 +25,7 @@ data class TrackEntity(
     @ColumnInfo("country")
     val country: String,
     @ColumnInfo("track_preview_url")
-    val previewUrl: String
+    val previewUrl: String,
+    @ColumnInfo("added_timestamp")
+    val addedTimestamp: Long
 )
