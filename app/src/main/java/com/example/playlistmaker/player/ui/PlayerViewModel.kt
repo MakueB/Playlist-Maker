@@ -8,6 +8,7 @@ import com.example.playlistmaker.library.domain.api.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -28,6 +29,9 @@ class PlayerViewModel(
 
     private val _elapsedTime = MutableLiveData<String>()
     val elapsedTime: LiveData<String> = _elapsedTime
+
+    private val _isFavorite = MutableLiveData<Boolean>()
+    val isFavorite: LiveData<Boolean> = _isFavorite
 
     private var timerJob: Job? = null
 
@@ -86,12 +90,14 @@ class PlayerViewModel(
 
     fun onFavoriteClicked(track: Track) {
         when (track.isFavorite) {
-            true -> viewModelScope.launch {
+            true -> viewModelScope.launch (Dispatchers.IO) {
                 favoritesInteractor.removeFromFavorites(track)
+                _isFavorite.postValue(false)
             }
 
-            false -> viewModelScope.launch {
+            false -> viewModelScope.launch (Dispatchers.IO) {
                 favoritesInteractor.addToFavorites(track)
+                _isFavorite.postValue(true)
             }
         }
     }

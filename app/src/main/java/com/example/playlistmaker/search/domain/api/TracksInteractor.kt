@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface TracksInteractor {
     fun search(query: String): Flow<Pair<List<Track>?, String?>>
-    fun saveToHistory(track: Track)
-    fun getSearchHistory() : List<Track>
+    suspend fun saveToHistory(track: Track)
+    suspend fun getSearchHistory() : List<Track>
     fun clearHistory()
 }

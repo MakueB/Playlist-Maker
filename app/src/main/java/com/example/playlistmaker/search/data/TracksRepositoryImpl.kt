@@ -1,7 +1,6 @@
 package com.example.playlistmaker.search.data
 
 import com.example.playlistmaker.database.AppDatabase
-import com.example.playlistmaker.database.dao.TrackDbConvertor
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import com.example.playlistmaker.search.data.dto.TrackSearchResponse
 import com.example.playlistmaker.search.domain.api.TracksRepository
@@ -13,7 +12,6 @@ import kotlinx.coroutines.flow.flow
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
     private val appDatabase: AppDatabase,
-    private val convertor: TrackDbConvertor
     ) : TracksRepository {
     override fun search(query: String): Flow<Resource<List<Track>>> = flow {
         val response = networkClient.sendRequest(TrackSearchRequest(query))
