@@ -1,13 +1,18 @@
 package com.example.playlistmaker.search.data.storage
 
 import android.content.SharedPreferences
+import com.example.playlistmaker.database.AppDatabase
+import com.example.playlistmaker.database.dao.TrackDbConvertor
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.Keys
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 
-class SearchHistoryRepositoryImpl (private val gson: Gson, private val sharedPreferences: SharedPreferences) : SearchHistoryRepository {
+class SearchHistoryRepositoryImpl (
+    private val gson: Gson,
+    private val sharedPreferences: SharedPreferences,
+) : SearchHistoryRepository {
     override fun saveToHistory(track: Track) {
         val historyList = getSearchHistory().toMutableList()
         historyList.removeAll { it.trackId == track.trackId }

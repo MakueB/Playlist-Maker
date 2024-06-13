@@ -15,7 +15,8 @@ class TrackDbConvertor {
             trackEntity.releaseDate,
             trackEntity.primaryGenreName,
             trackEntity.country,
-            trackEntity.previewUrl
+            trackEntity.previewUrl,
+            true
         )
     }
 

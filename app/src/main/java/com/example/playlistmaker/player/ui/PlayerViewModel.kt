@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.playlistmaker.library.domain.api.FavoritesInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
@@ -11,7 +12,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
+class PlayerViewModel(
+    private val playerInteractor: PlayerInteractor,
+    private val favoritesInteractor: FavoritesInteractor
+) : ViewModel() {
     companion object {
         const val DELAY_MILLIS = 300L
     }
@@ -32,7 +36,7 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     fun preparePlayer(track: Track?) {
-        interactor.preparePlayer(track,
+        playerInteractor.preparePlayer(track,
             { _playerState.value = PlayerState.PREPARED },
             {
                 timerJob?.cancel()
@@ -42,13 +46,13 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
     }
 
     private fun startPlayer() {
-        interactor.startPlayer()
+        playerInteractor.startPlayer()
         _playerState.value = PlayerState.PLAYING
         startTimer()
     }
 
     fun pausePlayer() {
-        interactor.pausePlayer()
+        playerInteractor.pausePlayer()
         timerJob?.cancel()
         _playerState.value = PlayerState.PAUSED
     }
@@ -74,13 +78,26 @@ class PlayerViewModel(private val interactor: PlayerInteractor) : ViewModel() {
         timerJob = viewModelScope.launch {
             while (_playerState.value == PlayerState.PLAYING) {
                 delay(DELAY_MILLIS)
-                _elapsedTime.value = CommonUtils.formatMillisToMmSs(interactor.getCurrentPosition())
+                _elapsedTime.value =
+                    CommonUtils.formatMillisToMmSs(playerInteractor.getCurrentPosition())
+            }
+        }
+    }
+
+    fun onFavoriteClicked(track: Track) {
+        when (track.isFavorite) {
+            true -> viewModelScope.launch {
+                favoritesInteractor.removeFromFavorites(track)
+            }
+
+            false -> viewModelScope.launch {
+                favoritesInteractor.addToFavorites(track)
             }
         }
     }
 
     override fun onCleared() {
-        interactor.release()
+        playerInteractor.release()
         super.onCleared()
     }
 }

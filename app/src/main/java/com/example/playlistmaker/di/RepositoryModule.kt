@@ -17,7 +17,7 @@ import org.koin.dsl.module
 
 val repositoryModule = module {
     single <TracksRepository>{
-        TracksRepositoryImpl(get())
+        TracksRepositoryImpl(get(), get(), get())
     }
 
     single <SearchHistoryRepository> {
