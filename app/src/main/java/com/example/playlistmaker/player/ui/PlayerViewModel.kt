@@ -91,11 +91,13 @@ class PlayerViewModel(
     fun onFavoriteClicked(track: Track) {
         when (track.isFavorite) {
             true -> viewModelScope.launch (Dispatchers.IO) {
+                track.isFavorite = false
                 favoritesInteractor.removeFromFavorites(track)
                 _isFavorite.postValue(false)
             }
 
             false -> viewModelScope.launch (Dispatchers.IO) {
+                track.isFavorite = true
                 favoritesInteractor.addToFavorites(track)
                 _isFavorite.postValue(true)
             }

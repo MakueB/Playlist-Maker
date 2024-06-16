@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.annotation.SuppressLint
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -11,7 +12,9 @@ import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
@@ -19,6 +22,7 @@ import com.example.playlistmaker.databinding.FragmentSearchBinding
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -55,10 +59,14 @@ class SearchFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        onTrackClickDebounce = debounce<Track>(CLICK_DEBOUNCE_DELAY, viewLifecycleOwner.lifecycleScope, false) { track: Track ->
+        onTrackClickDebounce = debounce<Track>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { track: Track ->
             val trackWasSavedMessage = getString(R.string.track_was_saved)
             val listContainsTrack =
-                viewModel.history.value?.any { it.trackId == track.trackId } ?: false
+                viewModel.history.value.any { it.trackId == track.trackId }
 
             viewModel.saveToHistory(track)
 
@@ -86,7 +94,7 @@ class SearchFragment : Fragment() {
         binding.recyclerView.adapter = adapter
 
         viewModel.updateSearchHistory()
-        historyAdapter?.tracks = viewModel.history.value?.toMutableList() ?: mutableListOf()
+        historyAdapter?.tracks = viewModel.history.value.toMutableList()
         binding.historyRecyclerView.adapter = historyAdapter
 
         binding.editText.requestFocus()
@@ -95,13 +103,14 @@ class SearchFragment : Fragment() {
         setupListeners()
         setupObservers()
 
-        if (!viewModel.history.value.isNullOrEmpty()) {
-            render(TracksState.History(viewModel.history.value ?: emptyList()))
+        if (viewModel.history.value.isNotEmpty()) {
+            render(TracksState.History(viewModel.history.value))
         } else {
             render(TracksState.Content(trackList))
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setupObservers() {
         viewModel.state.observe(viewLifecycleOwner) { state ->
             render(state)
@@ -109,12 +118,18 @@ class SearchFragment : Fragment() {
         viewModel.toastState.observe(viewLifecycleOwner) {
             showToast(it)
         }
-        viewModel.history.observe(viewLifecycleOwner) {
-            historyAdapter?.tracks = it.toMutableList()
-            historyAdapter?.notifyDataSetChanged()
+
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.history.collect {
+                    historyAdapter?.tracks = it.toMutableList()
+                    historyAdapter?.notifyDataSetChanged()
+                }
+            }
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun setupListeners() {
         binding.editText.addTextChangedListener(
             onTextChanged = { s, _, _, _ ->
@@ -125,15 +140,15 @@ class SearchFragment : Fragment() {
                     viewModel.searchDebounce(s.toString())
 
                     if ((binding.editText.hasFocus()
-                                && s?.isBlank() == true) && !viewModel.history.value.isNullOrEmpty()
+                                && s?.isBlank() == true) && viewModel.history.value.isNotEmpty()
                     ) {
-                        render(TracksState.History(viewModel.history.value ?: emptyList()))
+                        render(TracksState.History(viewModel.history.value))
                     } else {
                         render(TracksState.Content(trackList))
                     }
                 } else {
-                    if (!viewModel.history.value.isNullOrEmpty())
-                        render(TracksState.History(viewModel.history.value ?: emptyList()))
+                    if (viewModel.history.value.isNotEmpty())
+                        render(TracksState.History(viewModel.history.value))
                     else
                         render(TracksState.Content(trackList))
                 }
@@ -144,8 +159,8 @@ class SearchFragment : Fragment() {
             trackList.clear()
             adapter?.notifyDataSetChanged()
 
-            if (!viewModel.history.value.isNullOrEmpty()) {
-                render(TracksState.History(viewModel.history.value ?: emptyList()))
+            if (viewModel.history.value.isNotEmpty()) {
+                render(TracksState.History(viewModel.history.value))
             } else {
                 render(TracksState.Content(trackList))
             }
@@ -181,6 +196,7 @@ class SearchFragment : Fragment() {
         binding.progressBar.isVisible = true
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showContent(tracks: List<Track>) {
         binding.historyLinearLayout.isVisible = false
         binding.searchLinearLayout.isVisible = true
@@ -195,6 +211,7 @@ class SearchFragment : Fragment() {
         adapter?.notifyDataSetChanged()
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showHistory() {
         binding.historyLinearLayout.isVisible = true
         binding.searchLinearLayout.isVisible = false
@@ -206,7 +223,7 @@ class SearchFragment : Fragment() {
         binding.progressBar.isVisible = false
 
         viewModel.updateSearchHistory()
-        val history = viewModel.history.value?.toMutableList() ?: mutableListOf()
+        val history = viewModel.history.value.toMutableList()
         historyAdapter?.tracks = history
         historyAdapter?.notifyDataSetChanged()
     }
@@ -231,6 +248,7 @@ class SearchFragment : Fragment() {
         showMessage(message, "")
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showMessage(text: String, additionalText: String) {
         if (text.isNotEmpty()) {
             binding.somethingWrongTexView.visibility = View.VISIBLE
@@ -261,8 +279,8 @@ class SearchFragment : Fragment() {
             binding.editText.setText(text)
             if (text.isNotBlank())
                 viewModel.searchDebounce("$text ")
-            if (!viewModel.history.value.isNullOrEmpty() && text.isEmpty())
-                render(TracksState.History(viewModel.history.value ?: emptyList()))
+            if (viewModel.history.value.isNotEmpty() && text.isEmpty())
+                render(TracksState.History(viewModel.history.value))
             else
                 render(TracksState.Content(trackList))
         }

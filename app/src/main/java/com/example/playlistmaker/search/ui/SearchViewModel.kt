@@ -9,6 +9,8 @@ import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
@@ -22,10 +24,8 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     private val _toastState = SingleLiveEvent<String>()
     val toastState: LiveData<String> = _toastState
 
-    private val _history = MutableLiveData<List<Track>>().apply {
-        viewModelScope.launch {  interactor.getSearchHistory()   } // этот apply заменяется init (нужно проверить, когда закончу)
-    }
-    val history: LiveData<List<Track>> = _history
+    private val _history = MutableStateFlow<List<Track>>(emptyList())
+    val history = _history.asStateFlow()
 
     private var lastTextSearch: String? = null
 
@@ -35,7 +35,10 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
         }
 
     init {
-        updateSearchHistory()
+        viewModelScope.launch(Dispatchers.IO) {
+            val list = interactor.getSearchHistory()
+            _history.value = list
+        }
     }
 
     private fun showToast(message: String) {
@@ -113,7 +116,7 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     fun updateSearchHistory() {
         viewModelScope.launch (Dispatchers.IO) {
             val list = interactor.getSearchHistory()
-            _history.value = list //возможно, нужно поменять на postValue
+            _history.value = list
         }
     }
 
