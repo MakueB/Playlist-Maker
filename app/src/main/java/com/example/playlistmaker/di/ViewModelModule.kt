@@ -21,7 +21,7 @@ val viewModelModule = module {
     }
 
     viewModel {
-        FavoritesViewModel(get())
+        FavoritesViewModel(get(), get())
     }
 
     viewModel { (playlistId: Int) ->

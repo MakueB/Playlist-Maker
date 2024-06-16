@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,9 +9,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
@@ -35,9 +39,9 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
         }
 
     init {
-        viewModelScope.launch(Dispatchers.IO) {
-            val list = interactor.getSearchHistory()
-            _history.value = list
+        updateSearchHistory()
+        if (history.value.size > 0) {
+            renderState(TracksState.History(history.value))
         }
     }
 
@@ -113,8 +117,15 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
         }
     }
 
-    fun updateSearchHistory() {
+    fun updateSearchHistory()  {
         viewModelScope.launch (Dispatchers.IO) {
+            val list = interactor.getSearchHistory()
+            _history.value = list
+        }
+    }
+
+    fun updateSearchHistoryAsync() : Deferred<Unit> {
+        return viewModelScope.async (Dispatchers.IO) {
             val list = interactor.getSearchHistory()
             _history.value = list
         }

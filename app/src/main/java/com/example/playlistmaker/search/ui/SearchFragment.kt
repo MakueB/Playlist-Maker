@@ -103,11 +103,21 @@ class SearchFragment : Fragment() {
         setupListeners()
         setupObservers()
 
-        if (viewModel.history.value.isNotEmpty()) {
-            render(TracksState.History(viewModel.history.value))
-        } else {
-            render(TracksState.Content(trackList))
-        }
+
+        val hist = viewModel.history.value
+        //render(TracksState.History(viewModel.history.value))
+//        Log.d("check", "Render onViewCreated: ${viewModel.state.value}")
+//        if (viewModel.history.value.size > 0) {
+//            render(TracksState.History(viewModel.history.value))
+//            Log.d("check", "Render onViewCreated if History: ${viewModel.state.value}")
+//            Log.d("check", "History onViewCreated if History: ${viewModel.history.value}")
+//        } else {
+//            render(TracksState.Content(trackList))
+//            Log.d("check", "Render onViewCreated if Content: ${viewModel.state.value}")
+//            Log.d("check", "History onViewCreated if Content: ${viewModel.history.value}")
+//        }
+//        Log.d("check", "Render onViewCreated after if: ${viewModel.state.value}")
+//        Log.d("check", "History onViewCreated after if: ${viewModel.history.value}")
     }
 
     @SuppressLint("NotifyDataSetChanged")
