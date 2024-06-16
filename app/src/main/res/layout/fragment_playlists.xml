@@ -19,7 +19,7 @@
     </Button>
 
     <ImageView
-        android:id="@+id/searchPlaceholder"
+        android:id="@+id/favoritesPlaceholder"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:contentDescription="@null"
