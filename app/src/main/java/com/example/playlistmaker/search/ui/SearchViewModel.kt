@@ -39,9 +39,8 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
         }
 
     init {
-        updateSearchHistory()
-        if (history.value.size > 0) {
-            renderState(TracksState.History(history.value))
+        viewModelScope.launch {
+            updateSearchHistory()
         }
     }
 

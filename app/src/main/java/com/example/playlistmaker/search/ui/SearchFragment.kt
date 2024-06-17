@@ -3,6 +3,7 @@ package com.example.playlistmaker.search.ui
 import android.annotation.SuppressLint
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -103,21 +104,21 @@ class SearchFragment : Fragment() {
         setupListeners()
         setupObservers()
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.history.collect { historyList ->
+                    if (historyList.isNotEmpty()) {
+                        render(TracksState.History(historyList))
+                    } else {
+                        render(TracksState.Content(trackList))
+                    }
+                }
+            }
+        }
+
 
         val hist = viewModel.history.value
-        //render(TracksState.History(viewModel.history.value))
-//        Log.d("check", "Render onViewCreated: ${viewModel.state.value}")
-//        if (viewModel.history.value.size > 0) {
-//            render(TracksState.History(viewModel.history.value))
-//            Log.d("check", "Render onViewCreated if History: ${viewModel.state.value}")
-//            Log.d("check", "History onViewCreated if History: ${viewModel.history.value}")
-//        } else {
-//            render(TracksState.Content(trackList))
-//            Log.d("check", "Render onViewCreated if Content: ${viewModel.state.value}")
-//            Log.d("check", "History onViewCreated if Content: ${viewModel.history.value}")
-//        }
-//        Log.d("check", "Render onViewCreated after if: ${viewModel.state.value}")
-//        Log.d("check", "History onViewCreated after if: ${viewModel.history.value}")
+        Log.d("Check", "history value onViewCreated : $hist")
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -127,15 +128,6 @@ class SearchFragment : Fragment() {
         }
         viewModel.toastState.observe(viewLifecycleOwner) {
             showToast(it)
-        }
-
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.history.collect {
-                    historyAdapter?.tracks = it.toMutableList()
-                    historyAdapter?.notifyDataSetChanged()
-                }
-            }
         }
     }
 
@@ -191,7 +183,7 @@ class SearchFragment : Fragment() {
         when (state) {
             is TracksState.Loading -> showLoading()
             is TracksState.Content -> showContent(state.tracks)
-            is TracksState.History -> showHistory()
+            is TracksState.History -> showHistory(state.tracks)
             is TracksState.Error -> showError()
             is TracksState.Empty -> showEmpty(getString(R.string.nothing_found))
         }
@@ -222,7 +214,7 @@ class SearchFragment : Fragment() {
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private fun showHistory() {
+    private fun showHistory(tracks: List<Track>) {
         binding.historyLinearLayout.isVisible = true
         binding.searchLinearLayout.isVisible = false
         binding.clearHistory.isVisible = true
@@ -232,9 +224,7 @@ class SearchFragment : Fragment() {
         binding.refreshButton.isVisible = false
         binding.progressBar.isVisible = false
 
-        viewModel.updateSearchHistory()
-        val history = viewModel.history.value.toMutableList()
-        historyAdapter?.tracks = history
+        historyAdapter?.tracks = tracks.toMutableList()
         historyAdapter?.notifyDataSetChanged()
     }
 
