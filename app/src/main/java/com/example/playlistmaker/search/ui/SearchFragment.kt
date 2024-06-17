@@ -65,16 +65,7 @@ class SearchFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope,
             false
         ) { track: Track ->
-            val trackWasSavedMessage = getString(R.string.track_was_saved)
-            val listContainsTrack =
-                viewModel.history.value.any { it.trackId == track.trackId }
-
             viewModel.saveToHistory(track)
-
-            if (!listContainsTrack)
-                Toast.makeText(requireContext(), trackWasSavedMessage, Toast.LENGTH_SHORT)
-                    .show()
-
             val action = SearchFragmentDirections.actionSearchFragmentToPlayerActivity(track)
             findNavController().navigate(action)
         }
@@ -160,6 +151,8 @@ class SearchFragment : Fragment() {
             binding.editText.setText("")
             trackList.clear()
             adapter?.notifyDataSetChanged()
+
+            hideKeyboard(binding.editText)
 
             if (viewModel.history.value.isNotEmpty()) {
                 render(TracksState.History(viewModel.history.value))
@@ -284,6 +277,12 @@ class SearchFragment : Fragment() {
             else
                 render(TracksState.Content(trackList))
         }
+    }
+
+    private fun hideKeyboard(editText: EditText) {
+        val inputMethodManager =
+            requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+        inputMethodManager?.hideSoftInputFromWindow(editText.windowToken, 0)
     }
 
     private fun showKeyboard(editText: EditText) {

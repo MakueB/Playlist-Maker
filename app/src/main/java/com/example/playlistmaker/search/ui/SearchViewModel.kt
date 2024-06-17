@@ -123,13 +123,6 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
         }
     }
 
-    fun updateSearchHistoryAsync() : Deferred<Unit> {
-        return viewModelScope.async (Dispatchers.IO) {
-            val list = interactor.getSearchHistory()
-            _history.value = list
-        }
-    }
-
     fun clearHistory() {
         viewModelScope.launch (Dispatchers.IO) {
             interactor.clearHistory()
