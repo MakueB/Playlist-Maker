@@ -1,5 +1,6 @@
 package com.example.playlistmaker.library.ui
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -38,7 +39,7 @@ class FavoritesFragment : Fragment() {
         binding.favoritesRecyclerView.adapter = adapter
 
         favoritesViewModel.getFavorites()
-        favoritesViewModel.favoritesState.observe(this){
+        favoritesViewModel.favoritesState.observe(viewLifecycleOwner){
             render(it)
         }
     }
@@ -51,6 +52,7 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private fun showContent(tracks: List<Track>) {
         binding.apply {
             favoritesPlaceholder.isVisible = false
