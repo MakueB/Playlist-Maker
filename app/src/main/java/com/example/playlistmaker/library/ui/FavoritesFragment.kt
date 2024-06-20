@@ -65,6 +65,11 @@ class FavoritesFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        favoritesViewModel.getFavorites()
+    }
+
     private fun render(state: FavoritesState) {
         when (state) {
             is FavoritesState.Empty -> showEmpty(state.message)
