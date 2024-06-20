@@ -54,7 +54,7 @@
         app:layout_constraintTop_toBottomOf="@id/trackNameTextView"
         app:layout_constraintEnd_toStartOf="@id/dotImageView"
         app:layout_constrainedWidth="true"
-        tools:text="@tools:sample/lorem/random" />
+        tools:text="The Beatles" />
 
     <ImageView
         android:id="@+id/dotImageView"
