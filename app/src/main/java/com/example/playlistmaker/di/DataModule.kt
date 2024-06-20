@@ -13,6 +13,8 @@ import com.example.playlistmaker.sharing.data.ExternalNavigator
 import com.example.playlistmaker.sharing.data.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.utils.Keys
 import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -24,8 +26,16 @@ val dataModule = module {
         Retrofit.Builder()
             .baseUrl(ITUNES_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(get())
             .build()
             .create()
+    }
+
+    single <OkHttpClient> {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient().newBuilder().addInterceptor(interceptor)
+            .build()
     }
 
     single {

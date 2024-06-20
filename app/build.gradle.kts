@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation (libs.gson)
     implementation (libs.retrofit)
+    implementation(libs.logging.interceptor)
     implementation (libs.converter.gson)
     implementation(libs.glide)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)

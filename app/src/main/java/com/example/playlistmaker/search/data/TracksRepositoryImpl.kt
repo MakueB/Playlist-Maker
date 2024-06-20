@@ -20,6 +20,10 @@ class TracksRepositoryImpl(
                 emit(Resource.Error("Проверьте подключение к интернету"))
             }
 
+            404 -> {
+                emit(Resource.Error("Ничего не нашлось"))
+            }
+
             200 -> {
                 with(response as TrackSearchResponse) {
                     val favorites = appDatabase.trackDao().getIdAll()
