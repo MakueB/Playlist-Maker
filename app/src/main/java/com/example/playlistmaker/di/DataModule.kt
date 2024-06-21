@@ -1,6 +1,8 @@
 package com.example.playlistmaker.di
 
 import android.content.Context
+import androidx.room.Room
+import com.example.playlistmaker.database.AppDatabase
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -11,6 +13,8 @@ import com.example.playlistmaker.sharing.data.ExternalNavigator
 import com.example.playlistmaker.sharing.data.impl.ExternalNavigatorImpl
 import com.example.playlistmaker.utils.Keys
 import com.google.gson.Gson
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -22,8 +26,21 @@ val dataModule = module {
         Retrofit.Builder()
             .baseUrl(ITUNES_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
+            .client(get())
             .build()
             .create()
+    }
+
+    single <OkHttpClient> {
+        val interceptor = HttpLoggingInterceptor()
+        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
+        OkHttpClient().newBuilder().addInterceptor(interceptor)
+            .build()
+    }
+
+    single {
+        Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .build()
     }
 
     single {
@@ -35,7 +52,7 @@ val dataModule = module {
     }
 
     single<SearchHistoryRepository> {
-        SearchHistoryRepositoryImpl(get(), get())
+        SearchHistoryRepositoryImpl(get(), get(), get())
     }
 
     single<NetworkClient>{

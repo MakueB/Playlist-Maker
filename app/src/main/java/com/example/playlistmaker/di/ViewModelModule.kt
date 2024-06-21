@@ -17,11 +17,11 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlayerViewModel(get())
+        PlayerViewModel(get(), get())
     }
 
-    viewModel {(trackId: Int) ->
-        FavoritesViewModel(trackId)
+    viewModel {
+        FavoritesViewModel(get(), get(), get())
     }
 
     viewModel { (playlistId: Int) ->

@@ -1,13 +1,15 @@
-package com.example.playlistmaker.search.data.network//package com.example.playlistmaker.data.network
+package com.example.playlistmaker.search.data.network
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Log
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.dto.Response
 import com.example.playlistmaker.search.data.dto.TrackSearchRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
 
 class RetrofitNetworkClient(
     private val context: Context,
@@ -24,7 +26,14 @@ class RetrofitNetworkClient(
         return withContext(Dispatchers.IO) {
             try {
                 val response = iTunesService.search(dto.query)
+                Log.d("Check", "response $response")
                 response.apply { responseCode = 200 }
+            }
+            catch (ex: Exception) {
+                if (ex is retrofit2.HttpException)
+                    Response().apply { responseCode = 404 }
+                else
+                    Response().apply { responseCode = 500 }
             }
             catch (e: Throwable) {
                 Response().apply { responseCode = 500 }

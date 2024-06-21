@@ -1,5 +1,6 @@
 package com.example.playlistmaker.search.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -8,6 +9,12 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
@@ -21,8 +28,8 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     private val _toastState = SingleLiveEvent<String>()
     val toastState: LiveData<String> = _toastState
 
-    private val _history = MutableLiveData<List<Track>>().apply { interactor.getSearchHistory() }
-    val history: LiveData<List<Track>> = _history
+    private val _history = MutableStateFlow<List<Track>>(emptyList())
+    val history = _history.asStateFlow()
 
     private var lastTextSearch: String? = null
 
@@ -30,6 +37,12 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
         debounce<String>(SEARCH_DEBOUNCE_DELAY, viewModelScope, true) { changedText ->
             search(changedText)
         }
+
+    init {
+        viewModelScope.launch {
+            updateSearchHistory()
+        }
+    }
 
     private fun showToast(message: String) {
         _toastState.postValue(message)
@@ -53,8 +66,8 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     private fun processResult(foundTracks: List<Track>?, errorMessage: String?) {
         val tracks = mutableListOf<Track>()
 
-        if (foundTracks != null) {
-            tracks.addAll(foundTracks)
+        foundTracks?.let {
+            tracks.addAll(it)
         }
 
         when {
@@ -97,17 +110,23 @@ class SearchViewModel(private val interactor: TracksInteractor) : ViewModel() {
     }
 
     fun saveToHistory(track: Track) {
-        interactor.saveToHistory(track)
-        updateSearchHistory()
+        viewModelScope.launch (Dispatchers.IO) {
+                interactor.saveToHistory(track)
+                updateSearchHistory()
+        }
     }
 
-    fun updateSearchHistory() {
-        val list = interactor.getSearchHistory()
-        _history.value = list
+    fun updateSearchHistory()  {
+        viewModelScope.launch (Dispatchers.IO) {
+            val list = interactor.getSearchHistory()
+            _history.value = list
+        }
     }
 
     fun clearHistory() {
-        interactor.clearHistory()
-        updateSearchHistory()
+        viewModelScope.launch (Dispatchers.IO) {
+            interactor.clearHistory()
+            updateSearchHistory()
+        }
     }
 }

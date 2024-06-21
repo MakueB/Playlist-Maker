@@ -4,7 +4,7 @@
     android:shape="rectangle" >
     <solid android:color="@color/edit_text_background"
         android:background="@android:color/transparent"/> <!--  заливка -->
-    <stroke android:width="1dip" android:color="@color/YPLightGray" /> <!--  граница -->
+    <stroke android:width="1dip" android:color="@color/edit_text_background" /> <!--  граница -->
     <corners
     android:bottomRightRadius="@dimen/cornerRadius_8"
     android:bottomLeftRadius="@dimen/cornerRadius_8"

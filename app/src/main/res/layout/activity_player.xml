@@ -186,7 +186,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="top"
-        app:constraint_referenced_ids="addButton, playButton, likeButton" />
+        app:constraint_referenced_ids="addButton, playButton, favoriteButton" />
 
     <ImageButton
         android:id="@+id/addButton"
@@ -209,19 +209,19 @@
         android:background="@android:color/transparent"
         android:src="@drawable/button_play"
         app:layout_constraintBottom_toTopOf="@id/elapsedTime"
-        app:layout_constraintEnd_toStartOf="@id/likeButton"
+        app:layout_constraintEnd_toStartOf="@id/favoriteButton"
         app:layout_constraintStart_toEndOf="@id/addButton"
         android:contentDescription="@string/play" />
 
     <ImageButton
-        android:id="@+id/likeButton"
+        android:id="@+id/favoriteButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/margin_16"
         android:layout_marginBottom="48dp"
         android:background="@android:color/transparent"
         android:contentDescription="@string/add_to_favorites"
-        android:src="@drawable/button_like"
+        android:src="@drawable/favorite_inactive"
         app:layout_constraintBottom_toTopOf="@id/trackInfoBarrier"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintStart_toEndOf="@id/playButton" />

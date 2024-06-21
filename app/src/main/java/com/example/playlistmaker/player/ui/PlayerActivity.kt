@@ -9,6 +9,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -27,6 +28,8 @@ class PlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         val track = args.track
+
+        setFavoriteButton(track)
 
         binding.apply {
             country.text = track.country
@@ -93,6 +96,26 @@ class PlayerActivity : AppCompatActivity() {
             binding.elapsedTime.text = time
         }
         viewModel.preparePlayer(track)
+
+        binding.favoriteButton.setOnClickListener {
+            viewModel.onFavoriteClicked(track)
+        }
+
+        viewModel.isFavorite.observe(this) { isFavorite ->
+            if (isFavorite) {
+                binding.favoriteButton.setImageResource(R.drawable.favorite_active)
+            } else {
+                binding.favoriteButton.setImageResource(R.drawable.favorite_inactive)
+            }
+        }
+    }
+
+    private fun setFavoriteButton(track: Track) {
+        if (track.isFavorite) {
+            binding.favoriteButton.setImageResource(R.drawable.favorite_active)
+        } else {
+            binding.favoriteButton.setImageResource(R.drawable.favorite_inactive)
+        }
     }
 
     override fun onPause() {
