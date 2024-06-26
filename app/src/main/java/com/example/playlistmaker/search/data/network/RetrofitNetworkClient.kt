@@ -26,7 +26,6 @@ class RetrofitNetworkClient(
         return withContext(Dispatchers.IO) {
             try {
                 val response = iTunesService.search(dto.query)
-                Log.d("Check", "response $response")
                 response.apply { responseCode = 200 }
             }
             catch (ex: Exception) {

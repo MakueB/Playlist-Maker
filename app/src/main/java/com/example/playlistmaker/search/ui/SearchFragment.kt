@@ -3,7 +3,6 @@ package com.example.playlistmaker.search.ui
 import android.annotation.SuppressLint
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -109,7 +108,6 @@ class SearchFragment : Fragment() {
 
 
         val hist = viewModel.history.value
-        Log.d("Check", "history value onViewCreated : $hist")
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -122,7 +120,7 @@ class SearchFragment : Fragment() {
         }
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     private fun setupListeners() {
         binding.editText.addTextChangedListener(
             onTextChanged = { s, _, _, _ ->
@@ -241,7 +239,7 @@ class SearchFragment : Fragment() {
         showMessage(message, "")
     }
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "SetTextI18n")
     private fun showMessage(text: String, additionalText: String) {
         if (text.isNotEmpty()) {
             binding.somethingWrongTexView.visibility = View.VISIBLE
