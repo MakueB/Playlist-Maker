@@ -8,7 +8,7 @@
     tools:context=".library.ui.FavoritesFragment">
 
     <Button
-        android:id="@+id/clearHistory"
+        android:id="@+id/newPlaylistBtn"
         style="@style/FragmentPlaylistButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -22,8 +22,10 @@
     <color name="nav_item_background_color_selected">#FFFFFF</color>
     <color name="divider_color">#E6E8EB</color>
     <color name="favorites_heart_color">#F56B6C</color>
-    <color name="create_button_color">#AEAFB4</color>
-    <color name="text_input_layout_stroke_color">#AEAFB4</color>
+    <color name="create_button">#AEAFB4</color>
+    <color name="create_button_enabled">#3772E7</color>
     <color name="text_color_hint">#1A1B22</color>
     <color name="text_color_line_hint">#3772E7</color>
+    <color name="box_outline">#AEAFB4</color>
+    <color name="box_outline_focused">#3772E7</color>
 </resources>

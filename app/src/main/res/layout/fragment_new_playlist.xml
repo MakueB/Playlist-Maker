@@ -43,7 +43,8 @@
         android:text="@string/create"
         app:layout_constraintBottom_toTopOf="@id/bottomBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toStartOf="@id/leftBorder" />
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        android:enabled="true"/>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -97,8 +98,9 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistName"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         style="@style/CustomOutlineBox"
+        android:layout_marginTop="@dimen/margin_32"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintTop_toBottomOf="@id/imageFrameLayout"
@@ -107,6 +109,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
             android:textCursorDrawable="@drawable/cursor" />
 
     </com.google.android.material.textfield.TextInputLayout>
@@ -114,8 +117,9 @@
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistDescription"
         android:layout_width="0dp"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
         style="@style/CustomOutlineBox"
+        android:layout_marginTop="@dimen/margin_16"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintTop_toBottomOf="@id/playlistName"
@@ -124,6 +128,7 @@
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColor="@color/textColor"
             android:textCursorDrawable="@drawable/cursor" />
 
     </com.google.android.material.textfield.TextInputLayout>
