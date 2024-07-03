@@ -41,4 +41,8 @@
     <string name="are_you_sure_you_want_to_exit">Вы действительно хотите выйти</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
+    <string name="create">Создать</string>
+    <string name="placeholder_image">Выберите обложку для плейлиста</string>
+    <string name="playlist_name">Название</string>
+    <string name="playlist_description">Описание</string>
 </resources>

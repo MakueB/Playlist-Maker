@@ -14,4 +14,6 @@
     <color name="nav_item_color_selected">#3772E7</color>
     <color name="nav_item_color_normal">#FFFFFF</color>
     <color name="divider_color">#E6E8EB</color>
+    <color name="text_input_layout_stroke_color">#FFFFFF</color>
+    <color name="text_color_hint">#FFFFFF</color>
 </resources>

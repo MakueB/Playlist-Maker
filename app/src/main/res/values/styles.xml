@@ -149,4 +149,35 @@
         <item name="itemActiveIndicatorStyle">@color/playerBackgroundColor</item>
         <item name="android:background">@color/playerBackgroundColor</item>
     </style>
+
+    //New Playlist
+    <style name="CreatePlaylistButtonStyle" parent="ShapeAppearanceOverlay.Material3.Button">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:fontWeight">@integer/font_weight_500</item>
+        <item name="android:textSize">@dimen/textSize_16</item>
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:background">@drawable/create_playlist_button_shape</item>
+        <item name="backgroundTint">@color/create_button_color</item>
+        <item name="android:radius">8dp</item>
+    </style>
+
+    <style name="CreatePlaylistToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/textSize_22</item>
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="CreatePlaylistToolbarStyle" parent="ThemeOverlay.Material3.Toolbar.Surface">
+        <item name="android:background">@color/playerBackgroundColor</item>
+        <item name="titleTextColor">@color/textColor</item>
+        <item name="android:radius">8dp</item>
+    </style>
+
+    <style name="CustomOutlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="android:textColorHint">@color/text_color_hint</item>
+        <item name="hintTextColor">#243897</item>
+    </style>
+
 </resources>
