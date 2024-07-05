@@ -1,33 +1,24 @@
-package com.example.playlistmaker.library.ui
+package com.example.playlistmaker.library.ui.playlists
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
+import com.example.playlistmaker.library.ui.LibraryFragmentDirections
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
 
 class PlaylistsFragment  : Fragment() {
-    companion object {
-        private const val PLAYLIST_ID = "playlist_id"
-
-        fun newInstance(playlistId: Int) = PlaylistsFragment().apply {
-            arguments = Bundle().apply {
-                putInt(PLAYLIST_ID, playlistId)
-            }
-        }
-    }
 
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding: FragmentPlaylistsBinding get() = _binding!!
 
-    private val playlistsViewModel: PlaylistsViewModel by viewModel {
-        parametersOf(requireArguments().getInt(PLAYLIST_ID))
-    }
+    private val playlistsViewModel: PlaylistsViewModel by viewModel()
 
     override fun onCreateView(
         inflater: LayoutInflater,

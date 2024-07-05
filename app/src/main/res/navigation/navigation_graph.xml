@@ -46,7 +46,7 @@
     </activity>
     <fragment
         android:id="@+id/newPlaylistFragment"
-        android:name="com.example.playlistmaker.library.ui.NewPlaylistFragment"
+        android:name="com.example.playlistmaker.library.ui.newplaylist.NewPlaylistFragment"
         android:label="fragment_new_playlist"
         tools:layout="@layout/fragment_new_playlist" />
 
