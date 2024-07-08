@@ -11,6 +11,7 @@ import com.example.playlistmaker.settings.domain.api.SettingsInteractor
 import com.example.playlistmaker.settings.domain.api.SettingsRepository
 import com.example.playlistmaker.settings.domain.impl.SettingsInteractorImpl
 import com.example.playlistmaker.utils.Keys
+import com.markodevcic.peko.PermissionRequester
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -31,5 +32,7 @@ class App : Application() {
         settingsInteractor = SettingsInteractorImpl(settingsRepository)
 
         settingsRepository.setDarkThemeEnabled(settingsRepository.isDarkThemeEnabled())
+
+        PermissionRequester.initialize(applicationContext)
     }
 }

@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistViewBinding
-import com.example.playlistmaker.library.domain.Playlist
+import com.example.playlistmaker.newplaylist.domain.models.Playlist
 
 class PlaylistsAdapter : RecyclerView.Adapter<PlaylistsViewHolder>() {
     var playlists: List<Playlist> = listOf()

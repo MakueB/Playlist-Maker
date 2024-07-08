@@ -68,6 +68,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.kotlinx.coroutines.android)
+    implementation (libs.peko)
     annotationProcessor(libs.androidx.room.compiler)
     annotationProcessor(libs.compiler)
     testImplementation(libs.junit)
