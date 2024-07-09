@@ -6,6 +6,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Track (
     val trackId: Int,
+    val playlistId: Long,
     val trackName: String, // Название композиции
     val artistName: String, // Имя исполнителя
     val trackDuration: String, // Продолжительность трека

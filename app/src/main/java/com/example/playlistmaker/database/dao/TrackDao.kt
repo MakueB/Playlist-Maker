@@ -13,7 +13,7 @@ interface TrackDao {
     suspend fun insertListOfTracks(tracks: List<TrackEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTrack(track: TrackEntity)
+    suspend fun insertTrack(track: TrackEntity): Long
 
     @Query("SELECT * FROM tracks ORDER BY added_timestamp DESC")
     suspend fun getTracksAll(): List<TrackEntity>
@@ -29,4 +29,7 @@ interface TrackDao {
 
     @Query("DELETE FROM tracks")
     suspend fun deleteAll()
+
+    @Query("SELECT * FROM tracks WHERE playlist_id = :playlistId")
+    suspend fun getTracksByPlaylistId(playlistId: Long): List<TrackEntity>
 }

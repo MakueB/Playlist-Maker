@@ -17,15 +17,15 @@ class PlaylistsViewHolder(private val binding: PlaylistViewBinding) :
         binding.playlistName?.text = playlist.name
         binding.tracksNumber?.text = "$tracksNumber ${CommonUtils.getTrackWordForm(tracksNumber)}"
 
-        if (playlist.imageUrl.isEmpty())
-            binding.playlistCover?.setImageResource(R.drawable.placeholder)
+        if (playlist.imageUrl.isNullOrEmpty())
+            binding.playlistCover.setImageResource(R.drawable.placeholder)
         else
             Glide.with(itemView)
                 .load(playlist.imageUrl)
                 .placeholder(R.drawable.placeholder)
                 .centerCrop()
                 .transform(RoundedCorners(cornersInPx))
-                .into(binding.playlistCover!!)
+                .into(binding.playlistCover)
     }
 }
 

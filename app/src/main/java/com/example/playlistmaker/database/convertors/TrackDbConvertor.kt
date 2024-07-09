@@ -1,4 +1,4 @@
-package com.example.playlistmaker.database.dao
+package com.example.playlistmaker.database.convertors
 
 import com.example.playlistmaker.database.TrackEntity
 import com.example.playlistmaker.search.domain.models.Track
@@ -7,6 +7,7 @@ class TrackDbConvertor {
     fun map(trackEntity: TrackEntity): Track {
         return Track(
             trackEntity.trackId,
+            trackEntity.playlistId,
             trackEntity.trackName,
             trackEntity.artistName,
             trackEntity.trackDuration,
@@ -23,6 +24,7 @@ class TrackDbConvertor {
     fun map(track: Track): TrackEntity {
         return TrackEntity(
             track.trackId,
+            track.playlistId,
             track.trackName,
             track.artistName,
             track.trackDuration,

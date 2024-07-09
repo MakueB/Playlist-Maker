@@ -3,7 +3,6 @@ package com.example.playlistmaker.database
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.example.playlistmaker.search.domain.models.Track
 
 @Entity(tableName = "playlists")
 data class PlaylistEntity (
@@ -14,7 +13,5 @@ data class PlaylistEntity (
     @ColumnInfo("description")
     val description: String,
     @ColumnInfo("image_url")
-    val imageUri: String?,
-    @ColumnInfo("track_list")
-    val trackList: List<Track>
+    val imageUri: String?
 )
