@@ -62,4 +62,12 @@ val dataModule = module {
     single <ExternalNavigator> {
         ExternalNavigatorImpl(get())
     }
+
+    single {
+        get<AppDatabase>().trackDao()
+    }
+
+    single {
+        get<AppDatabase>().playlistDao()
+    }
 }

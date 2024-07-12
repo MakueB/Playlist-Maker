@@ -1,8 +1,11 @@
 package com.example.playlistmaker.di
 
+import com.example.playlistmaker.database.convertors.EmptyPlaylistDbConvertor
 import com.example.playlistmaker.database.convertors.TrackDbConvertor
 import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
 import com.example.playlistmaker.library.domain.api.FavoritesRepository
+import com.example.playlistmaker.newplaylist.data.NewPlaylistRepositoryImpl
+import com.example.playlistmaker.newplaylist.domain.api.NewPlaylistRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
@@ -16,11 +19,11 @@ import com.example.playlistmaker.sharing.domain.api.SharingRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single <TracksRepository>{
+    single<TracksRepository> {
         TracksRepositoryImpl(get(), get())
     }
 
-    single <SearchHistoryRepository> {
+    single<SearchHistoryRepository> {
         SearchHistoryRepositoryImpl(get(), get(), get())
     }
 
@@ -32,13 +35,23 @@ val repositoryModule = module {
         SharingRepositoryImpl(get(), get())
     }
 
-    factory  <PlayerRepository> {
+    factory<PlayerRepository> {
         PlayerRepositoryImpl()
     }
 
-    factory { TrackDbConvertor() }
+    factory {
+        TrackDbConvertor()
+    }
 
-    single <FavoritesRepository> {
+    factory {
+        EmptyPlaylistDbConvertor()
+    }
+
+    single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
+    }
+
+    single<NewPlaylistRepository> {
+        NewPlaylistRepositoryImpl(get(), get())
     }
 }

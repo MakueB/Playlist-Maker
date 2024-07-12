@@ -9,7 +9,7 @@ class NewPlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,
     private val emptyPlaylistDbConvertor: EmptyPlaylistDbConvertor
 ) : NewPlaylistRepository {
-    override suspend fun insertPlaylist(playlist: Playlist): Long {
+    override suspend fun savePlaylist(playlist: Playlist): Long {
         return playlistDao.insert(emptyPlaylistDbConvertor.map(playlist))
     }
 }
