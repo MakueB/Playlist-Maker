@@ -88,13 +88,6 @@
             app:srcCompat="@drawable/photo_placeholder" />
     </FrameLayout>
 
-<!--    не забыть поменять плейсхолдер на изображение в глайд-->
-
-<!--    Glide.with(context)-->
-<!--    .load(imageUrl)-->
-<!--    .into(coverImageView)-->
-<!--    .clearOnDetach() // Удалить плейсхолдер, когда изображение загружено-->
-
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistName"
         android:layout_width="0dp"
@@ -107,6 +100,7 @@
         android:hint="@string/playlist_name">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlistNameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textColor"
@@ -126,6 +120,7 @@
         android:hint="@string/playlist_description">
 
         <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/playlistDescriptionEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/textColor"

@@ -45,4 +45,7 @@
     <string name="placeholder_image">Выберите обложку для плейлиста</string>
     <string name="playlist_name">Название</string>
     <string name="playlist_description">Описание</string>
+    <string name="rationale_title">Для выбора изображения плейлиста приложению нужен доступ к галерее. Разрешить?</string>
+    <string name="open_settings_request">Предоставьте разрешения в настройках для выбора изображения</string>
+    <string name="image_permission_denied">Чтобы выбрать изображение, нужно предоставить разрешения в настройках</string>
 </resources>
