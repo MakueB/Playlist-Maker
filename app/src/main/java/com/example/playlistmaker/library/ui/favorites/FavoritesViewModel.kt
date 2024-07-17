@@ -6,7 +6,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
-import com.example.playlistmaker.library.domain.api.FavoritesInteractor
+import com.example.playlistmaker.library.domain.favorites.api.FavoritesInteractor
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Dispatchers

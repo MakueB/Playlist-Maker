@@ -61,17 +61,11 @@ class NewPlaylistFragment : Fragment() {
             binding.placeholder.isVisible = uri == null
         }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
-
         contentResolver = requireContext().contentResolver
         return binding.root
     }
@@ -80,7 +74,7 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
+        setupToolbar()
 
         binding.playlistNameEditText.addTextChangedListener {
             viewModel.updatePlaylistName(it.toString())
@@ -103,8 +97,7 @@ class NewPlaylistFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        setupToolbar()
-
+        // Обработка кнопки назад
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 handleBackPressed()
@@ -120,12 +113,12 @@ class NewPlaylistFragment : Fragment() {
 
     private fun handleBackPressed() {
         if (hasUnsavedChanges()) {
-            Log.d("check", "imageUri in handleBackPressed()  is ${viewModel.imageUri.value.toString()}")
-            Log.d("check", "uri in handleBackPressed()  is ${uri.toString()}")
+            Log.d("check", "imageUri in handleBackPressed() is ${viewModel.imageUri.value.toString()}")
+            Log.d("check", "uri in handleBackPressed() is ${uri.toString()}")
             showExitConfirmationDialog()
         } else {
-            Log.d("check", "imageUri in handleBackPressed() else  is ${viewModel.imageUri.value.toString()}")
-            Log.d("check", "uri in handleBackPressed() else   is ${uri.toString()}")
+            Log.d("check", "imageUri in handleBackPressed() else is ${viewModel.imageUri.value.toString()}")
+            Log.d("check", "uri in handleBackPressed() else is ${uri.toString()}")
             findNavController().navigateUp()
         }
     }
@@ -216,8 +209,8 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun hasUnsavedChanges(): Boolean {
-        Log.d("check", "imageUri in hasUnsavedChanges()  is ${viewModel.imageUri.value.toString()}")
-        Log.d("check", "uri in hasUnsavedChanges()  is ${viewModel.imageUri.value.toString()}")
+        Log.d("check", "imageUri in hasUnsavedChanges() is ${viewModel.imageUri.value.toString()}")
+        Log.d("check", "uri in hasUnsavedChanges() is ${uri.toString()}")
         return !viewModel.playlistName.value.isNullOrEmpty() ||
                 !viewModel.playlistDescription.value.isNullOrEmpty() ||
                 viewModel.imageUri.value != null

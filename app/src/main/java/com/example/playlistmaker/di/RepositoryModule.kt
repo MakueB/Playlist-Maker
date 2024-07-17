@@ -2,8 +2,8 @@ package com.example.playlistmaker.di
 
 import com.example.playlistmaker.database.convertors.EmptyPlaylistDbConvertor
 import com.example.playlistmaker.database.convertors.TrackDbConvertor
-import com.example.playlistmaker.library.data.FavoritesRepositoryImpl
-import com.example.playlistmaker.library.domain.api.FavoritesRepository
+import com.example.playlistmaker.library.data.favorites.FavoritesRepositoryImpl
+import com.example.playlistmaker.library.domain.favorites.api.FavoritesRepository
 import com.example.playlistmaker.newplaylist.data.NewPlaylistRepositoryImpl
 import com.example.playlistmaker.newplaylist.domain.api.NewPlaylistRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
