@@ -2,6 +2,7 @@ package com.example.playlistmaker.newplaylist.ui
 
 import android.Manifest
 import android.content.ContentResolver
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -10,10 +11,12 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.Settings
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -58,6 +61,10 @@ class NewPlaylistFragment : Fragment() {
             binding.placeholder.isVisible = uri == null
         }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -95,6 +102,32 @@ class NewPlaylistFragment : Fragment() {
             uri?.let { saveImageToPrivateStorage(it) }
             findNavController().navigateUp()
         }
+
+        setupToolbar()
+
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleBackPressed()
+            }
+        })
+    }
+
+    private fun setupToolbar() {
+        binding.toolbar.setNavigationOnClickListener {
+            handleBackPressed()
+        }
+    }
+
+    private fun handleBackPressed() {
+        if (hasUnsavedChanges()) {
+            Log.d("check", "imageUri in handleBackPressed()  is ${viewModel.imageUri.value.toString()}")
+            Log.d("check", "uri in handleBackPressed()  is ${uri.toString()}")
+            showExitConfirmationDialog()
+        } else {
+            Log.d("check", "imageUri in handleBackPressed() else  is ${viewModel.imageUri.value.toString()}")
+            Log.d("check", "uri in handleBackPressed() else   is ${uri.toString()}")
+            findNavController().navigateUp()
+        }
     }
 
     private fun openGallery() {
@@ -108,9 +141,22 @@ class NewPlaylistFragment : Fragment() {
                             ActivityResultContracts.PickVisualMedia.ImageOnly
                         )
                     )
-                    is PermissionResult.Denied.NeedsRationale -> openDialog(getString(R.string.rationale_title), ::openGallery)
-                    is PermissionResult.Denied.DeniedPermanently -> openDialog(getString(R.string.open_settings_request), ::openSettings)
-                    is PermissionResult.Cancelled -> Toast.makeText(requireContext(), getString(R.string.image_permission_denied), Toast.LENGTH_SHORT).show()
+
+                    is PermissionResult.Denied.NeedsRationale -> openDialog(
+                        getString(R.string.rationale_title),
+                        ::openGallery
+                    )
+
+                    is PermissionResult.Denied.DeniedPermanently -> openDialog(
+                        getString(R.string.open_settings_request),
+                        ::openSettings
+                    )
+
+                    is PermissionResult.Cancelled -> Toast.makeText(
+                        requireContext(),
+                        getString(R.string.image_permission_denied),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }
         }
@@ -154,5 +200,30 @@ class NewPlaylistFragment : Fragment() {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+    }
+
+    private fun showExitConfirmationDialog() {
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(getString(R.string.exit_creation_title))
+            .setMessage(getString(R.string.exit_creation_message))
+            .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton(getString(R.string.finish)) { _, _ ->
+                findNavController().navigateUp()
+            }
+            .show()
+    }
+
+    private fun hasUnsavedChanges(): Boolean {
+        Log.d("check", "imageUri in hasUnsavedChanges()  is ${viewModel.imageUri.value.toString()}")
+        Log.d("check", "uri in hasUnsavedChanges()  is ${viewModel.imageUri.value.toString()}")
+        return !viewModel.playlistName.value.isNullOrEmpty() ||
+                !viewModel.playlistDescription.value.isNullOrEmpty() ||
+                viewModel.imageUri.value != null
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
     }
 }

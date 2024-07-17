@@ -1,6 +1,7 @@
 package com.example.playlistmaker.newplaylist.ui
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -39,6 +40,7 @@ class NewPlaylistViewModel (
 
     fun updateImageUri (uri: Uri?) {
         _imageUri.value = uri
+        Log.d("check", "imageUri is ${imageUri.value.toString()}")
     }
 
     fun savePlaylist() {
