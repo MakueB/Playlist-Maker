@@ -214,52 +214,11 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        Log.d("picker", "onResume")
-//        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-//            override fun handleOnBackPressed() {
-//                handleBackPressed()
-//            }
-//        })
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        Log.d("picker", "onCreate")
-    }
-
-    override fun onViewStateRestored(savedInstanceState: Bundle?) {
-        super.onViewStateRestored(savedInstanceState)
-        Log.d("picker", "onViewStateRestored")
-    }
-
-    override fun onStart() {
-        super.onStart()
-        Log.d("picker", "onStart")
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Log.d("picker", "onPause")
-    }
-
-    override fun onStop() {
-        super.onStop()
-        Log.d("picker", "onStop")
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        Log.d("picker", "onSaveInstanceState")
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("picker", "onDestroyView")
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        Log.d("picker", "onDestroy")
+        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                handleBackPressed()
+            }
+        })
     }
 
     private fun showToast(message: String) {

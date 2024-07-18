@@ -17,5 +17,4 @@ class FavoritesInteractorImpl(private val repository: FavoritesRepository) : Fav
     override suspend fun getFavoritesAll(): Flow<List<Track>> {
         return repository.getFavoritesAll()
     }
-
 }

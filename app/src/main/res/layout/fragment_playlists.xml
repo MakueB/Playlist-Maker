@@ -32,7 +32,7 @@
     </androidx.recyclerview.widget.RecyclerView>
 
     <ImageView
-        android:id="@+id/favoritesPlaceholder"
+        android:id="@+id/placeholder"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:contentDescription="@null"
