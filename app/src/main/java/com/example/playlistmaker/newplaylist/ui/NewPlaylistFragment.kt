@@ -2,7 +2,6 @@ package com.example.playlistmaker.newplaylist.ui
 
 import android.Manifest
 import android.content.ContentResolver
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -74,6 +73,8 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        Log.d("picker", "onViewCreated")
+
         setupToolbar()
 
         binding.playlistNameEditText.addTextChangedListener {
@@ -97,12 +98,13 @@ class NewPlaylistFragment : Fragment() {
             findNavController().navigateUp()
         }
 
-        // Обработка кнопки назад
-        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                handleBackPressed()
-            }
-        })
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    handleBackPressed()
+                }
+            })
     }
 
     private fun setupToolbar() {
@@ -113,12 +115,8 @@ class NewPlaylistFragment : Fragment() {
 
     private fun handleBackPressed() {
         if (hasUnsavedChanges()) {
-            Log.d("check", "imageUri in handleBackPressed() is ${viewModel.imageUri.value.toString()}")
-            Log.d("check", "uri in handleBackPressed() is ${uri.toString()}")
             showExitConfirmationDialog()
         } else {
-            Log.d("check", "imageUri in handleBackPressed() else is ${viewModel.imageUri.value.toString()}")
-            Log.d("check", "uri in handleBackPressed() else is ${uri.toString()}")
             findNavController().navigateUp()
         }
     }
@@ -209,11 +207,59 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun hasUnsavedChanges(): Boolean {
-        Log.d("check", "imageUri in hasUnsavedChanges() is ${viewModel.imageUri.value.toString()}")
-        Log.d("check", "uri in hasUnsavedChanges() is ${uri.toString()}")
         return !viewModel.playlistName.value.isNullOrEmpty() ||
                 !viewModel.playlistDescription.value.isNullOrEmpty() ||
                 viewModel.imageUri.value != null
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Log.d("picker", "onResume")
+//        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+//            override fun handleOnBackPressed() {
+//                handleBackPressed()
+//            }
+//        })
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        Log.d("picker", "onCreate")
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        Log.d("picker", "onViewStateRestored")
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Log.d("picker", "onStart")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Log.d("picker", "onPause")
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d("picker", "onStop")
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        Log.d("picker", "onSaveInstanceState")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("picker", "onDestroyView")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("picker", "onDestroy")
     }
 
     private fun showToast(message: String) {
