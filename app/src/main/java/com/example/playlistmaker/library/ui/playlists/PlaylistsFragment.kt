@@ -1,6 +1,7 @@
 package com.example.playlistmaker.library.ui.playlists
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,6 +49,10 @@ class PlaylistsFragment  : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             render(it)
         }
+
+        viewModel.playlistLiveData.observe(viewLifecycleOwner) {
+            Log.d("playlist", it.toString())
+        }
     }
 
     private fun render(state: PlaylistsState) {
@@ -68,6 +73,10 @@ class PlaylistsFragment  : Fragment() {
         binding.somethingWrongTexView.isVisible = false
         binding.placeholder.isVisible = false
         binding.recyclerView.isVisible = true
+
+        adapter?.playlists?.clear()
+        adapter?.playlists?.addAll(playlists)
+        adapter?.notifyDataSetChanged()
     }
 
     override fun onResume() {

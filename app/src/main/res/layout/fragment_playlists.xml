@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -15,7 +15,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_24"
-        android:text="@string/new_playlist">
+        android:text="@string/new_playlist"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </Button>
 
@@ -27,7 +30,10 @@
         tools:itemCount="4"
         tools:spanCount="2"
         app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
-        android:visibility="visible">
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
 
@@ -40,7 +46,10 @@
         android:layout_marginTop="46dp"
         android:layout_marginBottom="@dimen/margin_16"
         android:visibility="gone"
-        android:src="@drawable/nothing_found_light">
+        android:src="@drawable/nothing_found_light"
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </ImageView>
 
@@ -56,8 +65,11 @@
         android:text="@string/no_playlists"
         android:ellipsize="none"
         android:maxLines="2"
-        android:visibility="gone">
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </com.google.android.material.textview.MaterialTextView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

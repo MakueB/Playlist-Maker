@@ -95,6 +95,7 @@ class NewPlaylistFragment : Fragment() {
 
         binding.createButton.setOnClickListener {
             uri?.let { saveImageToPrivateStorage(it) }
+            viewModel.savePlaylist()
             findNavController().navigateUp()
         }
 

@@ -7,7 +7,7 @@ import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 
 class PlaylistsAdapter : RecyclerView.Adapter<PlaylistsViewHolder>() {
-    var playlists: List<Playlist> = listOf()
+    var playlists: MutableList<Playlist> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
         return PlaylistsViewHolder(PlaylistViewBinding.inflate(layoutInspector, parent, false))
