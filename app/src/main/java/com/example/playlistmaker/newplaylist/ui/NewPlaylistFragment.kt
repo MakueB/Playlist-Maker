@@ -8,9 +8,7 @@ import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,14 +20,10 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.markodevcic.peko.PermissionRequester
-import com.markodevcic.peko.PermissionResult
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
@@ -40,9 +34,8 @@ class NewPlaylistFragment : Fragment() {
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding: FragmentNewPlaylistBinding get() = _binding!!
 
-    private val requester = PermissionRequester.instance()
+    //private val requester = PermissionRequester.instance()
     private lateinit var contentResolver: ContentResolver
-
     private var uri: Uri? = null
 
     private val readImagesPermission: String
@@ -73,8 +66,6 @@ class NewPlaylistFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        Log.d("picker", "onViewCreated")
-
         setupToolbar()
 
         binding.playlistNameEditText.addTextChangedListener {
@@ -100,7 +91,7 @@ class NewPlaylistFragment : Fragment() {
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
-            this,
+            viewLifecycleOwner,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     handleBackPressed()
@@ -123,36 +114,44 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun openGallery() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            requester.request(
-                readImagesPermission
-            ).collect { result ->
-                when (result) {
-                    is PermissionResult.Granted -> photoPicker.launch(
-                        PickVisualMediaRequest(
-                            ActivityResultContracts.PickVisualMedia.ImageOnly
-                        )
-                    )
-
-                    is PermissionResult.Denied.NeedsRationale -> openDialog(
-                        getString(R.string.rationale_title),
-                        ::openGallery
-                    )
-
-                    is PermissionResult.Denied.DeniedPermanently -> openDialog(
-                        getString(R.string.open_settings_request),
-                        ::openSettings
-                    )
-
-                    is PermissionResult.Cancelled -> Toast.makeText(
-                        requireContext(),
-                        getString(R.string.image_permission_denied),
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }
+        photoPicker.launch(
+            PickVisualMediaRequest(
+                ActivityResultContracts.PickVisualMedia.ImageOnly
+            )
+        )
     }
+
+//    private fun openGallery() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            requester.request(
+//                readImagesPermission
+//            ).collect { result ->
+//                when (result) {
+//                    is PermissionResult.Granted -> photoPicker.launch(
+//                        PickVisualMediaRequest(
+//                            ActivityResultContracts.PickVisualMedia.ImageOnly
+//                        )
+//                    )
+//
+//                    is PermissionResult.Denied.NeedsRationale -> openDialog(
+//                        getString(R.string.rationale_title),
+//                        ::openGallery
+//                    )
+//
+//                    is PermissionResult.Denied.DeniedPermanently -> openDialog(
+//                        getString(R.string.open_settings_request),
+//                        ::openSettings
+//                    )
+//
+//                    is PermissionResult.Cancelled -> Toast.makeText(
+//                        requireContext(),
+//                        getString(R.string.image_permission_denied),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        }
+//    }
 
     private fun openSettings() {
         val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
@@ -180,7 +179,7 @@ class NewPlaylistFragment : Fragment() {
 
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(
-            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            requireActivity().filesDir,
             getString(R.string.app_name)
         )
         if (!filePath.exists()) {
@@ -192,6 +191,9 @@ class NewPlaylistFragment : Fragment() {
         BitmapFactory
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+        inputStream?.close()
+        outputStream.close()
     }
 
     private fun showExitConfirmationDialog() {

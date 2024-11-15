@@ -1,16 +1,22 @@
 package com.example.playlistmaker.player.ui
 
+import android.Manifest
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
 import androidx.navigation.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
+import com.example.playlistmaker.library.ui.playlists.PlaylistsState
+import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
@@ -22,12 +28,30 @@ class PlayerActivity : AppCompatActivity() {
 
     private val args by navArgs<PlayerActivityArgs>()
 
+    private var adapter: PlayerAdapter? = null
+
+    private val readImagesPermission: String
+        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            Manifest.permission.READ_MEDIA_IMAGES
+        } else {
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val bottomSheetContainer = binding.bottomSheet
+        val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
         val track = args.track
+
+        adapter = PlayerAdapter()
+        binding.playlistsRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        binding.playlistsRecyclerView.adapter = adapter
 
         setFavoriteButton(track)
 
@@ -101,6 +125,14 @@ class PlayerActivity : AppCompatActivity() {
             viewModel.onFavoriteClicked(track)
         }
 
+        binding.addButton.setOnClickListener {
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            viewModel.getPlaylistsAll()
+            viewModel.state.observe(this) {
+                render(it)
+            }
+        }
+
         viewModel.isFavorite.observe(this) { isFavorite ->
             if (isFavorite) {
                 binding.favoriteButton.setImageResource(R.drawable.favorite_active)
@@ -108,6 +140,23 @@ class PlayerActivity : AppCompatActivity() {
                 binding.favoriteButton.setImageResource(R.drawable.favorite_inactive)
             }
         }
+    }
+
+    private fun render(state: PlaylistsState) {
+        when (state) {
+            is PlaylistsState.Content -> showContent(state.playlists)
+            is PlaylistsState.Empty -> showEmpty(state.message)
+            else -> showEmpty(getString(R.string.library_is_empty))
+        }
+    }
+    private fun showEmpty(message: String) {
+
+    }
+
+    private fun showContent(playlists: List<Playlist>) {
+        adapter?.playlists?.clear()
+        adapter?.playlists?.addAll(playlists)
+        adapter?.notifyDataSetChanged()
     }
 
     private fun setFavoriteButton(track: Track) {
