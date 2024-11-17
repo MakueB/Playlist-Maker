@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@color/handle_color"/>  <!-- Цвет прямоугольника -->
+    <corners android:radius="44dp"/>  <!-- Закругление углов -->
+</shape>

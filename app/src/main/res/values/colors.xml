@@ -28,4 +28,5 @@
     <color name="text_color_line_hint">#3772E7</color>
     <color name="box_outline">#AEAFB4</color>
     <color name="box_outline_focused">#3772E7</color>
+    <color name="handle_color">#E6E8EB</color>
 </resources>
