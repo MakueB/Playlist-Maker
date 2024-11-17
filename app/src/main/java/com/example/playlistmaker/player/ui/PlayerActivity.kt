@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -17,6 +18,7 @@ import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity() {
@@ -46,6 +48,23 @@ class PlayerActivity : AppCompatActivity() {
         val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
             state = BottomSheetBehavior.STATE_HIDDEN
         }
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback(){
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                val alpha = if (slideOffset < 0) 0f else slideOffset
+                binding.overlay.alpha = alpha
+            }
+        })
 
         val track = args.track
 
@@ -133,6 +152,10 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
+        binding.newPlaylistButton.setOnClickListener {
+            navigateToNewPlaylist()
+        }
+
         viewModel.isFavorite.observe(this) { isFavorite ->
             if (isFavorite) {
                 binding.favoriteButton.setImageResource(R.drawable.favorite_active)
@@ -140,6 +163,11 @@ class PlayerActivity : AppCompatActivity() {
                 binding.favoriteButton.setImageResource(R.drawable.favorite_inactive)
             }
         }
+    }
+
+    private fun navigateToNewPlaylist() {
+        val navController = findNavController()
+
     }
 
     private fun render(state: PlaylistsState) {

@@ -105,9 +105,6 @@ class SearchFragment : Fragment() {
                 }
             }
         }
-
-
-        val hist = viewModel.history.value
     }
 
     @SuppressLint("NotifyDataSetChanged")

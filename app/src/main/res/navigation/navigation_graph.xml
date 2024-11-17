@@ -39,6 +39,9 @@
         android:name="com.example.playlistmaker.player.ui.PlayerActivity"
         android:label="activity_player"
         tools:layout="@layout/activity_player">
+        <action
+            android:id="@+id/action_playerActivity_to_newPlaylistFragment"
+            app:destination="@id/newPlaylistFragment" />
         <argument
             android:name="track"
             app:argType="com.example.playlistmaker.search.domain.models.Track"
