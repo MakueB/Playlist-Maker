@@ -42,7 +42,7 @@
             app:layout_constraintGuide_end="16dp" />
 
         <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/fragment_container_view"
+            android:id="@+id/player_fragment_container_view"
             android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="0dp"
             android:layout_height="0dp"

@@ -1,22 +1,26 @@
 package com.example.playlistmaker.player.ui
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.ActivityPlayerBinding
 import com.example.playlistmaker.library.ui.playlists.PlaylistsState
+import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlayerActivity : AppCompatActivity(), BottomSheetListener {
+    companion object {
+        private const val ARG_FRAGMENT = "destination_fragment"
+    }
 
 
     private val viewModel by viewModel<PlayerViewModel>()
@@ -39,7 +43,7 @@ class PlayerActivity : AppCompatActivity(), BottomSheetListener {
 
         if(savedInstanceState == null) {
             supportFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container_view, PlayerFragment.newInstance(track))
+                .replace(R.id.player_fragment_container_view, PlayerFragment.newInstance(track))
                 .commit()
         }
 //        val navHostFragment = supportFragmentManager.findFragmentById(R.id.fragment_container_view) as NavHostFragment
@@ -77,8 +81,14 @@ class PlayerActivity : AppCompatActivity(), BottomSheetListener {
     }
 
     private fun navigateToNewPlaylist() {
-        val navController = supportFragmentManager.findFragmentById(R.id.fragment_container_view)?.findNavController()
-        navController?.navigate(R.id.action_playerFragment_to_newPlaylistFragment)
+        val intent = Intent(this, MainActivity::class.java).apply {
+            putExtra(ARG_FRAGMENT, "NewPlaylistFragment")
+        }
+        startActivity(intent)
+//        val action = PlayerActivityDirections.actionPlayerActivityToNewPlaylistFragment()
+//        findNavController().navigate(action)
+//        val navController = supportFragmentManager.findFragmentById(R.id.player_fragment_container_view)?.findNavController()
+//        navController?.navigate(R.id.action_playerFragment_to_newPlaylistFragment)
     }
 
     private fun render(state: PlaylistsState) {
