@@ -6,26 +6,65 @@
     android:layout_height="match_parent"
     android:background="@color/playerBackgroundColor">
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        style="@style/SettingsTheme"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:background="@color/playerBackgroundColor"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="parent"
-        app:layout_constraintEnd_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="parent"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        app:navGraph="@navigation/navigation_graph"
-        app:defaultNavHost="true"/>
+        tools:context=".player.ui.PlayerActivity">
 
-<!--    ЗДЕСЬ BOTTOM SHEET!!!!!!!!!!!!-->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/leftBorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/margin_16" />
 
-    <View android:id="@+id/overlay"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/rightBorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/margin_16" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/topBorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/margin_16" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottomBorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="16dp" />
+
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/fragment_container_view"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@color/playerBackgroundColor"
+            app:defaultNavHost="true"
+            app:layout_constraintTop_toTopOf="@id/topBorder"
+            app:layout_constraintEnd_toEndOf="@id/rightBorder"
+            app:layout_constraintStart_toStartOf="@id/leftBorder"
+            app:layout_constraintBottom_toBottomOf="@id/bottomBorder"
+            app:navGraph="@navigation/navigation_graph" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    <!--    ЗДЕСЬ BOTTOM SHEET!!!!!!!!!!!!-->
+
+    <View
+        android:id="@+id/overlay"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#99000000"
-        android:visibility="gone"/>
+        android:visibility="gone" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/bottom_sheet"
@@ -41,12 +80,12 @@
             android:layout_width="50dp"
             android:layout_height="4dp"
             android:layout_gravity="center_horizontal"
-            android:background="@drawable/rounded_handle"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="12dp"/>
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/rounded_handle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
             android:id="@+id/bottomSheetTitle"
@@ -56,13 +95,13 @@
             android:textAppearance="?attr/textAppearanceHeadline6"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/handle"/>
+            app:layout_constraintTop_toBottomOf="@+id/handle" />
         <!-- Кнопка "Новый плейлист" -->
         <Button
             android:id="@+id/newPlaylistButton"
+            style="@style/FragmentPlaylistButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            style="@style/FragmentPlaylistButtonStyle"
             android:layout_marginTop="@dimen/margin_16"
             android:text="@string/new_playlist"
             app:layout_constraintEnd_toEndOf="parent"

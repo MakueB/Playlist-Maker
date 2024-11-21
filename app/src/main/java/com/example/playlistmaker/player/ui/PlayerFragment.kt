@@ -7,7 +7,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
@@ -16,7 +15,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -52,11 +50,14 @@ class PlayerFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            track = it.getParcelable(ARG_TRACK, Track::class.java)
+            track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                it.getParcelable(ARG_TRACK, Track::class.java)
+            } else {
+                it.getParcelable(ARG_TRACK)
+            }
         }
     }
 
@@ -168,19 +169,11 @@ class PlayerFragment : Fragment() {
         }  else {
             throw RuntimeException("$context must implement BottomSheetListener")
         }
-        if (activity is PlayerActivity) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-                .isVisible = false
-        }
     }
 
     override fun onDetach() {
         super.onDetach()
         bottomSheetListener = null
-        if (activity is PlayerActivity) {
-            requireActivity().findViewById<BottomNavigationView>(R.id.bottom_navigation_view)
-                .isVisible = true
-        }
 
     }
 }
