@@ -11,7 +11,7 @@
         tools:layout="@layout/fragment_search">
         <action
             android:id="@+id/action_searchFragment_to_playerActivity"
-            app:destination="@id/playerActivity"
+            app:destination="@id/playerFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -27,7 +27,7 @@
         tools:layout="@layout/fragment_library" >
         <action
             android:id="@+id/action_libraryFragment_to_playerActivity"
-            app:destination="@id/playerActivity" />
+            app:destination="@id/playerFragment" />
         <action
             android:id="@+id/action_libraryFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />
@@ -37,16 +37,6 @@
         android:name="com.example.playlistmaker.settings.ui.SettingsFragment"
         android:label="SettingsFragment"
         tools:layout="@layout/fragment_settings"/>
-    <activity
-        android:id="@+id/playerActivity"
-        android:name="com.example.playlistmaker.player.ui.PlayerActivity"
-        android:label="activity_player"
-        tools:layout="@layout/activity_player">
-        <argument
-            android:name="track"
-            app:argType="com.example.playlistmaker.search.domain.models.Track"
-            />
-    </activity>
     <fragment
         android:id="@+id/newPlaylistFragment"
         android:name="com.example.playlistmaker.newplaylist.ui.NewPlaylistFragment"
@@ -57,6 +47,10 @@
         android:name="com.example.playlistmaker.player.ui.PlayerFragment"
         android:label="PlayerFragment"
         tools:layout="@layout/fragment_player">
+        <argument
+            android:name="track"
+            app:argType="com.example.playlistmaker.search.domain.models.Track"
+            />
         <action
             android:id="@+id/action_playerFragment_to_newPlaylistFragment"
             app:destination="@id/newPlaylistFragment" />

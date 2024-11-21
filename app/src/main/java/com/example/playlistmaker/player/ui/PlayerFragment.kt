@@ -1,46 +1,37 @@
 package com.example.playlistmaker.player.ui
 
-import android.content.Context
-import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class PlayerFragment : Fragment() {
-    companion object {
-        private const val ARG_TRACK = "track"
-
-        fun newInstance(track: Track): PlayerFragment {
-            val fragment = PlayerFragment()
-            val args = Bundle()
-            args.putParcelable(ARG_TRACK, track)
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
     private var _binding: FragmentPlayerBinding? = null
     private val binding: FragmentPlayerBinding get() = _binding!!
 
     private val viewModel by viewModel<PlayerViewModel>()
 
-    private var track: Track? = null
+    private lateinit var bottomSheetContainer: ConstraintLayout
+    private lateinit var bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>
 
-    //private val args by navArgs<PlayerFragmentArgs>()
-
-    private var bottomSheetListener: BottomSheetListener? = null
+    private val args by navArgs<PlayerFragmentArgs>()
+    private var adapter: PlayerAdapter? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,50 +41,39 @@ class PlayerFragment : Fragment() {
         return binding.root
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            track = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                it.getParcelable(ARG_TRACK, Track::class.java)
-            } else {
-                it.getParcelable(ARG_TRACK)
-            }
-        }
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //val track = args.track
+        val track = args.track
 
-        track?.let { setFavoriteButton(it) }
+        setFavoriteButton(track)
 
         binding.apply {
-            country.text = track?.country
-            genre.text = track?.primaryGenreName
-            releaseDate.text = track?.releaseDate?.substring(0, 4)
+            country.text = track.country
+            genre.text = track.primaryGenreName
+            releaseDate.text = track.releaseDate?.substring(0, 4)
 
-            if (track?.collectionName.isNullOrEmpty()) {
+            if (track.collectionName.isNullOrEmpty()) {
                 albumGroup.visibility = View.GONE
             } else {
                 albumGroup.isVisible = true
-                collectionName.text = track?.collectionName
+                collectionName.text = track.collectionName
             }
 
-            duration.text = track?.trackDuration
-            collectionNameTextView.text = track?.collectionName
-            trackName.text = track?.trackName
+            duration.text = track.trackDuration
+            collectionNameTextView.text = track.collectionName
+            trackName.text = track.trackName
         }
 
         val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
 
         binding.apply {
-            if (track?.artworkUrl100?.isEmpty() == true)
+            if (track.artworkUrl100.isEmpty())
                 cover.setImageResource(R.drawable.placeholder)
             else
                 context?.let { context ->
                     Glide.with(context)
-                        .load(track?.getCoverArtwork())
+                        .load(track.getCoverArtwork())
                         .placeholder(R.drawable.placeholder)
                         .centerCrop()
                         .transform(RoundedCorners(cornersInPx))
@@ -137,11 +117,13 @@ class PlayerFragment : Fragment() {
         viewModel.preparePlayer(track)
 
         binding.favoriteButton.setOnClickListener {
-            track?.let { it1 -> viewModel.onFavoriteClicked(it1) }
+            track.let { it1 -> viewModel.onFavoriteClicked(it1) }
         }
 
         binding.addButton.setOnClickListener {
-            bottomSheetListener?.showBottomSheet()
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            viewModel.getPlaylistsAll()
+            adapter?.notifyDataSetChanged()
         }
 
         viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
@@ -151,6 +133,40 @@ class PlayerFragment : Fragment() {
                 binding.favoriteButton.setImageResource(R.drawable.favorite_inactive)
             }
         }
+
+        bottomSheetContainer = binding.bottomSheet
+        bottomSheetBehavior = BottomSheetBehavior.from(bottomSheetContainer).apply {
+            state = BottomSheetBehavior.STATE_HIDDEN
+        }
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback(){
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                        binding.overlay.visibility = View.GONE
+                    }
+                    else -> {
+                        binding.overlay.visibility = View.VISIBLE
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                val alpha = if (slideOffset < 0) 0f else slideOffset
+                binding.overlay.alpha = alpha
+            }
+        })
+        adapter = PlayerAdapter()
+        binding.playlistsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        binding.playlistsRecyclerView.adapter = adapter
+
+        binding.newPlaylistButton.setOnClickListener {
+            navigateToNewPlaylist()
+        }
+    }
+
+    private fun navigateToNewPlaylist() {
+        val action = PlayerFragmentDirections.actionPlayerFragmentToNewPlaylistFragment()
+        findNavController().navigate(action)
     }
 
     private fun setFavoriteButton(track: Track) {
@@ -159,21 +175,5 @@ class PlayerFragment : Fragment() {
         } else {
             binding.favoriteButton.setImageResource(R.drawable.favorite_inactive)
         }
-    }
-
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        Log.d("PlayerFragment", "onAttach called")
-        if (context is BottomSheetListener) {
-            bottomSheetListener = context
-        }  else {
-            throw RuntimeException("$context must implement BottomSheetListener")
-        }
-    }
-
-    override fun onDetach() {
-        super.onDetach()
-        bottomSheetListener = null
-
     }
 }
