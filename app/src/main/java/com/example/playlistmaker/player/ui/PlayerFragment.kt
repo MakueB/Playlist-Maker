@@ -121,9 +121,11 @@ class PlayerFragment : Fragment() {
         }
 
         binding.addButton.setOnClickListener {
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             viewModel.getPlaylistsAll()
-            adapter?.notifyDataSetChanged()
+            viewModel.state.observe(viewLifecycleOwner) {
+                render(it)
+            }
         }
 
         viewModel.isFavorite.observe(viewLifecycleOwner) { isFavorite ->
