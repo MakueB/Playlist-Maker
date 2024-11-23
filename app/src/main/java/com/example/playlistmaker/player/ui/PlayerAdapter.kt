@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistViewBottomSheetBinding
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 
-class PlayerAdapter : RecyclerView.Adapter<PlayerViewHolder>() {
+class PlayerAdapter(private val clickListener: (Playlist) -> Unit) : RecyclerView.Adapter<PlayerViewHolder>() {
 
     var playlists: MutableList<Playlist> = mutableListOf()
 
@@ -22,5 +22,6 @@ class PlayerAdapter : RecyclerView.Adapter<PlayerViewHolder>() {
     override fun onBindViewHolder(holder: PlayerViewHolder, position: Int) {
         val currentPlaylist = playlists[position]
         holder.bind(currentPlaylist)
+        holder.itemView.setOnClickListener { clickListener(currentPlaylist) }
     }
 }

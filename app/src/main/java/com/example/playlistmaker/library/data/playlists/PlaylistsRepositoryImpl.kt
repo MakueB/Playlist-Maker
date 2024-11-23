@@ -1,6 +1,5 @@
 package com.example.playlistmaker.library.data.playlists
 
-import com.example.playlistmaker.database.PlaylistEntity
 import com.example.playlistmaker.database.PlaylistTrackEntity
 import com.example.playlistmaker.database.convertors.EmptyPlaylistDbConvertor
 import com.example.playlistmaker.database.convertors.TrackDbConvertor
@@ -23,15 +22,30 @@ class PlaylistsRepositoryImpl(
     }
 
     override suspend fun getPlaylistsAll(): Flow<List<Playlist>> = flow {
-        val playlistsDb = convertFromEntity(playlistDao.getAllPlaylists())
-        val playlists = addTracksByPlaylistId(playlistsDb)
-        emit(playlists)
+        val playlistsDb = playlistDao.getAllPlaylists() // Получение всех плейлистов из базы
+        val playlistsWithTracks = playlistsDb.map { playlistEntity ->
+            val playlist = playlistDbConvertor.map(playlistEntity) // Конвертация PlaylistEntity в Playlist
+            val tracks = playlistTrackDao.getTracksByPlaylist(playlist.id) // Получение треков для текущего плейлиста
+            val trackList = tracks.map { trackDbConvertor.mapFromPlaylistTrackEntity(it) } // Конвертация треков
+            playlist.copy(trackList = trackList) // Добавление треков в плейлист
+        }
+        emit(playlistsWithTracks) // Отправка результата
     }
 
+    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long)  {
+        val playlistTrackEntity = trackDbConvertor.mapToPlaylistTrackEntity(track, playlistId)
+        playlistTrackDao.insertTrackToPlaylist(playlistTrackEntity)
+    }
 
+    override suspend fun removeTrackFromPlaylist(track: Int, playlistId: Long) {
+        val trackEntity = playlistTrackDao.getTrackInPlaylist(track, playlistId)
+        if (trackEntity != null) {
+            playlistTrackDao.removeTrackFromPlaylist(trackEntity)
+        }
+    }
 
-    private fun convertFromEntity(playlists: List<PlaylistEntity>): List<Playlist> {
-        return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
+    override suspend fun clearPlaylist(playlistId: Long) {
+        playlistTrackDao.clearPlaylist(playlistId)
     }
 
     private suspend fun addTracksByPlaylistId(playlists: List<Playlist>): List<Playlist> {

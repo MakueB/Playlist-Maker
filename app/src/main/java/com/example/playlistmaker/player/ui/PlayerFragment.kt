@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -18,13 +19,16 @@ import com.example.playlistmaker.library.ui.playlists.PlaylistsState
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
-import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class PlayerFragment : Fragment() {
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
     private var _binding: FragmentPlayerBinding? = null
     private val binding: FragmentPlayerBinding get() = _binding!!
 
@@ -37,6 +41,8 @@ class PlayerFragment : Fragment() {
 
     private val args by navArgs<PlayerFragmentArgs>()
     private var adapter: PlayerAdapter? = null
+    private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -48,6 +54,15 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        onPlaylistClickDebounce = debounce<Playlist>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { playlist: Playlist ->
+            viewModel.addTrackToPlaylist(track!!, playlist)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
 
         track = arguments?.let { args.track } ?: viewModel.track.value
 
@@ -168,7 +183,10 @@ class PlayerFragment : Fragment() {
                 binding.overlay.alpha = alpha
             }
         })
-        adapter = PlayerAdapter()
+        adapter = PlayerAdapter { playlist: Playlist ->
+            onPlaylistClickDebounce(playlist)
+        }
+
         binding.playlistsRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.playlistsRecyclerView.adapter = adapter
 

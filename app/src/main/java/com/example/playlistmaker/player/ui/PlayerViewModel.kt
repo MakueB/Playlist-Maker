@@ -153,4 +153,10 @@ class PlayerViewModel(
         playerInteractor.release()
         super.onCleared()
     }
+
+    fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+        viewModelScope.launch {
+            playlistsInteractor.addTrackToPlaylist(track, playlist.id)
+        }
+    }
 }

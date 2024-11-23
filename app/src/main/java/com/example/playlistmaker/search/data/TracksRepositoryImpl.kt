@@ -31,7 +31,6 @@ class TracksRepositoryImpl(
                         val isFavorite = favorites.contains(it.trackId)
                         Track(
                             it.trackId,
-                            it.playlistId,
                             it.trackName,
                             it.artistName,
                             it.getTimeInMmSs(),

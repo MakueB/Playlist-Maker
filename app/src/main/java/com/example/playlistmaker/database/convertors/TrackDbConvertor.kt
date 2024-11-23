@@ -8,7 +8,6 @@ class TrackDbConvertor {
     fun map(trackEntity: TrackEntity): Track {
         return Track(
             trackEntity.trackId,
-            trackEntity.playlistId,
             trackEntity.trackName,
             trackEntity.artistName,
             trackEntity.trackDuration,
@@ -22,10 +21,10 @@ class TrackDbConvertor {
         )
     }
 
-    fun map(track: Track): TrackEntity {
+    fun map(track: Track, playlistId: Long): TrackEntity {
         return TrackEntity(
             track.trackId,
-            track.playlistId,
+            playlistId,
             track.trackName,
             track.artistName,
             track.trackDuration,
@@ -43,7 +42,6 @@ class TrackDbConvertor {
     fun mapFromPlaylistTrackEntity(playlistTrackEntity: PlaylistTrackEntity): Track {
         return Track(
             playlistTrackEntity.trackId,
-            playlistTrackEntity.playlistId,
             playlistTrackEntity.trackName,
             playlistTrackEntity.artistName,
             playlistTrackEntity.trackDuration,
@@ -58,10 +56,10 @@ class TrackDbConvertor {
     }
 
     // Конвертация Track -> PlaylistTrackEntity
-    fun mapToPlaylistTrackEntity(track: Track): PlaylistTrackEntity {
+    fun mapToPlaylistTrackEntity(track: Track, playlistId: Long): PlaylistTrackEntity {
         return PlaylistTrackEntity(
             track.trackId,
-            track.playlistId,
+            playlistId,
             track.trackName,
             track.artistName,
             track.trackDuration,
