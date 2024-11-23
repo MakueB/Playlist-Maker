@@ -1,11 +1,11 @@
 package com.example.playlistmaker.library.data.playlists
 
 import com.example.playlistmaker.database.PlaylistEntity
-import com.example.playlistmaker.database.TrackEntity
+import com.example.playlistmaker.database.PlaylistTrackEntity
 import com.example.playlistmaker.database.convertors.EmptyPlaylistDbConvertor
 import com.example.playlistmaker.database.convertors.TrackDbConvertor
 import com.example.playlistmaker.database.dao.PlaylistDao
-import com.example.playlistmaker.database.dao.TrackDao
+import com.example.playlistmaker.database.dao.PlaylistTrackDao
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsRepository
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.flow
 
 class PlaylistsRepositoryImpl(
     private val playlistDao: PlaylistDao,
-    private val trackDao: TrackDao,
+    private val playlistTrackDao: PlaylistTrackDao,
     private val playlistDbConvertor: EmptyPlaylistDbConvertor,
     private val trackDbConvertor: TrackDbConvertor
 ) : PlaylistsRepository {
@@ -28,17 +28,19 @@ class PlaylistsRepositoryImpl(
         emit(playlists)
     }
 
+
+
     private fun convertFromEntity(playlists: List<PlaylistEntity>): List<Playlist> {
         return playlists.map { playlist -> playlistDbConvertor.map(playlist) }
     }
 
     private suspend fun addTracksByPlaylistId(playlists: List<Playlist>): List<Playlist> {
         return playlists.map { playlist: Playlist ->
-            playlist.copy(trackList = convertFromTrackEntity(trackDao.getTracksByPlaylistId(playlist.id)))
+            playlist.copy(trackList = convertFromTrackEntity(playlistTrackDao.getTracksByPlaylist(playlist.id)))
         }
     }
 
-    private fun convertFromTrackEntity(tracks: List<TrackEntity>): List<Track> {
-        return tracks.map { track -> trackDbConvertor.map(track) }
+    private fun convertFromTrackEntity(tracks: List<PlaylistTrackEntity>): List<Track> {
+        return tracks.map { track -> trackDbConvertor.mapFromPlaylistTrackEntity(track) }
     }
 }

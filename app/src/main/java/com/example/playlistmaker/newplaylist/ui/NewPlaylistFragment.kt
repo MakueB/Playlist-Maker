@@ -23,13 +23,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.example.playlistmaker.player.ui.PlayerViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
 
 class NewPlaylistFragment : Fragment() {
-    private val viewModel by viewModel<NewPlaylistViewModel>()
+    private val newPlstViewModel by viewModel<NewPlaylistViewModel>()
+    private val playerViewModel by viewModel<PlayerViewModel>()
 
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding: FragmentNewPlaylistBinding get() = _binding!!
@@ -49,7 +51,7 @@ class NewPlaylistFragment : Fragment() {
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
             binding.playlistImage.setImageURI(uri)
             this.uri = uri
-            viewModel.updateImageUri(uri)
+            newPlstViewModel.updateImageUri(uri)
             binding.placeholder.isVisible = uri == null
         }
 
@@ -68,15 +70,17 @@ class NewPlaylistFragment : Fragment() {
 
         setupToolbar()
 
+        val  track = playerViewModel.track.value
+
         binding.playlistNameEditText.addTextChangedListener {
-            viewModel.updatePlaylistName(it.toString())
+            newPlstViewModel.updatePlaylistName(it.toString())
         }
 
         binding.playlistDescriptionEditText.addTextChangedListener {
-            viewModel.updatePlaylistDescription(it.toString())
+            newPlstViewModel.updatePlaylistDescription(it.toString())
         }
 
-        viewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+        newPlstViewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
             binding.createButton.isEnabled = isEnabled
         }
 
@@ -86,7 +90,7 @@ class NewPlaylistFragment : Fragment() {
 
         binding.createButton.setOnClickListener {
             uri?.let { saveImageToPrivateStorage(it) }
-            viewModel.savePlaylist()
+            newPlstViewModel.savePlaylist()
             findNavController().navigateUp()
         }
 
@@ -185,7 +189,7 @@ class NewPlaylistFragment : Fragment() {
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
-        val file = File(filePath, "${viewModel.playlistName.value}_cover.jpg")
+        val file = File(filePath, "${newPlstViewModel.playlistName.value}_cover.jpg")
         val inputStream = contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
@@ -210,9 +214,9 @@ class NewPlaylistFragment : Fragment() {
     }
 
     private fun hasUnsavedChanges(): Boolean {
-        return !viewModel.playlistName.value.isNullOrEmpty() ||
-                !viewModel.playlistDescription.value.isNullOrEmpty() ||
-                viewModel.imageUri.value != null
+        return !newPlstViewModel.playlistName.value.isNullOrEmpty() ||
+                !newPlstViewModel.playlistDescription.value.isNullOrEmpty() ||
+                newPlstViewModel.imageUri.value != null
     }
 
     override fun onResume() {

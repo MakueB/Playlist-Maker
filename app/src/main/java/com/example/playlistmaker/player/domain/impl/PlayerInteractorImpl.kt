@@ -24,4 +24,9 @@ class PlayerInteractorImpl(private val playerRepository: PlayerRepository) : Pla
     override fun release() {
         playerRepository.release()
     }
+
+    override fun reset() {
+        playerRepository.reset()
+    }
+
 }

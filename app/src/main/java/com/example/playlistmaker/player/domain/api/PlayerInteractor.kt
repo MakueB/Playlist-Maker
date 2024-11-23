@@ -13,4 +13,5 @@ interface PlayerInteractor {
     fun pausePlayer()
     fun getCurrentPosition(): Long
     fun release()
+    fun reset()
 }

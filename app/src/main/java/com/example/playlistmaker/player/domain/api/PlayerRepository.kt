@@ -13,4 +13,5 @@ interface PlayerRepository {
     fun pausePlayer()
     fun getCurrentPosition(): Long
     fun release()
+    fun reset()
 }

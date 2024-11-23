@@ -50,8 +50,6 @@ class PlayerViewModel(
         _playerState.value = PlayerState.DEFAULT
     }
 
-
-
     private fun renderState(state: PlaylistsState) {
         _state.postValue(state)
     }
@@ -137,6 +135,18 @@ class PlayerViewModel(
                 _isFavorite.postValue(true)
             }
         }
+    }
+
+    fun setTrack(track: Track) {
+        _track.value = track
+    }
+
+    fun release() {
+        playerInteractor.release()
+    }
+
+    fun reset() {
+        playerInteractor.reset()
     }
 
     override fun onCleared() {
