@@ -1,6 +1,5 @@
 package com.example.playlistmaker.library.data.playlists
 
-import com.example.playlistmaker.database.PlaylistTrackEntity
 import com.example.playlistmaker.database.convertors.EmptyPlaylistDbConvertor
 import com.example.playlistmaker.database.convertors.TrackDbConvertor
 import com.example.playlistmaker.database.dao.PlaylistDao
@@ -8,6 +7,7 @@ import com.example.playlistmaker.database.dao.PlaylistTrackDao
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsRepository
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.Resource
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
@@ -29,12 +29,21 @@ class PlaylistsRepositoryImpl(
             val trackList = tracks.map { trackDbConvertor.mapFromPlaylistTrackEntity(it) } // Конвертация треков
             playlist.copy(trackList = trackList) // Добавление треков в плейлист
         }
-        emit(playlistsWithTracks) // Отправка результата
+        emit(playlistsWithTracks)
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long)  {
-        val playlistTrackEntity = trackDbConvertor.mapToPlaylistTrackEntity(track, playlistId)
-        playlistTrackDao.insertTrackToPlaylist(playlistTrackEntity)
+    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long): Flow<Resource<String>>  = flow {
+        // Проверяем, есть ли трек в плейлисте
+        val existingTrack = playlistTrackDao.getTrackInPlaylist(track.trackId, playlistId)
+        val playlist = playlistDbConvertor.map(playlistDao.getPlaylistById(playlistId))
+        if (existingTrack != null) {
+            emit(Resource.Error("Track '${track.trackName}' is already in the playlist."))
+        } else {
+            // Конвертируем трек в PlaylistTrackEntity и добавляем в базу данных
+            val playlistTrackEntity = trackDbConvertor.mapToPlaylistTrackEntity(track, playlistId)
+            playlistTrackDao.insertTrackToPlaylist(playlistTrackEntity)
+            emit(Resource.Success("Track '${track.trackName}' was added successfully to the playlist '${playlist.name}'"))
+        }
     }
 
     override suspend fun removeTrackFromPlaylist(track: Int, playlistId: Long) {
@@ -46,15 +55,5 @@ class PlaylistsRepositoryImpl(
 
     override suspend fun clearPlaylist(playlistId: Long) {
         playlistTrackDao.clearPlaylist(playlistId)
-    }
-
-    private suspend fun addTracksByPlaylistId(playlists: List<Playlist>): List<Playlist> {
-        return playlists.map { playlist: Playlist ->
-            playlist.copy(trackList = convertFromTrackEntity(playlistTrackDao.getTracksByPlaylist(playlist.id)))
-        }
-    }
-
-    private fun convertFromTrackEntity(tracks: List<PlaylistTrackEntity>): List<Track> {
-        return tracks.map { track -> trackDbConvertor.mapFromPlaylistTrackEntity(track) }
     }
 }

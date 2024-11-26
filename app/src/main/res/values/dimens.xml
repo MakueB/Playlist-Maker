@@ -26,4 +26,5 @@
     <dimen name="padding_18">18dp</dimen>
     <dimen name="padding_19">19dp</dimen>
     <dimen name="design_bottom_navigation_height" tools:override="true">20dp</dimen>
+    <dimen name="bottom_sheet_peek_height">440dp</dimen>
 </resources>

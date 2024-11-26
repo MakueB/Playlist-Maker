@@ -7,6 +7,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.utils.CommonUtils
+import java.io.File
 
 class PlaylistsViewHolder(private val binding: PlaylistViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
@@ -16,6 +17,7 @@ class PlaylistsViewHolder(private val binding: PlaylistViewBinding) :
 
         binding.playlistName.text = playlist.name
         binding.tracksNumber.text = "$tracksNumber ${CommonUtils.getTrackWordForm(tracksNumber)}"
+
 
         if (playlist.imageUrl.isNullOrEmpty())
             binding.playlistCover.setImageResource(R.drawable.placeholder)

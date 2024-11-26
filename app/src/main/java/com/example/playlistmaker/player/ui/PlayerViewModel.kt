@@ -15,6 +15,8 @@ import com.example.playlistmaker.utils.CommonUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
@@ -43,6 +45,9 @@ class PlayerViewModel(
 
     private val _playlistsLiveData = MutableLiveData<List<Playlist>>()
     val playlistLiveData: LiveData<List<Playlist>> = _playlistsLiveData
+
+    private val _trackToPlaylistResultMessage = MutableStateFlow<Pair<String, Boolean>?>(null)
+    val trackToPlaylistResultMessage: StateFlow<Pair<String, Boolean>?> = _trackToPlaylistResultMessage
 
     private var timerJob: Job? = null
 
@@ -141,22 +146,21 @@ class PlayerViewModel(
         _track.value = track
     }
 
-    fun release() {
-        playerInteractor.release()
-    }
-
-    fun reset() {
-        playerInteractor.reset()
-    }
-
     override fun onCleared() {
         playerInteractor.release()
         super.onCleared()
     }
 
-    fun addTrackToPlaylist(track: Track, playlist: Playlist) {
+    fun addTrackToPlaylist(track: Track, playlistId: Long) {
         viewModelScope.launch {
-            playlistsInteractor.addTrackToPlaylist(track, playlist.id)
+            playlistsInteractor.addTrackToPlaylist(track, playlistId).collect { result ->
+                _trackToPlaylistResultMessage.value = result
+            }
         }
+    }
+
+    // Reset message if needed
+    fun resetMessage() {
+        _trackToPlaylistResultMessage.value = null
     }
 }

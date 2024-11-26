@@ -4,7 +4,9 @@ import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteracto
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsRepository
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.Resource
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class PlaylistsInteractorImpl (
     private val repository: PlaylistsRepository
@@ -17,9 +19,13 @@ class PlaylistsInteractorImpl (
         return repository.getPlaylistsAll()
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long) {
-
-        repository.addTrackToPlaylist(track, playlistId)
+    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long) : Flow<Pair<String, Boolean>> = flow {
+        repository.addTrackToPlaylist(track, playlistId).collect{ result ->
+            when (result) {
+                is Resource.Success -> emit(Pair(result.data ?: "", true))  // Success case
+                is Resource.Error -> emit(Pair(result.message ?: "", false))  // Error case
+            }
+        }
     }
 
     override suspend fun removeTrackFromPlaylist(track: Track, playlistId: Long) {

@@ -12,11 +12,9 @@ import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -64,34 +62,16 @@ class NewPlaylistFragment : Fragment() {
         return binding.root
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         setupToolbar()
+        setupListeners()
 
-        val  track = playerViewModel.track.value
-
-        binding.playlistNameEditText.addTextChangedListener {
-            newPlstViewModel.updatePlaylistName(it.toString())
-        }
-
-        binding.playlistDescriptionEditText.addTextChangedListener {
-            newPlstViewModel.updatePlaylistDescription(it.toString())
-        }
-
-        newPlstViewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
-            binding.createButton.isEnabled = isEnabled
-        }
-
-        binding.playlistImage.setOnClickListener {
-            openGallery()
-        }
-
-        binding.createButton.setOnClickListener {
-            uri?.let { saveImageToPrivateStorage(it) }
-            newPlstViewModel.savePlaylist()
-            findNavController().navigateUp()
+        binding.apply {
+            newPlstViewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+                createButton.isEnabled = isEnabled
+            }
         }
 
         requireActivity().onBackPressedDispatcher.addCallback(
@@ -101,6 +81,39 @@ class NewPlaylistFragment : Fragment() {
                     handleBackPressed()
                 }
             })
+    }
+
+    private fun setupListeners() {
+        binding.apply {
+            playlistNameEditText.requestFocus()
+            playlistNameEditText.setOnFocusChangeListener { _, hasFocus ->
+                if (hasFocus) {
+                    if (playlistNameEditText.text.isNullOrEmpty()) {
+                        playlistNameEditText.hint = getString(R.string.playlist_name_hint)
+                    } else {
+                        playlistNameEditText.hint = ""
+                    }
+                }
+            }
+
+            playlistNameEditText.addTextChangedListener {
+                newPlstViewModel.updatePlaylistName(it.toString())
+            }
+
+            playlistDescriptionEditText.addTextChangedListener {
+                newPlstViewModel.updatePlaylistDescription(it.toString())
+            }
+
+            playlistImage.setOnClickListener {
+                openGallery()
+            }
+
+            createButton.setOnClickListener {
+                uri?.let { saveImageToPrivateStorage(it) }
+                newPlstViewModel.savePlaylist()
+                findNavController().navigateUp()
+            }
+        }
     }
 
     private fun setupToolbar() {
@@ -221,14 +234,12 @@ class NewPlaylistFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requireActivity().onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                handleBackPressed()
-            }
-        })
-    }
-
-    private fun showToast(message: String) {
-        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    handleBackPressed()
+                }
+            })
     }
 }

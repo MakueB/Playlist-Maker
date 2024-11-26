@@ -49,10 +49,6 @@ class PlaylistsFragment  : Fragment() {
         viewModel.state.observe(viewLifecycleOwner) {
             render(it)
         }
-
-        viewModel.playlistLiveData.observe(viewLifecycleOwner) {
-            Log.d("playlist", it.toString())
-        }
     }
 
     private fun render(state: PlaylistsState) {
