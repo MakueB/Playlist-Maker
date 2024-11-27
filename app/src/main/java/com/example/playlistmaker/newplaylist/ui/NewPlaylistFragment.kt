@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,7 +31,7 @@ class NewPlaylistFragment : Fragment() {
     //private val requester = PermissionRequester.instance()
     private lateinit var contentResolver: ContentResolver
     private var uri: Uri? = null
-    private val imageQuality = 100
+
 
     private val photoPicker =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
@@ -99,7 +98,6 @@ class NewPlaylistFragment : Fragment() {
 
             createButton.setOnClickListener {
                 uri?.let { saveImageToPrivateStorage(it) }
-                Toast.makeText(requireContext(), "Плейлист ${newPlstViewModel.playlistName.value} успешно создан", Toast.LENGTH_SHORT).show()
                 newPlstViewModel.savePlaylist()
                 findNavController().navigateUp()
             }
@@ -128,6 +126,39 @@ class NewPlaylistFragment : Fragment() {
         )
     }
 
+//    private fun openGallery() {
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            requester.request(
+//                readImagesPermission
+//            ).collect { result ->
+//                when (result) {
+//                    is PermissionResult.Granted -> photoPicker.launch(
+//                        PickVisualMediaRequest(
+//                            ActivityResultContracts.PickVisualMedia.ImageOnly
+//                        )
+//                    )
+//
+//                    is PermissionResult.Denied.NeedsRationale -> openDialog(
+//                        getString(R.string.rationale_title),
+//                        ::openGallery
+//                    )
+//
+//                    is PermissionResult.Denied.DeniedPermanently -> openDialog(
+//                        getString(R.string.open_settings_request),
+//                        ::openSettings
+//                    )
+//
+//                    is PermissionResult.Cancelled -> Toast.makeText(
+//                        requireContext(),
+//                        getString(R.string.image_permission_denied),
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        }
+//    }
+
+
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(
             requireActivity().filesDir,
@@ -136,12 +167,12 @@ class NewPlaylistFragment : Fragment() {
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
-        val file = File(filePath, "${newPlstViewModel.playlistName.value}_cover_${System.currentTimeMillis()}.jpg")
+        val file = File(filePath, "${newPlstViewModel.playlistName.value}_cover.jpg")
         val inputStream = contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
             .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, imageQuality, outputStream)
+            .compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
 
         inputStream?.close()
         outputStream.close()

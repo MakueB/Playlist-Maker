@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/playerBackgroundColor"
+        android:layout_margin="@dimen/margin_16"
         tools:context=".player.ui.PlayerActivity">
 
         <ImageView
@@ -21,7 +22,9 @@
             android:src="@drawable/light_modearrow_back"
             android:theme="@style/SettingsBackArrowStyle"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_bias="0"/>
 
         <androidx.constraintlayout.widget.Barrier
             android:id="@+id/trackInfoBarrier"

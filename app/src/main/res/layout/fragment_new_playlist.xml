@@ -8,14 +8,14 @@
     tools:context=".newplaylist.ui.NewPlaylistFragment">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/leftBorder"
+        android:id="@+id/startBorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/margin_16" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/rightBorder"
+        android:id="@+id/endBorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -42,8 +42,8 @@
         android:layout_height="wrap_content"
         android:text="@string/create"
         app:layout_constraintBottom_toTopOf="@id/bottomBorder"
-        app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/endBorder"
+        app:layout_constraintStart_toStartOf="@id/startBorder"
         android:enabled="false"/>
 
     <androidx.appcompat.widget.Toolbar
@@ -67,17 +67,18 @@
         android:layout_marginTop="@dimen/margin_8"
         android:layout_marginBottom="@dimen/margin_8"
         app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/endBorder"
+        app:layout_constraintStart_toStartOf="@id/startBorder"
         app:layout_constraintTop_toBottomOf="@id/toolbar">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/playlist_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@drawable/create_playlist_imageview_shape"
             android:contentDescription="@string/cover_image"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedCornersImageView"/>
 
         <ImageView
             android:id="@+id/placeholder"
@@ -95,8 +96,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_32"
         android:hint="@string/playlist_name"
-        app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/endBorder"
+        app:layout_constraintStart_toStartOf="@id/startBorder"
         app:layout_constraintTop_toBottomOf="@id/imageFrameLayout">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -115,8 +116,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_16"
         android:hint="@string/playlist_description"
-        app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintEnd_toStartOf="@id/endBorder"
+        app:layout_constraintStart_toStartOf="@id/startBorder"
         app:layout_constraintTop_toBottomOf="@id/playlistName">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -125,7 +126,6 @@
             android:layout_height="wrap_content"
             android:textColor="@color/textColor"
             android:textCursorDrawable="@drawable/cursor" />
-
     </com.google.android.material.textfield.TextInputLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

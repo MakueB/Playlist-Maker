@@ -9,14 +9,14 @@
     tools:context=".library.ui.LibraryFragment">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/leftBorder"
+        android:id="@+id/startBorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_begin="@dimen/margin_16" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/rightBorder"
+        android:id="@+id/endBorder"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -43,9 +43,9 @@
         android:layout_height="?attr/actionBarSize"
         android:gravity="top"
         app:contentInsetStart="0dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/endBorder"
+        app:layout_constraintStart_toStartOf="@id/startBorder"
+        app:layout_constraintTop_toTopOf="@id/topBorder"
         app:title="@string/library" />
 
     <com.google.android.material.tabs.TabLayout
@@ -53,8 +53,8 @@
         style="@style/LibraryTabLayoutStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/endBorder"
+        app:layout_constraintStart_toStartOf="@id/startBorder"
         app:layout_constraintTop_toBottomOf="@+id/library_toolbar">
 
         <com.google.android.material.tabs.TabItem

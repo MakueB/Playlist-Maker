@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:theme="@style/SearchTheme"
     android:background="@color/playerBackgroundColor"
+    android:layout_margin="@dimen/margin_16"
     tools:ignore="ExtraText">
 
     <androidx.appcompat.widget.Toolbar
