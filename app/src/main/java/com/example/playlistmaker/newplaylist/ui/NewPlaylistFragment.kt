@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -161,13 +162,13 @@ class NewPlaylistFragment : Fragment() {
 
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(
-            requireActivity().filesDir,
-            getString(R.string.app_name)
+            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), // Используем внешний каталог для изображений
+            "Images"
         )
         if (!filePath.exists()) {
             filePath.mkdirs()
         }
-        val file = File(filePath, "${newPlstViewModel.playlistName.value}_cover.jpg")
+        val file = File(filePath, "${newPlstViewModel.playlistName.value}_cover_${System.currentTimeMillis()}.jpg")
         val inputStream = contentResolver.openInputStream(uri)
         val outputStream = FileOutputStream(file)
         BitmapFactory
