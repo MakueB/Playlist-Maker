@@ -35,16 +35,16 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="32dp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/create_button"
-        style="@style/CreatePlaylistButtonStyle"
         android:layout_width="0dp"
+        style="@style/CreatePlaylistButtonStyle"
         android:layout_height="wrap_content"
         android:text="@string/create"
         app:layout_constraintBottom_toTopOf="@id/bottomBorder"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
         app:layout_constraintStart_toStartOf="@id/leftBorder"
-        android:enabled="true"/>
+        android:enabled="false"/>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -52,12 +52,12 @@
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
         android:background="@color/playerBackgroundColor"
-        app:title="@string/new_playlist"
-        app:navigationIcon="?attr/homeAsUpIndicator"
-        app:titleTextAppearance="@style/CreatePlaylistToolbarTitleTextAppearance"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:navigationIcon="?attr/homeAsUpIndicator"
+        app:title="@string/new_playlist"
+        app:titleTextAppearance="@style/CreatePlaylistToolbarTitleTextAppearance" />
 
     <FrameLayout
         android:id="@+id/imageFrameLayout"
@@ -75,9 +75,9 @@
             android:id="@+id/playlist_image"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@drawable/create_playlist_imageview_shape"
             android:contentDescription="@string/cover_image"
-            android:scaleType="centerCrop"
-            android:background="@drawable/create_playlist_imageview_shape" />
+            android:scaleType="centerCrop" />
 
         <ImageView
             android:id="@+id/placeholder"
@@ -90,14 +90,14 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistName"
+        style="@style/CustomOutlineBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/CustomOutlineBox"
         android:layout_marginTop="@dimen/margin_32"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        android:hint="@string/playlist_name"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintTop_toBottomOf="@id/imageFrameLayout"
-        android:hint="@string/playlist_name">
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@id/imageFrameLayout">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/playlistNameEditText"
@@ -110,14 +110,14 @@
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/playlistDescription"
+        style="@style/CustomOutlineBox"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        style="@style/CustomOutlineBox"
         android:layout_marginTop="@dimen/margin_16"
-        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        android:hint="@string/playlist_description"
         app:layout_constraintEnd_toStartOf="@id/rightBorder"
-        app:layout_constraintTop_toBottomOf="@id/playlistName"
-        android:hint="@string/playlist_description">
+        app:layout_constraintStart_toStartOf="@id/leftBorder"
+        app:layout_constraintTop_toBottomOf="@id/playlistName">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/playlistDescriptionEditText"

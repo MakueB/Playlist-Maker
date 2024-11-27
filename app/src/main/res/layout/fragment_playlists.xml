@@ -26,6 +26,7 @@
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
         tools:listitem="@layout/playlist_view"
         tools:itemCount="4"
         tools:spanCount="2"

@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:background="@color/playerBackgroundColor">
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/playlistCover"
             android:layout_width="0dp"
             android:layout_height="0dp"
@@ -25,6 +25,7 @@
             app:srcCompat="@drawable/placeholder"
             android:contentDescription="@string/cover_image"
             android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/RoundedCornersImageView"
             android:layout_margin="@dimen/margin_4" />
 
         <TextView

@@ -179,4 +179,10 @@
         <item name="hintTextColor">#243897</item>
     </style>
 
+    <style name="RoundedCornersImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+
 </resources>
