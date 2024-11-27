@@ -44,7 +44,6 @@ class PlayerViewModel(
     val state get() = _state
 
     private val _playlistsLiveData = MutableLiveData<List<Playlist>>()
-    val playlistLiveData: LiveData<List<Playlist>> = _playlistsLiveData
 
     private val _trackToPlaylistResultMessage = MutableStateFlow<Pair<String, Boolean>?>(null)
     val trackToPlaylistResultMessage: StateFlow<Pair<String, Boolean>?> = _trackToPlaylistResultMessage
@@ -79,7 +78,10 @@ class PlayerViewModel(
 
     fun preparePlayer(track: Track?) {
         playerInteractor.preparePlayer(track,
-            { _playerState.value = PlayerState.PREPARED },
+            {
+                _playerState.value = PlayerState.PREPARED
+                _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
+            },
             {
                 timerJob?.cancel()
                 _playerState.value = PlayerState.PREPARED
@@ -157,10 +159,5 @@ class PlayerViewModel(
                 _trackToPlaylistResultMessage.value = result
             }
         }
-    }
-
-    // Reset message if needed
-    fun resetMessage() {
-        _trackToPlaylistResultMessage.value = null
     }
 }
