@@ -23,3 +23,4 @@ local.properties
 daemon
 daemon/8.6
 com/example/playlistmaker/ui/activities/search/OldSearchActivity.kt
+build.gradle.kts
