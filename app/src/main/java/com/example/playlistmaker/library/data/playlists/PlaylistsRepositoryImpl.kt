@@ -21,18 +21,26 @@ class PlaylistsRepositoryImpl(
         playlistDao.deletePlaylist(playlistDbConvertor.map(playlist))
     }
 
-    override suspend fun getPlaylistsAll(): Flow<List<Playlist>> = flow {
-        val playlistsDb = playlistDao.getAllPlaylists() // Получение всех плейлистов из базы
-        val playlistsWithTracks = playlistsDb.map { playlistEntity ->
-            val playlist = playlistDbConvertor.map(playlistEntity) // Конвертация PlaylistEntity в Playlist
-            val tracks = playlistTrackDao.getTracksByPlaylist(playlist.id) // Получение треков для текущего плейлиста
-            val trackList = tracks.map { trackDbConvertor.mapFromPlaylistTrackEntity(it) } // Конвертация треков
-            playlist.copy(trackList = trackList) // Добавление треков в плейлист
+    override suspend fun getPlaylistsAll(): Flow<List<Playlist>> {
+        return flow {
+            val playlistsDb = playlistDao.getAllPlaylists() // Получение всех плейлистов из базы
+            val playlistsWithTracks = playlistsDb.map { playlistEntity ->
+                val playlist =
+                    playlistDbConvertor.map(playlistEntity) // Конвертация PlaylistEntity в Playlist
+                val tracks =
+                    playlistTrackDao.getTracksByPlaylist(playlist.id) // Получение треков для текущего плейлиста
+                val trackList =
+                    tracks.map { trackDbConvertor.mapFromPlaylistTrackEntity(it) } // Конвертация треков
+                playlist.copy(trackList = trackList) // Добавление треков в плейлист
+            }
+            emit(playlistsWithTracks)
         }
-        emit(playlistsWithTracks)
     }
 
-    override suspend fun addTrackToPlaylist(track: Track, playlistId: Long): Flow<Resource<String>>  = flow {
+    override suspend fun addTrackToPlaylist(
+        track: Track,
+        playlistId: Long
+    ): Flow<Resource<String>> = flow {
         // Проверяем, есть ли трек в плейлисте
         val existingTrack = playlistTrackDao.getTrackInPlaylist(track.trackId, playlistId)
         val playlist = playlistDbConvertor.map(playlistDao.getPlaylistById(playlistId))

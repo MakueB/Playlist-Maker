@@ -127,39 +127,6 @@ class NewPlaylistFragment : Fragment() {
         )
     }
 
-//    private fun openGallery() {
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            requester.request(
-//                readImagesPermission
-//            ).collect { result ->
-//                when (result) {
-//                    is PermissionResult.Granted -> photoPicker.launch(
-//                        PickVisualMediaRequest(
-//                            ActivityResultContracts.PickVisualMedia.ImageOnly
-//                        )
-//                    )
-//
-//                    is PermissionResult.Denied.NeedsRationale -> openDialog(
-//                        getString(R.string.rationale_title),
-//                        ::openGallery
-//                    )
-//
-//                    is PermissionResult.Denied.DeniedPermanently -> openDialog(
-//                        getString(R.string.open_settings_request),
-//                        ::openSettings
-//                    )
-//
-//                    is PermissionResult.Cancelled -> Toast.makeText(
-//                        requireContext(),
-//                        getString(R.string.image_permission_denied),
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        }
-//    }
-
-
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(
             requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), // Используем внешний каталог для изображений
