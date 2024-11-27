@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.playlistmaker.database.PlaylistEntity
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
 
 @Dao
 interface PlaylistDao {

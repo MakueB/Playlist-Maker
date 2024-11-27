@@ -1,14 +1,10 @@
 package com.example.playlistmaker.newplaylist.ui
 
-import android.Manifest
 import android.content.ContentResolver
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
-import com.example.playlistmaker.player.ui.PlayerViewModel
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
@@ -29,7 +24,6 @@ import java.io.FileOutputStream
 
 class NewPlaylistFragment : Fragment() {
     private val newPlstViewModel by viewModel<NewPlaylistViewModel>()
-    private val playerViewModel by viewModel<PlayerViewModel>()
 
     private var _binding: FragmentNewPlaylistBinding? = null
     private val binding: FragmentNewPlaylistBinding get() = _binding!!
@@ -38,12 +32,6 @@ class NewPlaylistFragment : Fragment() {
     private lateinit var contentResolver: ContentResolver
     private var uri: Uri? = null
 
-    private val readImagesPermission: String
-        get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_IMAGES
-        } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
-        }
 
     private val photoPicker =
         registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
@@ -170,29 +158,6 @@ class NewPlaylistFragment : Fragment() {
 //        }
 //    }
 
-    private fun openSettings() {
-        val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-            addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            data = Uri.fromParts("package", requireContext().packageName, null)
-        }
-        startActivity(intent)
-    }
-
-    private fun openDialog(
-        title: String,
-        action: () -> Unit
-    ) {
-        MaterialAlertDialogBuilder(requireContext())
-            .setTitle(title)
-            .setNegativeButton(getString(R.string.no)) { dialog, _ ->
-                dialog.dismiss()
-            }
-            .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-                action()
-                dialog.dismiss()
-            }
-            .show()
-    }
 
     private fun saveImageToPrivateStorage(uri: Uri) {
         val filePath = File(

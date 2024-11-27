@@ -7,7 +7,6 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.utils.CommonUtils
-import java.io.File
 
 class PlaylistsViewHolder(private val binding: PlaylistViewBinding) :
     RecyclerView.ViewHolder(binding.root) {

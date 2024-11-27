@@ -13,7 +13,6 @@ class PlaylistsViewModel(
     private val interactor: PlaylistsInteractor
 ): ViewModel()  {
     private val _playlistsLiveData = MutableLiveData<List<Playlist>>()
-    val playlistLiveData: LiveData<List<Playlist>> = _playlistsLiveData
 
     private val _state = MutableLiveData<PlaylistsState>()
     val state get() = _state

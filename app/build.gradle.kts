@@ -70,7 +70,6 @@ dependencies {
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation (libs.peko)
-    implementation("com.markodevcic:peko:3.0.5")
     annotationProcessor(libs.androidx.room.compiler)
     annotationProcessor(libs.compiler)
     testImplementation(libs.junit)
