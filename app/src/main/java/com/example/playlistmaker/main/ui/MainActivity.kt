@@ -23,15 +23,10 @@ class MainActivity : AppCompatActivity() {
         val navController = navHostFragment.navController
         binding.bottomNavigationView.setupWithNavController(navController)
 
-        val destinationFragment = intent.getStringExtra("destination_fragment")
-        if (destinationFragment == "NewPlaylistFragment") {
-            navController.navigate(R.id.newPlaylistFragment)
-        }
-
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.playerFragment -> binding.bottomNavigationView.visibility = View.GONE
-                else -> binding.bottomNavigationView.visibility = View.VISIBLE
+                R.id.playerFragment -> binding.bottomNavigationView.isVisible = false
+                else -> binding.bottomNavigationView.isVisible = true
             }
         }
 
