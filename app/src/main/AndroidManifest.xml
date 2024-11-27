@@ -24,11 +24,6 @@
             android:name=".library.ui.LibraryFragment"
             android:exported="false" />
         <activity
-            android:name=".player.ui.PlayerActivity"
-            android:configChanges="orientation|screenSize"
-            android:exported="false"
-            android:theme="@style/SettingsTheme" />
-        <activity
             android:name=".search.ui.SearchFragment"
             android:exported="false"
             android:theme="@style/SearchTheme" />

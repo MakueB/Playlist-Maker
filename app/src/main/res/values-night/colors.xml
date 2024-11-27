@@ -19,4 +19,5 @@
     <color name="create_button">#AEAFB4</color>
     <color name="create_button_enabled">#3772E7</color>
     <color name="handle_color">#FFFFFF</color>
+    <color name="bottom_sheet_text_color">#FFFFFF</color>
 </resources>

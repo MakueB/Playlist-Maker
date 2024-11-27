@@ -81,16 +81,16 @@ class PlayerFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.trackToPlaylistResultMessage.collect { result ->
-                    result?.let { (message, success) ->
-                        Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
-                        if (success) {
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                            bottomSheetBehavior.peekHeight = peekHeight
-                        }
+                    val (message, success) = result
+                    Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                    if (success) {
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                        bottomSheetBehavior.peekHeight = peekHeight
                     }
                 }
             }
         }
+
 
         binding.apply {
             country.text = track?.country
