@@ -40,6 +40,7 @@ val dataModule = module {
 
     single {
         Room.databaseBuilder(androidContext(), AppDatabase::class.java, "database.db")
+            .fallbackToDestructiveMigration()
             .build()
     }
 
@@ -61,5 +62,17 @@ val dataModule = module {
 
     single <ExternalNavigator> {
         ExternalNavigatorImpl(get())
+    }
+
+    single {
+        get<AppDatabase>().trackDao()
+    }
+
+    single {
+        get<AppDatabase>().playlistDao()
+    }
+
+    single {
+        get<AppDatabase>().playlistTrackDao()
     }
 }

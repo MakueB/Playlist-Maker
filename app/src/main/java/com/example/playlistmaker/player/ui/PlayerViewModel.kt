@@ -4,18 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.library.domain.api.FavoritesInteractor
+import com.example.playlistmaker.R
+import com.example.playlistmaker.library.domain.favorites.api.FavoritesInteractor
+import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
+import com.example.playlistmaker.library.ui.playlists.PlaylistsState
+import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class PlayerViewModel(
     private val playerInteractor: PlayerInteractor,
-    private val favoritesInteractor: FavoritesInteractor
+    private val favoritesInteractor: FavoritesInteractor,
+    private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
     companion object {
         const val DELAY_MILLIS = 300L
@@ -33,15 +40,48 @@ class PlayerViewModel(
     private val _isFavorite = MutableLiveData<Boolean>()
     val isFavorite: LiveData<Boolean> = _isFavorite
 
+    private val _state = MutableLiveData<PlaylistsState>()
+    val state get() = _state
+
+    private val _playlistsLiveData = MutableLiveData<List<Playlist>>()
+
+    private val _trackToPlaylistResultMessage = MutableSharedFlow<Pair<String, Boolean>>()
+    val trackToPlaylistResultMessage = _trackToPlaylistResultMessage.asSharedFlow()
+
     private var timerJob: Job? = null
 
     init {
         _playerState.value = PlayerState.DEFAULT
     }
 
+    private fun renderState(state: PlaylistsState) {
+        _state.postValue(state)
+    }
+
+    fun getPlaylistsAll() {
+        renderState(PlaylistsState.Loading)
+        viewModelScope.launch {
+            playlistsInteractor.getPlaylistsAll().collect { playlists ->
+                processResult(playlists)
+            }
+        }
+    }
+
+    private fun processResult(playlists: List<Playlist>) {
+        if (playlists.isEmpty()) {
+            renderState(PlaylistsState.Empty(R.string.no_playlists.toString()))
+        } else {
+            renderState(PlaylistsState.Content(playlists))
+            _playlistsLiveData.postValue(playlists)
+        }
+    }
+
     fun preparePlayer(track: Track?) {
         playerInteractor.preparePlayer(track,
-            { _playerState.value = PlayerState.PREPARED },
+            {
+                _playerState.value = PlayerState.PREPARED
+                _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
+            },
             {
                 timerJob?.cancel()
                 _playerState.value = PlayerState.PREPARED
@@ -104,8 +144,20 @@ class PlayerViewModel(
         }
     }
 
+    fun setTrack(track: Track) {
+        _track.value = track
+    }
+
     override fun onCleared() {
         playerInteractor.release()
         super.onCleared()
+    }
+
+    fun addTrackToPlaylist(track: Track, playlistId: Long) {
+        viewModelScope.launch {
+            playlistsInteractor.addTrackToPlaylist(track, playlistId).collect { result ->
+                _trackToPlaylistResultMessage.emit(result)
+            }
+        }
     }
 }

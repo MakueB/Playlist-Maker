@@ -129,4 +129,29 @@
         <item name="android:background">@color/playerBackgroundColor</item>
     </style>
 
+    //New Playlist
+
+    <style name="CreatePlaylistToolbarTitleTextAppearance" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/textSize_22</item>
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="CreatePlaylistToolbarStyle" parent="ThemeOverlay.Material3.Toolbar.Surface">
+        <item name="android:background">@color/playerBackgroundColor</item>
+        <item name="titleTextColor">@color/textColor</item>
+        <item name="android:radius">8dp</item>
+    </style>
+
+    <style name="CustomOutlineBox" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/text_input_layout_stroke_color</item>
+        <item name="android:textColorHint">@color/text_color_hint</item>
+        <item name="hintTextColor">#243897</item>
+    </style>
+
+    <style name="RoundedCornersImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
 </resources>

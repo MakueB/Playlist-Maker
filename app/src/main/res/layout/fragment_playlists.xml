@@ -1,32 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/playerBackgroundColor"
-    tools:context=".library.ui.FavoritesFragment">
+    tools:context=".library.ui.favorites.FavoritesFragment">
 
     <Button
-        android:id="@+id/clearHistory"
+        android:id="@+id/newPlaylistBtn"
         style="@style/FragmentPlaylistButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="@dimen/margin_24"
-        android:text="@string/new_playlist">
+        android:text="@string/new_playlist"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </Button>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_16"
+        tools:listitem="@layout/playlist_view"
+        tools:itemCount="4"
+        tools:spanCount="2"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        android:visibility="visible"
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+    </androidx.recyclerview.widget.RecyclerView>
+
     <ImageView
-        android:id="@+id/favoritesPlaceholder"
+        android:id="@+id/placeholder"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:contentDescription="@null"
         android:layout_gravity="center_horizontal"
         android:layout_marginTop="46dp"
         android:layout_marginBottom="@dimen/margin_16"
-        android:src="@drawable/nothing_found_light">
+        android:visibility="gone"
+        android:src="@drawable/nothing_found_light"
+        app:layout_constraintTop_toBottomOf="@id/newPlaylistBtn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </ImageView>
 
@@ -41,8 +65,12 @@
         android:textSize="@dimen/textSize_19"
         android:text="@string/no_playlists"
         android:ellipsize="none"
-        android:maxLines="2">
+        android:maxLines="2"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/placeholder"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
     </com.google.android.material.textview.MaterialTextView>
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

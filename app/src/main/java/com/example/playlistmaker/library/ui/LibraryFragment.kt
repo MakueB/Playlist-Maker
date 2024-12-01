@@ -27,10 +27,7 @@ class LibraryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val trackId = arguments?.getInt("trackId", -1) ?: -1 //использовать requireArguments()
-        val playlist = arguments?.getInt("playlistId", -1) ?: -1//сюда данные нужно будет получать по-другому
-
-        binding.viewPager.adapter = LibraryViewPagerAdapter(childFragmentManager, lifecycle, trackId, playlist)
+        binding.viewPager.adapter = LibraryViewPagerAdapter(childFragmentManager, lifecycle)
 
         tabMediator = TabLayoutMediator(binding.libraryTabLayout, binding.viewPager) { tab, position ->
             when (position) {

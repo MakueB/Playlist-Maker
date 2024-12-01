@@ -7,6 +7,7 @@
     android:orientation="vertical"
     android:theme="@style/SearchTheme"
     android:background="@color/playerBackgroundColor"
+    android:layout_margin="@dimen/margin_16"
     tools:ignore="ExtraText">
 
     <androidx.appcompat.widget.Toolbar
@@ -149,7 +150,7 @@
         </androidx.recyclerview.widget.RecyclerView>
 
         <Button
-            android:id="@+id/clearHistory"
+            android:id="@+id/clear_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"

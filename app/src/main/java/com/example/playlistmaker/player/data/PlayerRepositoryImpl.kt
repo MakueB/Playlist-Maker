@@ -9,6 +9,7 @@ class PlayerRepositoryImpl: PlayerRepository {
 
     override fun preparePlayer(track: Track?, onPrepared: () -> Unit, onComplete: () -> Unit) {
         mediaPlayer.apply {
+            reset()
             setDataSource(track?.previewUrl)
             prepareAsync()
             setOnPreparedListener{
@@ -30,6 +31,10 @@ class PlayerRepositoryImpl: PlayerRepository {
 
     override fun getCurrentPosition(): Long {
         return mediaPlayer.currentPosition.toLong()
+    }
+
+    override fun reset() {
+        mediaPlayer.reset()
     }
 
     override fun release() {
