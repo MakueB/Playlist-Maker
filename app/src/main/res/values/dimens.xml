@@ -12,8 +12,10 @@
     <dimen name="textSize_13">13sp</dimen>
     <dimen name="textSize_14">14sp</dimen>
     <dimen name="textSize_16">16sp</dimen>
+    <dimen name="textSize_18">18sp</dimen>
     <dimen name="textSize_19">19sp</dimen>
     <dimen name="textSize_22">22sp</dimen>
+    <dimen name="textSize_24">24sp</dimen>
     <dimen name="settings_textSize">16sp</dimen>
     <dimen name="cornerRadius_8">8dp</dimen>
     <dimen name="cornerRadius_16">16dp</dimen>
