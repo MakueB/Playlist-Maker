@@ -53,7 +53,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/playlistCoverImage"
-            tools:text="Best songs 2021" />
+            android:text="Best songs 2021" />
 
         <!-- Год -->
         <TextView
@@ -69,7 +69,7 @@
             android:textSize="@dimen/textSize_18"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/playlistName"
-            tools:text="2022" />
+            android:text="2022" />
 
         <!-- Время и треки -->
         <TextView
@@ -85,7 +85,7 @@
             android:textSize="@dimen/textSize_18"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/playlistDescription"
-            tools:text="300 минут • 98 треков" />
+            android:text="300 минут • 98 треков" />
 
         <!-- Иконки действия -->
         <LinearLayout
@@ -104,14 +104,14 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 app:tint="@color/YPBlack"
-                tools:src="@drawable/share" />
+                android:src="@drawable/share" />
 
             <ImageView
                 android:id="@+id/moreIcon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 app:tint="@color/YPBlack"
-                tools:src="@drawable/ic_more" />
+                android:src="@drawable/ic_more" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -130,7 +130,6 @@
             android:layout_height="match_parent"
             android:background="@drawable/rounded_bottom_sheet"
             app:behavior_hideable="false"
-            app:behavior_peekHeight="340dp"
             app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
             <View

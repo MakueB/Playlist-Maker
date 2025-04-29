@@ -59,6 +59,11 @@ class PlaylistsRepositoryImpl(
         if (trackEntity != null) {
             playlistTrackDao.removeTrackFromPlaylist(trackEntity)
         }
+
+        val isOrphan = playlistTrackDao.getPlaylistsForTrack(track).isEmpty()
+        if (isOrphan) {
+            playlistTrackDao.deleteTrackById(track)
+        }
     }
 
     override suspend fun clearPlaylist(playlistId: Long) {

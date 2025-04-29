@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.TrackViewBinding
 import com.example.playlistmaker.search.domain.models.Track
 
-class TrackAdapter(private val clickListener: (Track) -> Unit) : RecyclerView.Adapter<TracksViewHolder>() {
+class TrackAdapter(private val actionListener: TrackActionListener) : RecyclerView.Adapter<TracksViewHolder>() {
     var tracks = mutableListOf<Track>()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TracksViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
@@ -19,6 +19,7 @@ class TrackAdapter(private val clickListener: (Track) -> Unit) : RecyclerView.Ad
     override fun onBindViewHolder(holder: TracksViewHolder, position: Int) {
         val currentTrack = tracks[position]
         holder.bind(currentTrack)
-        holder.itemView.setOnClickListener {  clickListener(currentTrack) }
+        holder.itemView.setOnClickListener {  actionListener.onTrackClick(currentTrack) }
+        holder.itemView.setOnLongClickListener { actionListener.onTrackLongClick(currentTrack) }
     }
 }

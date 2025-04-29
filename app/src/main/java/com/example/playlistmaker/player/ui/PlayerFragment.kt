@@ -239,7 +239,6 @@ class PlayerFragment : Fragment() {
     }
 
     private fun navigateToNewPlaylist() {
-
         val action = PlayerFragmentDirections.actionPlayerFragmentToNewPlaylistFragment()
         findNavController().navigate(action)
     }

@@ -69,14 +69,29 @@ class SearchFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        adapter = TrackAdapter { track: Track ->
-            (activity as MainActivity).animateBottomNavigationView()
-            onTrackClickDebounce(track)
-        }
-        historyAdapter = TrackAdapter { track: Track ->
-            (activity as MainActivity).animateBottomNavigationView()
-            onTrackClickDebounce(track)
-        }
+        adapter = TrackAdapter (object : TrackActionListener {
+            override fun onTrackClick(track: Track) {
+                (activity as MainActivity).animateBottomNavigationView()
+                onTrackClickDebounce(track)
+            }
+
+            override fun onTrackLongClick(track: Track): Boolean {
+                return  false
+            }
+        })
+
+
+        historyAdapter = TrackAdapter (object : TrackActionListener {
+            override fun onTrackClick(track: Track) {
+                (activity as MainActivity).animateBottomNavigationView()
+                onTrackClickDebounce(track)
+            }
+
+            override fun onTrackLongClick(track: Track): Boolean {
+                return false
+            }
+        })
+
 
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         binding.historyRecyclerView.layoutManager = LinearLayoutManager(requireContext())

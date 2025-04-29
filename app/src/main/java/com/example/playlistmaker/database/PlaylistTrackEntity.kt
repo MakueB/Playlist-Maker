@@ -9,9 +9,9 @@ import androidx.room.Entity
 )
 data class PlaylistTrackEntity(
     @ColumnInfo(name = "track_id")
-    val trackId: Int, // Поле для track_id
+    val trackId: Int,
     @ColumnInfo(name = "playlist_id")
-    val playlistId: Long, // Поле для playlist_id
+    val playlistId: Long,
     @ColumnInfo(name = "track_name")
     val trackName: String,
     @ColumnInfo(name = "artist_name")

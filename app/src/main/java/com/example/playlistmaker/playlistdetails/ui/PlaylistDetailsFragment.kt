@@ -1,31 +1,49 @@
 package com.example.playlistmaker.playlistdetails.ui
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
 import android.util.TypedValue
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.coordinatorlayout.widget.CoordinatorLayout
-import androidx.core.view.updateLayoutParams
+import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistDetailsBinding
+import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.TrackActionListener
+import com.example.playlistmaker.search.ui.TrackAdapter
 import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.Locale
 
 
 class PlaylistDetailsFragment : Fragment() {
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
     private var _binding: FragmentPlaylistDetailsBinding? = null
     private val binding: FragmentPlaylistDetailsBinding get() = _binding!!
 
+    private val viewModel: PlaylistDetailsViewModel by viewModel()
+
     private val args by navArgs<PlaylistDetailsFragmentArgs>()
     private var playlist: Playlist? = null
+
+    private var adapter: TrackAdapter? = null
+    private lateinit var onTrackClickDebounce: (Track) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +63,12 @@ class PlaylistDetailsFragment : Fragment() {
             val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
             playlistName.text = playlist?.name
             playlistDescription.text = playlist?.description
-            playlistDetails.text = "$tracksNumber ${CommonUtils.getTrackWordForm(tracksNumber)} • ${totalDurationInSeconds.toFormattedDuration()}"
+            playlistDetails.text = getString(
+                R.string.playlist_details,
+                tracksNumber,
+                CommonUtils.getTrackWordForm(tracksNumber),
+                totalDurationInSeconds.toFormattedDuration()
+            )
 
             if (playlist?.imageUrl.isNullOrEmpty()) {
                 playlistCoverImage.setImageResource(R.drawable.placeholder)
@@ -60,41 +83,142 @@ class PlaylistDetailsFragment : Fragment() {
                 }
             }
 
-            bottomSheet.post {
-                adjustTopLayoutHeight()
+            actionIcons.post {
+                val actionIconsBottom = binding.actionIcons.bottom
+
+                val parentHeight = (binding.root.parent as View).height
+
+                val extraOffsetInDp = 16
+                val extraOffsetInPx = TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    extraOffsetInDp.toFloat(),
+                    resources.displayMetrics
+                ).toInt()
+
+                val desiredPeekHeight = parentHeight - actionIconsBottom - extraOffsetInPx
+
+                val bottomSheet = binding.bottomSheet
+                val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+                bottomSheetBehavior.peekHeight = desiredPeekHeight
+
+                bottomSheetBehavior.isFitToContents = true
+
+                var lastSlideOffset = 0f
+                bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        if (newState == BottomSheetBehavior.STATE_SETTLING) {
+                            if (lastSlideOffset < 0.5f) {
+                                bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                            } else {
+                                bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                            }
+                        }
+                    }
+
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        lastSlideOffset = slideOffset
+                    }
+                })
             }
+
+
+            bottomSheet.post {
+                //adjustTopLayoutHeight()
+            }
+
+            backArrow.setOnClickListener {
+                requireActivity().onBackPressedDispatcher.onBackPressed()
+            }
+
+            shareIcon.setOnClickListener {
+                viewModel.onShareClicked(playlist)
+            }
+
+            onTrackClickDebounce = debounce<Track>(
+                CLICK_DEBOUNCE_DELAY,
+                viewLifecycleOwner.lifecycleScope,
+                false
+            ) { track: Track ->
+                val action = PlaylistDetailsFragmentDirections.actionPlaylistDetailsFragmentToPlayerFragment(track)
+                findNavController().navigate(action)
+            }
+
+            adapter = TrackAdapter(object : TrackActionListener {
+                override fun onTrackClick(track: Track) {
+                    (activity as MainActivity).animateBottomNavigationView()
+                    onTrackClickDebounce(track)
+                }
+
+                override fun onTrackLongClick(track: Track): Boolean {
+                    showRemoveTrackDialog(track)
+                    return true
+                }
+            })
+
+            viewModel.shareCommand.observe(viewLifecycleOwner) { command ->
+                when (command) {
+                    is ShareCommand.ShowEmptyPlaylistMessage -> {
+                        Toast.makeText(requireContext(), "В этом плейлисте нет списка треков, которым можно поделиться", Toast.LENGTH_SHORT).show()
+                    }
+
+                    is ShareCommand.SharePlaylist -> {
+                        val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                            putExtra(Intent.EXTRA_TEXT, command.text)
+                            type = "text/plain"
+                        }
+                        startActivity(Intent.createChooser(shareIntent,"Поделиться через:"))
+                    }
+                }
+            }
+
+            binding.tracksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+            adapter?.tracks = playlist?.trackList?.toMutableList() ?: mutableListOf()
+            binding.tracksRecyclerView.adapter = adapter
         }
     }
 
+    private fun showRemoveTrackDialog(track: Track) {
+        val dialog = AlertDialog.Builder(requireContext())
+            .setMessage("Хотите удалить трек?")
+            .setNegativeButton("Нет") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .setPositiveButton("Да") { dialog, _ ->
+                removeTrackFromPlaylist(track)
+                dialog.dismiss()
+            }
+            .create()
+
+        dialog.show()
+    }
+
+    private fun removeTrackFromPlaylist(track: Track) {
+        val position = adapter?.tracks?.indexOf(track) ?: return
+        if (position != -1) {
+            adapter?.tracks?.removeAt(position)
+            adapter?.notifyItemRemoved(position)
+            adapter?.notifyItemRangeChanged(position, adapter?.itemCount ?: 0)
+        }
+
+        viewModel.removeTrack(track, playlist!!.id)
+    }
+// метод ограничивает высоту вью в процентах от экрана. Позже выберу лучшее решение
     private fun adjustTopLayoutHeight() {
         binding.apply {
-            // Находим координаты нижнего края LinearLayout (actionIcons)
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
-            val bottomOfShareIcon = binding.actionIcons.bottom
 
-            // Конвертируем отступ в пиксели
-            val extraMarginPx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                64f, // Дополнительный отступ
-                resources.displayMetrics
-            ).toInt()
+            val peekHeightPercent = 0.25f
 
-            // Минимальная высота (в dp)
-            val minHeightPx = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                100f, // Минимальная высота
-                resources.displayMetrics
-            ).toInt()
+            val peekHeight = (screenHeight * peekHeightPercent).toInt()
 
-            val calculatedHeight = screenHeight - bottomOfShareIcon - extraMarginPx
-            val finalHeight = calculatedHeight.coerceAtLeast(minHeightPx) // Учитываем минимальную высоту
-
-            // Устанавливаем BottomSheetBehavior
             val behavior = BottomSheetBehavior.from(bottomSheet)
-            behavior.peekHeight = if (calculatedHeight < finalHeight) finalHeight else calculatedHeight
-            behavior.state = BottomSheetBehavior.STATE_COLLAPSED // Устанавливаем состояние
+            behavior.peekHeight = peekHeight
+            behavior.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
+
+
     // Конвертирует строку формата "ММ:СС" или "ЧЧ:ММ:СС" в секунды
     fun String.toDurationInSeconds(): Int {
         val parts = this.split(":").map { it.toIntOrNull() ?: 0 }
@@ -111,9 +235,51 @@ class PlaylistDetailsFragment : Fragment() {
         val minutes = (this % 3600) / 60
         val seconds = this % 60
         return if (hours > 0) {
-            String.format("%d:%02d:%02d", hours, minutes, seconds)
+            String.format(Locale("ru", "RU"),"%d:%02d:%02d", hours, minutes, seconds)
         } else {
-            String.format("%02d:%02d", minutes, seconds)
+            String.format(Locale("ru", "RU"),"%02d:%02d", minutes, seconds)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        binding.actionIcons.post {
+            val actionIconsBottom = binding.actionIcons.bottom
+
+            val parentHeight = (binding.root.parent as View).height
+
+            val extraOffsetInDp = 16
+            val extraOffsetInPx = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                extraOffsetInDp.toFloat(),
+                resources.displayMetrics
+            ).toInt()
+
+            val desiredPeekHeight = parentHeight - actionIconsBottom - extraOffsetInPx
+
+            val bottomSheet = binding.bottomSheet
+            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+
+            bottomSheetBehavior.peekHeight = desiredPeekHeight
+
+            bottomSheetBehavior.isFitToContents = true
+
+            var lastSlideOffset = 0f
+            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    if (newState == BottomSheetBehavior.STATE_SETTLING) {
+                        if (lastSlideOffset < 0.5f) {
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+                        } else {
+                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    lastSlideOffset = slideOffset
+                }
+            })
         }
     }
 }

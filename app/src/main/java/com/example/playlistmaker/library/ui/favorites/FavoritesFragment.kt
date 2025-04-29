@@ -13,7 +13,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentFavoritesBinding
 import com.example.playlistmaker.library.ui.LibraryFragmentDirections
+import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.TrackActionListener
 import com.example.playlistmaker.search.ui.TrackAdapter
 import com.example.playlistmaker.utils.debounce
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -54,7 +56,17 @@ class FavoritesFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        adapter = TrackAdapter(onTrackClickDebounce)
+        adapter = TrackAdapter(object : TrackActionListener {
+            override fun onTrackClick(track: Track) {
+                (activity as MainActivity).animateBottomNavigationView()
+                onTrackClickDebounce(track)
+            }
+
+            override fun onTrackLongClick(track: Track): Boolean {
+                return false
+            }
+
+        })
         binding.favoritesRecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         binding.favoritesRecyclerView.adapter = adapter
 
