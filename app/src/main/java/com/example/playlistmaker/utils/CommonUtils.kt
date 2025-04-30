@@ -36,4 +36,26 @@ object CommonUtils {
             else -> "треков"
         }
     }
+
+    // Конвертирует строку формата "ММ:СС" или "ЧЧ:ММ:СС" в секунды
+    fun toDurationInSeconds(time: String): Int {
+        val parts = time.split(":").map { it.toIntOrNull() ?: 0 }
+        return when (parts.size) {
+            2 -> parts[0] * 60 + parts[1] // ММ:СС
+            3 -> parts[0] * 3600 + parts[1] * 60 + parts[2] // ЧЧ:ММ:СС
+            else -> 0
+        }
+    }
+
+    // Конвертирует секунды в строку формата "ЧЧ:ММ:СС"
+    fun toFormattedDuration(seconds: Int): String {
+        val hours = seconds / 3600
+        val minutes = (seconds % 3600) / 60
+        val seconds = seconds % 60
+        return if (hours > 0) {
+            String.format(Locale("ru", "RU"),"%d:%02d:%02d", hours, minutes, seconds)
+        } else {
+            String.format(Locale("ru", "RU"),"%02d:%02d", minutes, seconds)
+        }
+    }
 }
