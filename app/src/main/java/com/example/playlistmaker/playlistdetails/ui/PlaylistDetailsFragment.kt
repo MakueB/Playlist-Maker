@@ -161,7 +161,6 @@ class PlaylistDetailsFragment : Fragment() {
                 viewModel.onShareClicked(playlist)
             }
         }
-
     }
 
     private fun showRemoveTrackDialog(track: Track) {

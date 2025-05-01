@@ -23,15 +23,15 @@ class PlaylistsRepositoryImpl(
 
     override suspend fun getPlaylistsAll(): Flow<List<Playlist>> {
         return flow {
-            val playlistsDb = playlistDao.getAllPlaylists() // Получение всех плейлистов из базы
+            val playlistsDb = playlistDao.getAllPlaylists()
             val playlistsWithTracks = playlistsDb.map { playlistEntity ->
                 val playlist =
-                    playlistDbConvertor.map(playlistEntity) // Конвертация PlaylistEntity в Playlist
+                    playlistDbConvertor.map(playlistEntity)
                 val tracks =
-                    playlistTrackDao.getTracksByPlaylist(playlist.id) // Получение треков для текущего плейлиста
+                    playlistTrackDao.getTracksByPlaylist(playlist.id)
                 val trackList =
-                    tracks.map { trackDbConvertor.mapFromPlaylistTrackEntity(it) } // Конвертация треков
-                playlist.copy(trackList = trackList) // Добавление треков в плейлист
+                    tracks.map { trackDbConvertor.mapFromPlaylistTrackEntity(it) }
+                playlist.copy(trackList = trackList)
             }
             emit(playlistsWithTracks)
         }
@@ -41,13 +41,11 @@ class PlaylistsRepositoryImpl(
         track: Track,
         playlistId: Long
     ): Flow<Resource<String>> = flow {
-        // Проверяем, есть ли трек в плейлисте
         val existingTrack = playlistTrackDao.getTrackInPlaylist(track.trackId, playlistId)
         val playlist = playlistDbConvertor.map(playlistDao.getPlaylistById(playlistId))
         if (existingTrack != null) {
             emit(Resource.Error("Track '${track.trackName}' is already in the playlist."))
         } else {
-            // Конвертируем трек в PlaylistTrackEntity и добавляем в базу данных
             val playlistTrackEntity = trackDbConvertor.mapToPlaylistTrackEntity(track, playlistId)
             playlistTrackDao.insertTrackToPlaylist(playlistTrackEntity)
             emit(Resource.Success("Track '${track.trackName}' was added successfully to the playlist '${playlist.name}'"))

@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.utils.SingleLiveEvent
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

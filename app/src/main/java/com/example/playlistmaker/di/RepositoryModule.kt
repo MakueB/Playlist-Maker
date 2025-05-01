@@ -10,6 +10,8 @@ import com.example.playlistmaker.newplaylist.data.NewPlaylistRepositoryImpl
 import com.example.playlistmaker.newplaylist.domain.api.NewPlaylistRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
+import com.example.playlistmaker.playlistdetails.data.PlaylistDetailsRepositoryImpl
+import com.example.playlistmaker.playlistdetails.domain.api.PlaylistDetailsRepository
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.storage.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
@@ -59,5 +61,9 @@ val repositoryModule = module {
 
     single <PlaylistsRepository> {
         PlaylistsRepositoryImpl(get(), get(), get(), get())
+    }
+
+    single <PlaylistDetailsRepository> {
+        PlaylistDetailsRepositoryImpl()
     }
 }
