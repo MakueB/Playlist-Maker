@@ -1,4 +1,4 @@
-package com.example.playlistmaker.playlistdetails.ui
+package com.example.playlistmaker.details.ui
 
 import android.app.AlertDialog
 import android.content.Intent
@@ -17,7 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentPlaylistDetailsBinding
+import com.example.playlistmaker.databinding.FragmentDetailsBinding
 import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
@@ -29,17 +29,17 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class PlaylistDetailsFragment : Fragment() {
+class DetailsFragment : Fragment() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 
-    private var _binding: FragmentPlaylistDetailsBinding? = null
-    private val binding: FragmentPlaylistDetailsBinding get() = _binding!!
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding: FragmentDetailsBinding get() = _binding!!
 
-    private val viewModel: PlaylistDetailsViewModel by viewModel()
+    private val viewModel: DetailsViewModel by viewModel()
 
-    private val args by navArgs<PlaylistDetailsFragmentArgs>()
+    private val args by navArgs<DetailsFragmentArgs>()
     private var playlist: Playlist? = null
 
     private var adapter: TrackAdapter? = null
@@ -49,7 +49,7 @@ class PlaylistDetailsFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -73,7 +73,7 @@ class PlaylistDetailsFragment : Fragment() {
                 false
             ) { track: Track ->
                 val action =
-                    PlaylistDetailsFragmentDirections.actionPlaylistDetailsFragmentToPlayerFragment(
+                    DetailsFragmentDirections.actionPlaylistDetailsFragmentToPlayerFragment(
                         track
                     )
                 findNavController().navigate(action)

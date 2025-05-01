@@ -1,6 +1,4 @@
-package com.example.playlistmaker.playlistdetails.ui
-
-import org.w3c.dom.Text
+package com.example.playlistmaker.details.ui
 
 sealed class ShareCommand {
     object ShowEmptyPlaylistMessage: ShareCommand()

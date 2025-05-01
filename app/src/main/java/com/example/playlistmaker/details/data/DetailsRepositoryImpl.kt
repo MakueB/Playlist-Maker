@@ -1,12 +1,12 @@
-package com.example.playlistmaker.playlistdetails.data
+package com.example.playlistmaker.details.data
 
 import com.example.playlistmaker.newplaylist.domain.models.Playlist
-import com.example.playlistmaker.playlistdetails.domain.api.PlaylistDetailsRepository
-import com.example.playlistmaker.playlistdetails.ui.ShareCommand
+import com.example.playlistmaker.details.domain.api.DetailsRepository
+import com.example.playlistmaker.details.ui.ShareCommand
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 
-class PlaylistDetailsRepositoryImpl: PlaylistDetailsRepository {
+class DetailsRepositoryImpl: DetailsRepository {
     override fun execute(playlist: Playlist?): ShareCommand {
         val tracks = playlist?.trackList ?: emptyList()
         return if (tracks.isEmpty()) {

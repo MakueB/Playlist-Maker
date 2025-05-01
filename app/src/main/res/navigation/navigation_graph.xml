@@ -63,9 +63,9 @@
     </fragment>
     <fragment
         android:id="@+id/playlistDetailsFragment"
-        android:name="com.example.playlistmaker.playlistdetails.ui.PlaylistDetailsFragment"
+        android:name="com.example.playlistmaker.details.ui.DetailsFragment"
         android:label="fragment_playlist_details"
-        tools:layout="@layout/fragment_playlist_details">
+        tools:layout="@layout/fragment_details">
         <argument
             android:name="playlist"
             app:argType="com.example.playlistmaker.newplaylist.domain.models.Playlist" />

@@ -56,4 +56,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="playlist_name_hint">Название</string>
     <string name="playlist_details">%1$d %2$s • %3$s</string>
+    <string name="playlist_cover_image">playlist Cover Image</string>
 </resources>
