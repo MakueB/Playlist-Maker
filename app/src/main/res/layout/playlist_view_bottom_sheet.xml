@@ -7,7 +7,7 @@
     android:background="@color/playerBackgroundColor">
 
     <ImageView
-        android:id="@+id/image"
+        android:id="@+id/menu_image"
         android:layout_width="45dp"
         android:layout_height="45dp"
         android:layout_marginStart="@dimen/margin_8"
@@ -37,7 +37,7 @@
         app:layout_constraintBottom_toTopOf="@id/numberOfTracks"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/image"
+        app:layout_constraintStart_toEndOf="@id/menu_image"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Лучшие песни" />
 
@@ -52,7 +52,7 @@
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"
-        app:layout_constraintStart_toEndOf="@id/image"
+        app:layout_constraintStart_toEndOf="@id/menu_image"
         app:layout_constraintTop_toBottomOf="@id/playlistName"
         tools:text="157 треков" />
 </androidx.constraintlayout.widget.ConstraintLayout>

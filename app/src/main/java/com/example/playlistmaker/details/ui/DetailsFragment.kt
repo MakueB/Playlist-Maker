@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Resources
 import android.os.Bundle
+import android.util.Log
 import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.View
@@ -58,7 +59,7 @@ class DetailsFragment : Fragment() {
 
         playlist = args.playlist
         setupUi(playlist)
-        setupBottomSheetHeight()
+        setupShareBottomSheetHeight()
         setupListeners()
         setupObservers()
         setupAdapter()
@@ -160,6 +161,13 @@ class DetailsFragment : Fragment() {
             shareIcon.setOnClickListener {
                 viewModel.onShareClicked(playlist)
             }
+
+            menuIcon.setOnClickListener {
+                menuBottomSheet.visibility = View.VISIBLE
+                playlist?.let {
+                    setupMenuBottomSheet(it)
+                }
+            }
         }
     }
 
@@ -190,11 +198,11 @@ class DetailsFragment : Fragment() {
     }
 
     // метод ограничивает высоту вью в процентах от экрана. Позже выберу лучшее решение
-    private fun adjustTopLayoutHeight() {
+    private fun adjustTopLayoutHeight(bottomSheet: View, percent: Float) {
         binding.apply {
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
 
-            val peekHeightPercent = 0.25f
+            val peekHeightPercent = percent
 
             val peekHeight = (screenHeight * peekHeightPercent).toInt()
 
@@ -204,7 +212,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun setupBottomSheetHeight() {
+    private fun setupShareBottomSheetHeight() {
         binding.actionIcons.post {
             val actionIconsBottom = binding.actionIcons.bottom
 
@@ -227,7 +235,8 @@ class DetailsFragment : Fragment() {
             bottomSheetBehavior.isFitToContents = true
 
             var lastSlideOffset = 0f
-            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            bottomSheetBehavior.addBottomSheetCallback(object :
+                BottomSheetBehavior.BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
                     if (newState == BottomSheetBehavior.STATE_SETTLING) {
                         if (lastSlideOffset < 0.5f) {
@@ -245,8 +254,35 @@ class DetailsFragment : Fragment() {
         }
     }
 
+    private fun setupMenuBottomSheet(playlist: Playlist) {
+        val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
+        val menuBottomSheet = binding.menuBottomSheet
+        context?.let { Glide.with(it).clear(binding.menuImage) }
+
+        if (!playlist.imageUrl.isNullOrEmpty()) {
+            context?.let { context ->
+                Glide.with(context)
+                    .load(playlist.imageUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .transform(RoundedCorners(cornersInPx))
+                    .into(binding.menuImage)
+            }
+        } else {
+            binding.menuImage.setImageResource(R.drawable.placeholder)
+        }
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        adjustTopLayoutHeight(binding.menuBottomSheet, 0.45f)
+
+        bottomSheetBehavior.isFitToContents = false
+        bottomSheetBehavior.isHideable = true
+    }
+
     override fun onResume() {
         super.onResume()
-        setupBottomSheetHeight()
+        setupShareBottomSheetHeight()
     }
 }
