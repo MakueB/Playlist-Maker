@@ -1,38 +1,33 @@
 package com.example.playlistmaker.details.ui
 
-import android.app.AlertDialog
-import android.content.Intent
-import android.content.res.Resources
-import android.os.Bundle
-import android.util.Log
-import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
+import android.app.*
+import android.content.*
+import android.content.res.*
+import android.os.*
+import android.util.*
+import android.view.*
+import android.widget.*
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import androidx.lifecycle.*
+import androidx.navigation.fragment.*
+import androidx.recyclerview.widget.*
+import com.bumptech.glide.*
+import com.bumptech.glide.load.resource.bitmap.*
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentDetailsBinding
-import com.example.playlistmaker.main.ui.MainActivity
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
-import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.search.ui.TrackActionListener
-import com.example.playlistmaker.search.ui.TrackAdapter
-import com.example.playlistmaker.utils.CommonUtils
-import com.example.playlistmaker.utils.debounce
-import com.google.android.material.bottomsheet.BottomSheetBehavior
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.example.playlistmaker.databinding.*
+import com.example.playlistmaker.main.ui.*
+import com.example.playlistmaker.newplaylist.domain.models.*
+import com.example.playlistmaker.search.domain.models.*
+import com.example.playlistmaker.search.ui.*
+import com.example.playlistmaker.utils.*
+import com.google.android.material.bottomsheet.*
+import org.koin.androidx.viewmodel.ext.android.*
 
 
 class DetailsFragment : Fragment() {
     companion object {
         private const val CLICK_DEBOUNCE_DELAY = 1000L
+        private const val MENU_BOTTOM_SHEET_HEIGHT_PERCENT = 0.45f
     }
 
     private var _binding: FragmentDetailsBinding? = null
@@ -142,7 +137,7 @@ class DetailsFragment : Fragment() {
             } else {
                 context?.let { context ->
                     Glide.with(context)
-                        .load(playlist.imageUrl)
+                        .load(playlist?.imageUrl)
                         .placeholder(R.drawable.placeholder)
                         .centerCrop()
                         .transform(RoundedCorners(cornersInPx))
@@ -167,6 +162,24 @@ class DetailsFragment : Fragment() {
                 playlist?.let {
                     setupMenuBottomSheet(it)
                 }
+            }
+
+            menuShare.setOnClickListener {
+                viewModel.onShareClicked(playlist)
+            }
+
+            menuDeletePlaylist.setOnClickListener {
+                val dialog = AlertDialog.Builder(requireContext())
+                    .setMessage("Хотите удалить плейлист ${playlist?.name}?")
+                    .setNegativeButton(getString(R.string.no)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
+                        playlist?.let { playlist -> viewModel.deletePlaylist(playlist) }
+                        findNavController().popBackStack()
+                    }
+                    .create()
+                dialog.show()
             }
         }
     }
@@ -197,14 +210,11 @@ class DetailsFragment : Fragment() {
         viewModel.removeTrack(track, playlist!!.id)
     }
 
-    // метод ограничивает высоту вью в процентах от экрана. Позже выберу лучшее решение
     private fun adjustTopLayoutHeight(bottomSheet: View, percent: Float) {
         binding.apply {
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
 
-            val peekHeightPercent = percent
-
-            val peekHeight = (screenHeight * peekHeightPercent).toInt()
+            val peekHeight = (screenHeight * percent).toInt()
 
             val behavior = BottomSheetBehavior.from(bottomSheet)
             behavior.peekHeight = peekHeight
@@ -256,29 +266,38 @@ class DetailsFragment : Fragment() {
 
     private fun setupMenuBottomSheet(playlist: Playlist) {
         val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
-        val menuBottomSheet = binding.menuBottomSheet
-        context?.let { Glide.with(it).clear(binding.menuImage) }
 
-        if (!playlist.imageUrl.isNullOrEmpty()) {
-            context?.let { context ->
-                Glide.with(context)
-                    .load(playlist.imageUrl)
-                    .placeholder(R.drawable.placeholder)
-                    .centerCrop()
-                    .transform(RoundedCorners(cornersInPx))
-                    .into(binding.menuImage)
+        binding.apply {
+            val menuBottomSheet = menuBottomSheet
+            context?.let { Glide.with(it).clear(menuImage) }
+
+            if (!playlist.imageUrl.isNullOrEmpty()) {
+                context?.let { context ->
+                    Glide.with(context)
+                        .load(playlist.imageUrl)
+                        .placeholder(R.drawable.placeholder)
+                        .centerCrop()
+                        .transform(RoundedCorners(cornersInPx))
+                        .into(menuImage)
+                }
+            } else {
+                menuImage.setImageResource(R.drawable.placeholder)
             }
-        } else {
-            binding.menuImage.setImageResource(R.drawable.placeholder)
+
+            menuPlaylistName.text = playlist.name
+            val tracksNumber = playlist.trackList.size
+            menuNumberOfTracks.text = "${tracksNumber} ${CommonUtils.getTrackWordForm(tracksNumber)}"
+
+
+
+            val bottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            adjustTopLayoutHeight(menuBottomSheet, MENU_BOTTOM_SHEET_HEIGHT_PERCENT)
+
+            bottomSheetBehavior.isFitToContents = false
+            bottomSheetBehavior.isHideable = true
         }
-
-        val bottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-        adjustTopLayoutHeight(binding.menuBottomSheet, 0.45f)
-
-        bottomSheetBehavior.isFitToContents = false
-        bottomSheetBehavior.isHideable = true
     }
 
     override fun onResume() {

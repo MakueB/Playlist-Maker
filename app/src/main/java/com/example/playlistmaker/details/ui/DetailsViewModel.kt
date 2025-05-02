@@ -27,4 +27,10 @@ class DetailsViewModel(
             playlistInteractor.removeTrackFromPlaylist(track, playlistId)
         }
     }
+
+    fun deletePlaylist(playlist: Playlist) {
+        viewModelScope.launch {
+            playlistInteractor.deletePlaylist(playlist)
+        }
+    }
 }

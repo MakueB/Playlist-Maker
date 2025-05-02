@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.playerFragment -> binding.bottomNavigationView.isVisible = false
                 R.id.newPlaylistFragment -> binding.bottomNavigationView.isVisible = false
-                R.id.playlistDetailsFragment -> binding.bottomNavigationView.isVisible = false
+                R.id.detailsFragment -> binding.bottomNavigationView.isVisible = false
                 else -> binding.bottomNavigationView.isVisible = true
             }
         }
