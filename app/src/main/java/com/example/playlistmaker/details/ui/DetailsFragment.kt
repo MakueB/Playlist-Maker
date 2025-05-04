@@ -18,7 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.*
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.*
 import com.example.playlistmaker.main.ui.*
-import com.example.playlistmaker.createplaylist.domain.models.*
+import com.example.playlistmaker.createandeditplaylist.domain.models.*
 import com.example.playlistmaker.search.domain.models.*
 import com.example.playlistmaker.search.ui.*
 import com.example.playlistmaker.utils.*

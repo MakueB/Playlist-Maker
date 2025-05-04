@@ -1,6 +1,6 @@
 package com.example.playlistmaker.details.data
 
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.details.domain.api.DetailsRepository
 import com.example.playlistmaker.details.ui.ShareCommand
 import com.example.playlistmaker.search.domain.models.Track

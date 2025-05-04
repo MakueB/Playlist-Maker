@@ -8,7 +8,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.library.domain.favorites.api.FavoritesInteractor
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.library.ui.playlists.PlaylistsState
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils

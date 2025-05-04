@@ -6,8 +6,8 @@ import com.example.playlistmaker.library.data.favorites.FavoritesRepositoryImpl
 import com.example.playlistmaker.library.data.playlists.PlaylistsRepositoryImpl
 import com.example.playlistmaker.library.domain.favorites.api.FavoritesRepository
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsRepository
-import com.example.playlistmaker.createplaylist.data.CreatePlaylistRepositoryImpl
-import com.example.playlistmaker.createplaylist.domain.api.CreatePlaylistRepository
+import com.example.playlistmaker.createandeditplaylist.data.CreatePlaylistRepositoryImpl
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
 import com.example.playlistmaker.details.data.DetailsRepositoryImpl

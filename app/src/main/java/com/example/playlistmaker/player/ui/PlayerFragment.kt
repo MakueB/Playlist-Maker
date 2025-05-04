@@ -19,7 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.library.ui.playlists.PlaylistsState
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.utils.debounce

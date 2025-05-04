@@ -14,7 +14,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.library.ui.LibraryFragmentDirections
 import com.example.playlistmaker.main.ui.MainActivity
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel

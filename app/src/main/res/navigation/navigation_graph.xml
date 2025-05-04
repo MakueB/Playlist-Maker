@@ -42,13 +42,13 @@
         tools:layout="@layout/fragment_settings" />
     <fragment
         android:id="@+id/createPlaylistFragment"
-        android:name="com.example.playlistmaker.createplaylist.ui.CreatePlaylistFragment"
+        android:name="com.example.playlistmaker.createandeditplaylist.ui.create.CreatePlaylistFragment"
         android:label="fragment_create_playlist"
         tools:layout="@layout/fragment_create_playlist">
 
         <argument
             android:name="playlist"
-            app:argType="com.example.playlistmaker.createplaylist.domain.models.Playlist"
+            app:argType="com.example.playlistmaker.createandeditplaylist.domain.models.Playlist"
             app:nullable="true" />
         <action
             android:id="@+id/action_newPlaylistFragment_to_playerFragment"
@@ -57,7 +57,7 @@
 
     <fragment
         android:id="@+id/editPlaylistFragment"
-        android:name="com.example.playlistmaker.editplaylist.ui.EditPlaylistFragment"
+        android:name="com.example.playlistmaker.createandeditplaylist.ui.edit.EditPlaylistFragment"
         android:label="fragment_edit_playlist"
         tools:layout="@layout/fragment_create_playlist">
 
@@ -66,7 +66,7 @@
             app:destination="@id/detailsFragment" />
         <argument
             android:name="playlist"
-            app:argType="com.example.playlistmaker.createplaylist.domain.models.Playlist" />
+            app:argType="com.example.playlistmaker.createandeditplaylist.domain.models.Playlist" />
     </fragment>
 
     <fragment
@@ -88,7 +88,7 @@
         tools:layout="@layout/fragment_details">
         <argument
             android:name="playlist"
-            app:argType="com.example.playlistmaker.createplaylist.domain.models.Playlist" />
+            app:argType="com.example.playlistmaker.createandeditplaylist.domain.models.Playlist" />
         <action
             android:id="@+id/action_playlistDetailsFragment_to_playerFragment"
             app:destination="@id/playerFragment" />

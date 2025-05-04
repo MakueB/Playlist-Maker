@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(

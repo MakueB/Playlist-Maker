@@ -4,8 +4,8 @@ import com.example.playlistmaker.library.domain.favorites.api.FavoritesInteracto
 import com.example.playlistmaker.library.domain.favorites.impl.FavoritesInteractorImpl
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.library.domain.playlists.impl.PlaylistsInteractorImpl
-import com.example.playlistmaker.createplaylist.domain.CreatePlaylistInteractorImpl
-import com.example.playlistmaker.createplaylist.domain.api.CreatePlaylistInteractor
+import com.example.playlistmaker.createandeditplaylist.domain.CreatePlaylistInteractorImpl
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.details.domain.api.DetailsInteractor

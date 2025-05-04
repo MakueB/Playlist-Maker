@@ -1,9 +1,9 @@
-package com.example.playlistmaker.createplaylist.data
+package com.example.playlistmaker.createandeditplaylist.data
 
 import com.example.playlistmaker.database.convertors.EmptyPlaylistDbConvertor
 import com.example.playlistmaker.database.dao.PlaylistDao
-import com.example.playlistmaker.createplaylist.domain.api.CreatePlaylistRepository
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistRepository
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 
 class CreatePlaylistRepositoryImpl(
     private val playlistDao: PlaylistDao,

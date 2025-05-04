@@ -1,10 +1,10 @@
-package com.example.playlistmaker.editplaylist.ui
+package com.example.playlistmaker.createandeditplaylist.ui.edit
 
 import androidx.core.net.toUri
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.createplaylist.domain.api.CreatePlaylistInteractor
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
-import com.example.playlistmaker.createplaylist.ui.CreatePlaylistViewModel
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistInteractor
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.ui.create.CreatePlaylistViewModel
 import kotlinx.coroutines.launch
 
 class EditPlaylistViewModel(

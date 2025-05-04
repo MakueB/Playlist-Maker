@@ -1,12 +1,12 @@
-package com.example.playlistmaker.createplaylist.ui
+package com.example.playlistmaker.createandeditplaylist.ui.create
 
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.createplaylist.domain.api.CreatePlaylistInteractor
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistInteractor
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
 open class CreatePlaylistViewModel (

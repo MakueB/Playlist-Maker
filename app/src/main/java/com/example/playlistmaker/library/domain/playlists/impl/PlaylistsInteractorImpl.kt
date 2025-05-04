@@ -2,7 +2,7 @@ package com.example.playlistmaker.library.domain.playlists.impl
 
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsRepository
-import com.example.playlistmaker.createplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.Resource
 import kotlinx.coroutines.flow.Flow
