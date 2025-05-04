@@ -1,6 +1,6 @@
 package com.example.playlistmaker.library.domain.playlists.api
 
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
 

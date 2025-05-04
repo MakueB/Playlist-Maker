@@ -7,6 +7,8 @@ import android.os.*
 import android.util.*
 import android.view.*
 import android.widget.*
+import androidx.core.view.doOnLayout
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
 import androidx.navigation.fragment.*
@@ -16,7 +18,7 @@ import com.bumptech.glide.load.resource.bitmap.*
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.*
 import com.example.playlistmaker.main.ui.*
-import com.example.playlistmaker.newplaylist.domain.models.*
+import com.example.playlistmaker.createplaylist.domain.models.*
 import com.example.playlistmaker.search.domain.models.*
 import com.example.playlistmaker.search.ui.*
 import com.example.playlistmaker.utils.*
@@ -137,7 +139,7 @@ class DetailsFragment : Fragment() {
             } else {
                 context?.let { context ->
                     Glide.with(context)
-                        .load(playlist?.imageUrl)
+                        .load(playlist.imageUrl)
                         .placeholder(R.drawable.placeholder)
                         .centerCrop()
                         .transform(RoundedCorners(cornersInPx))
@@ -158,7 +160,7 @@ class DetailsFragment : Fragment() {
             }
 
             menuIcon.setOnClickListener {
-                menuBottomSheet.visibility = View.VISIBLE
+                menuBottomSheet.isVisible = true
                 playlist?.let {
                     setupMenuBottomSheet(it)
                 }
@@ -180,6 +182,11 @@ class DetailsFragment : Fragment() {
                     }
                     .create()
                 dialog.show()
+            }
+
+            menuEditInfo.setOnClickListener {
+                val action = DetailsFragmentDirections.actionDetailsFragmentToEditPlaylistFragment(playlist!!)
+                findNavController().navigate(action)
             }
         }
     }
@@ -223,7 +230,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun setupShareBottomSheetHeight() {
-        binding.actionIcons.post {
+        binding.actionIcons.doOnLayout {
             val actionIconsBottom = binding.actionIcons.bottom
 
             val parentHeight = (binding.root.parent as View).height
@@ -239,28 +246,11 @@ class DetailsFragment : Fragment() {
 
             val bottomSheet = binding.bottomSheet
             val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
             bottomSheetBehavior.peekHeight = desiredPeekHeight
 
             bottomSheetBehavior.isFitToContents = true
-
-            var lastSlideOffset = 0f
-            bottomSheetBehavior.addBottomSheetCallback(object :
-                BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    if (newState == BottomSheetBehavior.STATE_SETTLING) {
-                        if (lastSlideOffset < 0.5f) {
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-                        } else {
-                            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                        }
-                    }
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    lastSlideOffset = slideOffset
-                }
-            })
         }
     }
 
@@ -285,10 +275,14 @@ class DetailsFragment : Fragment() {
             }
 
             menuPlaylistName.text = playlist.name
+
             val tracksNumber = playlist.trackList.size
-            menuNumberOfTracks.text = "${tracksNumber} ${CommonUtils.getTrackWordForm(tracksNumber)}"
-
-
+            val trackCountText = getString(
+                R.string.track_count,
+                tracksNumber,
+                CommonUtils.getTrackWordForm(tracksNumber)
+            )
+            menuNumberOfTracks.text = trackCountText
 
             val bottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED

@@ -19,7 +19,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.library.ui.playlists.PlaylistsState
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.utils.debounce
@@ -49,7 +49,6 @@ class PlayerFragment : Fragment() {
     private val args by navArgs<PlayerFragmentArgs>()
     private var adapter: PlayerAdapter? = null
     private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -90,7 +89,6 @@ class PlayerFragment : Fragment() {
                 }
             }
         }
-
 
         binding.apply {
             country.text = track?.country
@@ -151,7 +149,6 @@ class PlayerFragment : Fragment() {
                 }
 
                 else -> {
-                    // Обработка других состояний по необходимости
                 }
             }
         }
@@ -239,7 +236,7 @@ class PlayerFragment : Fragment() {
     }
 
     private fun navigateToNewPlaylist() {
-        val action = PlayerFragmentDirections.actionPlayerFragmentToNewPlaylistFragment()
+        val action = PlayerFragmentDirections.actionPlayerFragmentToNewPlaylistFragment(null)
         findNavController().navigate(action)
     }
 

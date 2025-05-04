@@ -14,7 +14,7 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.library.ui.LibraryFragmentDirections
 import com.example.playlistmaker.main.ui.MainActivity
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createplaylist.domain.models.Playlist
 import com.example.playlistmaker.utils.debounce
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -46,7 +46,7 @@ class PlaylistsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.newPlaylistBtn.setOnClickListener {
-            findNavController().navigate(LibraryFragmentDirections.actionLibraryFragmentToNewPlaylistFragment())
+            findNavController().navigate(LibraryFragmentDirections.actionLibraryFragmentToNewPlaylistFragment(null))
         }
 
         onPlaylistClickDebounce = debounce<Playlist>(

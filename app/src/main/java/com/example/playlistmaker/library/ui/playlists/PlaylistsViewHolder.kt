@@ -5,7 +5,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createplaylist.domain.models.Playlist
 import com.example.playlistmaker.utils.CommonUtils
 
 class PlaylistsViewHolder(private val binding: PlaylistViewBinding) :

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createplaylist.domain.models.Playlist
 import com.example.playlistmaker.details.domain.api.DetailsInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.SingleLiveEvent

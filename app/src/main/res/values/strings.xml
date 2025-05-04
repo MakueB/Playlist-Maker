@@ -57,4 +57,6 @@
     <string name="playlist_name_hint">Название</string>
     <string name="playlist_details">%1$d %2$s • %3$s</string>
     <string name="playlist_cover_image">playlist Cover Image</string>
+    <string name="track_count"> %1$d %2$s </string>
+    <string name="save">Сохранить</string>
 </resources>
