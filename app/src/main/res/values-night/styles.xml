@@ -154,4 +154,15 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="MyAlertDialogTheme" parent="">
+        <item name="textColorAlertDialogListItem">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
 </resources>

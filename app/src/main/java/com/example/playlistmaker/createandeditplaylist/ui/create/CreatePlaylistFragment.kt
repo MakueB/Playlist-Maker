@@ -1,5 +1,6 @@
 package com.example.playlistmaker.createandeditplaylist.ui.create
 
+import android.app.AlertDialog
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
@@ -37,7 +39,7 @@ class CreatePlaylistFragment : Fragment() {
 
     private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { pickedUri: Uri? ->
         if (pickedUri != null) {
-            val savedUri = saveImageToPrivateStorage(pickedUri) // сохраняем и получаем новый Uri
+            val savedUri = saveImageToPrivateStorage(pickedUri)
             binding.playlistImage.setImageURI(savedUri)
             createPlstViewModel.updateImageUri(savedUri)
             binding.placeholder.isVisible = false
@@ -148,11 +150,11 @@ class CreatePlaylistFragment : Fragment() {
         inputStream.close()
         outputStream.close()
 
-        return file.toUri() // <--- ВОТ ЧТО ТЕБЕ НУЖНО СОХРАНИТЬ В Playlist.imageUrl
+        return file.toUri()
     }
 
     private fun showExitConfirmationDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertDialogTheme)
             .setTitle(getString(R.string.exit_creation_title))
             .setMessage(getString(R.string.exit_creation_message))
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -162,6 +164,10 @@ class CreatePlaylistFragment : Fragment() {
                 findNavController().navigateUp()
             }
             .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textColor))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textColor))
     }
 
     private fun hasUnsavedChanges(): Boolean {

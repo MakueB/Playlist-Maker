@@ -184,5 +184,16 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="MyAlertDialogTheme" parent="Theme.Material3.DayNight.Dialog.Alert">
+        <item name="textColorAlertDialogListItem">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
 
 </resources>
