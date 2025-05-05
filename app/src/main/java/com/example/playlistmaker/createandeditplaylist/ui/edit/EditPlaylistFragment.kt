@@ -121,7 +121,7 @@ class EditPlaylistFragment : Fragment() {
                 val updatedPlaylist = editPlaylistViewModel.updateAndGetPlaylist()
 
                 val navOptions = NavOptions.Builder()
-                    .setPopUpTo(R.id.editPlaylistFragment, true)
+                    .setPopUpTo(R.id.detailsFragment, true)
                     .build()
 
                 val action = EditPlaylistFragmentDirections.actionEditPlaylistFragmentToDetailsFragment(updatedPlaylist)
