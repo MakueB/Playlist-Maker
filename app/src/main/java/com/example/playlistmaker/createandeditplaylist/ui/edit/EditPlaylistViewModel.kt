@@ -33,4 +33,21 @@ class EditPlaylistViewModel(
             createPlaylistInteractor.savePlaylist(updated)
         }
     }
+
+    fun updateAndGetPlaylist(): Playlist {
+        val name = _playlistName.value ?: return playlistToEdit
+        val description = _playlistDescription.value.orEmpty()
+        val imageUri = _imageUri.value?.toString()
+
+        val updated = playlistToEdit.copy(
+            name = name,
+            description = description,
+            imageUrl = imageUri
+        )
+
+        viewModelScope.launch {
+            createPlaylistInteractor.savePlaylist(updated)
+        }
+        return updated
+    }
 }

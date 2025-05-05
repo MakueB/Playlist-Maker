@@ -66,7 +66,8 @@
             app:destination="@id/detailsFragment" />
         <argument
             android:name="playlist"
-            app:argType="com.example.playlistmaker.createandeditplaylist.domain.models.Playlist" />
+            app:argType="com.example.playlistmaker.createandeditplaylist.domain.models.Playlist"
+            app:nullable="true" />
     </fragment>
 
     <fragment

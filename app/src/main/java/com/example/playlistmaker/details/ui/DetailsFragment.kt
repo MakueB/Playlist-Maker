@@ -242,7 +242,7 @@ class DetailsFragment : Fragment() {
                 resources.displayMetrics
             ).toInt()
 
-            val desiredPeekHeight = parentHeight - actionIconsBottom - extraOffsetInPx
+            val desiredPeekHeight = parentHeight - actionIconsBottom - extraOffsetInPx //не забыть поковыряться тут, странное поведение
 
             val bottomSheet = binding.bottomSheet
             val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
@@ -296,6 +296,8 @@ class DetailsFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        setupShareBottomSheetHeight()
+        binding.actionIcons.doOnLayout {
+            setupShareBottomSheetHeight()
+        }
     }
 }

@@ -15,12 +15,12 @@ import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.playlistmaker.R
 import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
-import com.example.playlistmaker.createandeditplaylist.ui.edit.EditPlaylistViewModel
 import com.example.playlistmaker.details.ui.DetailsFragmentArgs
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
@@ -117,8 +117,16 @@ class EditPlaylistFragment : Fragment() {
 
             createButton.setOnClickListener {
                 uri?.let { saveImageToPrivateStorage(it) }
-                editPlaylistViewModel.savePlaylist()
-                findNavController().navigateUp()
+
+                val updatedPlaylist = editPlaylistViewModel.updateAndGetPlaylist()
+
+                val navOptions = NavOptions.Builder()
+                    .setPopUpTo(R.id.editPlaylistFragment, true)
+                    .build()
+
+                val action = EditPlaylistFragmentDirections.actionEditPlaylistFragmentToDetailsFragment(updatedPlaylist)
+
+                findNavController().navigate(action, navOptions)
             }
 
             editPlaylistViewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
