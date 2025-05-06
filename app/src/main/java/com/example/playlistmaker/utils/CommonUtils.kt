@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
 import android.util.TypedValue
+import com.example.playlistmaker.search.domain.models.Track
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -57,5 +58,25 @@ object CommonUtils {
         } else {
             String.format(Locale("ru", "RU"),"%02d:%02d", minutes, seconds)
         }
+    }
+
+    fun getTotalDurationInMinutes(tracks: List<Track>): Int {
+        return tracks.sumOf { track ->
+            // Преобразуем строку формата "mm:ss" в минуты
+            val parts = track.trackDuration.split(":")
+            val minutes = parts.getOrNull(0)?.toIntOrNull() ?: 0
+            val seconds = parts.getOrNull(1)?.toIntOrNull() ?: 0
+            minutes + (seconds / 60)
+        }
+    }
+
+    fun formatMinutesText(minutes: Int): String {
+        val suffix = when {
+            minutes % 100 in 11..14 -> "минут"
+            minutes % 10 == 1 -> "минута"
+            minutes % 10 in 2..4 -> "минуты"
+            else -> "минут"
+        }
+        return "$minutes $suffix"
     }
 }

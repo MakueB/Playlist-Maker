@@ -23,6 +23,7 @@ import com.example.playlistmaker.search.domain.models.*
 import com.example.playlistmaker.search.ui.*
 import com.example.playlistmaker.utils.*
 import com.google.android.material.bottomsheet.*
+import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
 import org.koin.androidx.viewmodel.ext.android.*
 
 
@@ -121,17 +122,16 @@ class DetailsFragment : Fragment() {
     private fun setupUi(playlist: Playlist?) {
         binding.apply {
             val tracksNumber = playlist?.trackList?.size ?: 0
-            val totalDurationInSeconds =
-                playlist?.trackList?.sumOf { CommonUtils.toDurationInSeconds(it.trackDuration) }
-                    ?: 0
+            val totalDuration =
+                CommonUtils.getTotalDurationInMinutes(playlist?.trackList ?: emptyList())
             val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
             playlistName.text = playlist?.name
             playlistDescription.text = playlist?.description
             playlistDetails.text = getString(
                 R.string.playlist_details,
+                CommonUtils.formatMinutesText(totalDuration),
                 tracksNumber,
-                CommonUtils.getTrackWordForm(tracksNumber),
-                CommonUtils.toFormattedDuration(totalDurationInSeconds)
+                CommonUtils.getTrackWordForm(tracksNumber)
             )
 
             if (playlist?.imageUrl.isNullOrEmpty()) {
@@ -161,17 +161,18 @@ class DetailsFragment : Fragment() {
 
             menuIcon.setOnClickListener {
                 menuBottomSheet.isVisible = true
-                playlist?.let {
-                    setupMenuBottomSheet(it)
+                playlist?.let { playlist ->
+                    setupMenuBottomSheet(playlist)
                 }
             }
 
             menuShare.setOnClickListener {
+                menuBottomSheet.isVisible = false
                 viewModel.onShareClicked(playlist)
             }
 
             menuDeletePlaylist.setOnClickListener {
-                val dialog = AlertDialog.Builder(requireContext())
+                val dialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
                     .setMessage("Хотите удалить плейлист ${playlist?.name}?")
                     .setNegativeButton(getString(R.string.no)) { dialog, _ ->
                         dialog.dismiss()
@@ -185,14 +186,15 @@ class DetailsFragment : Fragment() {
             }
 
             menuEditInfo.setOnClickListener {
-                val action = DetailsFragmentDirections.actionDetailsFragmentToEditPlaylistFragment(playlist!!)
+                val action =
+                    DetailsFragmentDirections.actionDetailsFragmentToEditPlaylistFragment(playlist!!)
                 findNavController().navigate(action)
             }
         }
     }
 
     private fun showRemoveTrackDialog(track: Track) {
-        val dialog = AlertDialog.Builder(requireContext())
+        val dialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
             .setMessage("Хотите удалить трек?")
             .setNegativeButton("Нет") { dialog, _ ->
                 dialog.dismiss()
@@ -222,7 +224,6 @@ class DetailsFragment : Fragment() {
             val screenHeight = Resources.getSystem().displayMetrics.heightPixels
 
             val peekHeight = (screenHeight * percent).toInt()
-
             val behavior = BottomSheetBehavior.from(bottomSheet)
             behavior.peekHeight = peekHeight
             behavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -242,11 +243,31 @@ class DetailsFragment : Fragment() {
                 resources.displayMetrics
             ).toInt()
 
-            val desiredPeekHeight = parentHeight - actionIconsBottom - extraOffsetInPx //не забыть поковыряться тут, странное поведение
+            val desiredPeekHeight =
+                parentHeight - actionIconsBottom - extraOffsetInPx
 
             val bottomSheet = binding.bottomSheet
             val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.visibility = View.GONE
+                        }
+
+                        else -> {
+                            binding.overlay.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    val alpha = if (slideOffset < 0) 0f else slideOffset
+                    binding.overlay.alpha = alpha
+                }
+            })
 
             bottomSheetBehavior.peekHeight = desiredPeekHeight
 
@@ -287,7 +308,27 @@ class DetailsFragment : Fragment() {
             val bottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 
+            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) {
+                    when (newState) {
+                        BottomSheetBehavior.STATE_HIDDEN -> {
+                            binding.overlay.visibility = View.GONE
+                        }
+
+                        else -> {
+                            binding.overlay.visibility = View.VISIBLE
+                        }
+                    }
+                }
+
+                override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                    val alpha = if (slideOffset < 0) 0f else slideOffset
+                    binding.overlay.alpha = alpha
+                }
+            })
+
             adjustTopLayoutHeight(menuBottomSheet, MENU_BOTTOM_SHEET_HEIGHT_PERCENT)
+
 
             bottomSheetBehavior.isFitToContents = false
             bottomSheetBehavior.isHideable = true
