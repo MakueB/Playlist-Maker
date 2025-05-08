@@ -1,19 +1,24 @@
 package com.example.playlistmaker.details.data
 
-import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.details.domain.api.DetailsRepository
 import com.example.playlistmaker.details.ui.ShareCommand
+import com.example.playlistmaker.details.ui.models.PlaylistUiModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 
-class DetailsRepositoryImpl: DetailsRepository {
-    override fun execute(playlist: Playlist?): ShareCommand {
-        val tracks = playlist?.trackList ?: emptyList()
+class DetailsRepositoryImpl : DetailsRepository {
+
+    override fun getShareCommand(playlistUiModel: PlaylistUiModel): ShareCommand {
+        val tracks = playlistUiModel.tracks
         return if (tracks.isEmpty()) {
             ShareCommand.ShowEmptyPlaylistMessage
         } else {
-            val text = buildShareText(playlist?.name ?: "", playlist?.description ?: "", tracks)
-            return ShareCommand.SharePlaylist(text)
+            val text = buildShareText(
+                playlistUiModel.name,
+                playlistUiModel.description ?: "",
+                tracks
+            )
+            ShareCommand.SharePlaylist(text)
         }
     }
 
@@ -31,7 +36,7 @@ class DetailsRepositoryImpl: DetailsRepository {
 
         val trackLines = tracks.mapIndexed { index, track ->
             val duration = CommonUtils.toDurationInSeconds(track.trackDuration)
-            "${index + 1}. ${track.artistName} - ${track.trackName} ($duration)"
+            "${index + 1}. ${track.artistName} - ${track.trackName} (${duration})"
         }
         return header + "\n" + trackLines.joinToString("\n")
     }

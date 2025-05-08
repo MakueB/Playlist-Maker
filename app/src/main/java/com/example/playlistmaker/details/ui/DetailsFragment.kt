@@ -1,30 +1,35 @@
 package com.example.playlistmaker.details.ui
 
-import android.app.*
-import android.content.*
-import android.content.res.*
-import android.os.*
-import android.util.*
-import android.view.*
-import android.widget.*
+import android.app.AlertDialog
+import android.content.Intent
+import android.content.res.Resources
+import android.os.Bundle
+import android.util.TypedValue
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.*
-import androidx.navigation.fragment.*
-import androidx.recyclerview.widget.*
-import com.bumptech.glide.*
-import com.bumptech.glide.load.resource.bitmap.*
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.*
-import com.example.playlistmaker.main.ui.*
-import com.example.playlistmaker.createandeditplaylist.domain.models.*
-import com.example.playlistmaker.search.domain.models.*
-import com.example.playlistmaker.search.ui.*
-import com.example.playlistmaker.utils.*
-import com.google.android.material.bottomsheet.*
+import com.example.playlistmaker.databinding.FragmentDetailsBinding
+import com.example.playlistmaker.details.ui.models.PlaylistUiModel
+import com.example.playlistmaker.main.ui.MainActivity
+import com.example.playlistmaker.search.domain.models.Track
+import com.example.playlistmaker.search.ui.TrackActionListener
+import com.example.playlistmaker.search.ui.TrackAdapter
+import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.debounce
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
-import org.koin.androidx.viewmodel.ext.android.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class DetailsFragment : Fragment() {
@@ -39,7 +44,6 @@ class DetailsFragment : Fragment() {
     private val viewModel: DetailsViewModel by viewModel()
 
     private val args by navArgs<DetailsFragmentArgs>()
-    private var playlist: Playlist? = null
 
     private var adapter: TrackAdapter? = null
     private lateinit var onTrackClickDebounce: (Track) -> Unit
@@ -55,13 +59,12 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        playlist = args.playlist
-        setupUi(playlist)
-        setupShareBottomSheetHeight()
-        setupListeners()
-        setupObservers()
+        viewModel.loadPlaylist(args.playlist.id)
         setupAdapter()
+        setupObservers()
+        setupListeners()
         setupDebounce()
+        setupShareBottomSheetHeight()
     }
 
     private fun setupDebounce() {
@@ -72,9 +75,7 @@ class DetailsFragment : Fragment() {
                 false
             ) { track: Track ->
                 val action =
-                    DetailsFragmentDirections.actionPlaylistDetailsFragmentToPlayerFragment(
-                        track
-                    )
+                    DetailsFragmentDirections.actionPlaylistDetailsFragmentToPlayerFragment(track)
                 findNavController().navigate(action)
             }
         }
@@ -93,11 +94,13 @@ class DetailsFragment : Fragment() {
             }
         })
         binding.tracksRecyclerView.layoutManager = LinearLayoutManager(requireContext())
-        adapter?.tracks = playlist?.trackList?.toMutableList() ?: mutableListOf()
         binding.tracksRecyclerView.adapter = adapter
     }
 
     private fun setupObservers() {
+        viewModel.state.observe(viewLifecycleOwner) { model ->
+            renderUi(model)
+        }
         viewModel.shareCommand.observe(viewLifecycleOwner) { command ->
             when (command) {
                 is ShareCommand.ShowEmptyPlaylistMessage -> {
@@ -119,34 +122,29 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun setupUi(playlist: Playlist?) {
-        binding.apply {
-            val tracksNumber = playlist?.trackList?.size ?: 0
-            val totalDuration =
-                CommonUtils.getTotalDurationInMinutes(playlist?.trackList ?: emptyList())
-            val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
-            playlistName.text = playlist?.name
-            playlistDescription.text = playlist?.description
-            playlistDetails.text = getString(
-                R.string.playlist_details,
-                CommonUtils.formatMinutesText(totalDuration),
-                tracksNumber,
-                CommonUtils.getTrackWordForm(tracksNumber)
-            )
+    private fun renderUi(model: PlaylistUiModel) = binding.apply {
+        playlistName.text = model.name
+        playlistDescription.text = model.description
+        playlistDetails.text = getString(
+            R.string.playlist_details,
+            model.totalDuration,
+            model.trackCount,
+            model.trackWordForm
+        )
 
-            if (playlist?.imageUrl.isNullOrEmpty()) {
-                playlistCoverImage.setImageResource(R.drawable.placeholder)
-            } else {
-                context?.let { context ->
-                    Glide.with(context)
-                        .load(playlist.imageUrl)
-                        .placeholder(R.drawable.placeholder)
-                        .centerCrop()
-                        .transform(RoundedCorners(cornersInPx))
-                        .into(playlistCoverImage)
-                }
-            }
+        context?.let { context ->
+            val corners = CommonUtils.dpToPx(8f, context)
+            val target = Glide.with(context)
+                .load(model.imageUrl)
+                .placeholder(R.drawable.placeholder)
+                .centerCrop()
+                .transform(RoundedCorners(corners))
+
+            target.into(playlistCoverImage)
         }
+
+        adapter?.tracks = model.tracks.toMutableList()
+        adapter?.notifyDataSetChanged()
     }
 
     private fun setupListeners() {
@@ -156,68 +154,53 @@ class DetailsFragment : Fragment() {
             }
 
             shareIcon.setOnClickListener {
-                viewModel.onShareClicked(playlist)
+                viewModel.onShareClicked()
             }
 
             menuIcon.setOnClickListener {
                 menuBottomSheet.isVisible = true
-                playlist?.let { playlist ->
-                    setupMenuBottomSheet(playlist)
+                viewModel.state.value?.let { model ->
+                    setupMenuBottomSheet(model)
                 }
             }
 
             menuShare.setOnClickListener {
                 menuBottomSheet.isVisible = false
-                viewModel.onShareClicked(playlist)
+                viewModel.onShareClicked()
             }
 
-            menuDeletePlaylist.setOnClickListener {
-                val dialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
-                    .setMessage("Хотите удалить плейлист ${playlist?.name}?")
-                    .setNegativeButton(getString(R.string.no)) { dialog, _ ->
-                        dialog.dismiss()
-                    }
-                    .setPositiveButton(getString(R.string.yes)) { dialog, _ ->
-                        playlist?.let { playlist -> viewModel.deletePlaylist(playlist) }
+            binding.menuDeletePlaylist.setOnClickListener {
+                AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
+                    .setMessage("Удалить плейлист?")
+                    .setNegativeButton("Нет", null)
+                    .setPositiveButton("Да") { _, _ ->
+                        viewModel.deletePlaylist()
                         findNavController().popBackStack()
                     }
-                    .create()
-                dialog.show()
+                    .show()
             }
 
             menuEditInfo.setOnClickListener {
                 val action =
-                    DetailsFragmentDirections.actionDetailsFragmentToEditPlaylistFragment(playlist!!)
+                    DetailsFragmentDirections.actionDetailsFragmentToEditPlaylistFragment(args.playlist)
                 findNavController().navigate(action)
             }
         }
     }
 
     private fun showRemoveTrackDialog(track: Track) {
-        val dialog = AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
+        AlertDialog.Builder(requireContext(), R.style.CustomAlertDialog)
             .setMessage("Хотите удалить трек?")
             .setNegativeButton("Нет") { dialog, _ ->
                 dialog.dismiss()
             }
             .setPositiveButton("Да") { dialog, _ ->
-                removeTrackFromPlaylist(track)
+                viewModel.removeTrack(track)
                 dialog.dismiss()
             }
-            .create()
-
-        dialog.show()
+            .create().show()
     }
 
-    private fun removeTrackFromPlaylist(track: Track) {
-        val position = adapter?.tracks?.indexOf(track) ?: return
-        if (position != -1) {
-            adapter?.tracks?.removeAt(position)
-            adapter?.notifyItemRemoved(position)
-            adapter?.notifyItemRangeChanged(position, adapter?.itemCount ?: 0)
-        }
-
-        viewModel.removeTrack(track, playlist!!.id)
-    }
 
     private fun adjustTopLayoutHeight(bottomSheet: View, percent: Float) {
         binding.apply {
@@ -275,7 +258,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    private fun setupMenuBottomSheet(playlist: Playlist) {
+    private fun setupMenuBottomSheet(playlist: PlaylistUiModel) {
         val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
 
         binding.apply {
@@ -297,7 +280,7 @@ class DetailsFragment : Fragment() {
 
             menuPlaylistName.text = playlist.name
 
-            val tracksNumber = playlist.trackList.size
+            val tracksNumber = playlist.tracks.size
             val trackCountText = getString(
                 R.string.track_count,
                 tracksNumber,
@@ -329,7 +312,6 @@ class DetailsFragment : Fragment() {
 
             adjustTopLayoutHeight(menuBottomSheet, MENU_BOTTOM_SHEET_HEIGHT_PERCENT)
 
-
             bottomSheetBehavior.isFitToContents = false
             bottomSheetBehavior.isHideable = true
         }
@@ -341,4 +323,6 @@ class DetailsFragment : Fragment() {
             setupShareBottomSheetHeight()
         }
     }
+
+
 }

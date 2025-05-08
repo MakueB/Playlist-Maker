@@ -11,8 +11,8 @@ import kotlinx.coroutines.flow.flow
 class PlaylistsInteractorImpl (
     private val repository: PlaylistsRepository
 ) : PlaylistsInteractor {
-    override suspend fun deletePlaylist(playlist: Playlist) {
-        repository.deletePlaylist(playlist)
+    override suspend fun deletePlaylist(playlistId: Long) {
+        repository.deletePlaylist(playlistId)
     }
 
     override suspend fun getPlaylistsAll(): Flow<List<Playlist>> {

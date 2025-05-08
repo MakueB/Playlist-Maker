@@ -17,8 +17,8 @@ class PlaylistsRepositoryImpl(
     private val playlistDbConvertor: EmptyPlaylistDbConvertor,
     private val trackDbConvertor: TrackDbConvertor
 ) : PlaylistsRepository {
-    override suspend fun deletePlaylist(playlist: Playlist) {
-        playlistDao.deletePlaylist(playlistDbConvertor.map(playlist))
+    override suspend fun deletePlaylist(playlistId: Long) {
+        playlistDao.deletePlaylistById(playlistId)
     }
 
     override suspend fun getPlaylistsAll(): Flow<List<Playlist>> {

@@ -3,6 +3,7 @@ package com.example.playlistmaker.di
 import android.content.Context
 import androidx.room.Room
 import com.example.playlistmaker.database.AppDatabase
+import com.example.playlistmaker.details.ui.PlaylistMapper
 import com.example.playlistmaker.search.data.NetworkClient
 import com.example.playlistmaker.search.data.network.ITunesApi
 import com.example.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -74,5 +75,8 @@ val dataModule = module {
 
     single {
         get<AppDatabase>().playlistTrackDao()
+    }
+    single {
+        PlaylistMapper()
     }
 }

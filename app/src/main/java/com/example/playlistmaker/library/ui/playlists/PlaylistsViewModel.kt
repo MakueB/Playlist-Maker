@@ -40,7 +40,7 @@ class PlaylistsViewModel(
 
     fun deletePlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            interactor.deletePlaylist(playlist)
+            interactor.deletePlaylist(playlist.id)
             getPlaylistsAll()
         }
     }
