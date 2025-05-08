@@ -68,7 +68,7 @@ class DetailsViewModel(
         _state.value = updatedState
 
         viewModelScope.launch {
-            playlistInteractor.removeTrackFromPlaylist(track, current.id)
+            detailsInteractor.removeTrackFromPlaylist(track.trackId, current.id)
 
             updatePlaylist(
                 Playlist(

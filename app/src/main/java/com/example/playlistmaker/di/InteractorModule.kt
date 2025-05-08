@@ -48,6 +48,6 @@ val interactorModule = module {
     }
 
     single<DetailsInteractor> {
-        DetailsInteractorImpl(get())
+        DetailsInteractorImpl(get(),get())
     }
 }

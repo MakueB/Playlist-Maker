@@ -52,15 +52,15 @@ class PlaylistsRepositoryImpl(
         }
     }
 
-    override suspend fun removeTrackFromPlaylist(track: Int, playlistId: Long) {
-        val trackEntity = playlistTrackDao.getTrackInPlaylist(track, playlistId)
+    override suspend fun removeTrackFromPlaylist(trackId: Int, playlistId: Long) {
+        val trackEntity = playlistTrackDao.getTrackInPlaylist(trackId, playlistId)
         if (trackEntity != null) {
             playlistTrackDao.removeTrackFromPlaylist(trackEntity)
         }
 
-        val isOrphan = playlistTrackDao.getPlaylistsForTrack(track).isEmpty()
+        val isOrphan = playlistTrackDao.getPlaylistsForTrack(trackId).isEmpty()
         if (isOrphan) {
-            playlistTrackDao.deleteTrackById(track)
+            playlistTrackDao.deleteTrackById(trackId)
         }
     }
 
