@@ -21,7 +21,7 @@ import com.example.playlistmaker.databinding.FragmentPlayerBinding
 import com.example.playlistmaker.library.ui.playlists.PlaylistsState
 import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.Utils
 import com.example.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
@@ -107,7 +107,7 @@ class PlayerFragment : Fragment() {
             trackName.text = track?.trackName
         }
 
-        val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
+        val cornersInPx = Utils.dpToPx(8f, requireContext())
 
         binding.apply {
             if (track?.artworkUrl100?.isEmpty() == true)

@@ -2,14 +2,14 @@ package com.example.playlistmaker.details.ui
 
 import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.details.ui.models.PlaylistUiModel
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.Utils
 
 class PlaylistMapper {
     fun toUiModel(playlist: Playlist): PlaylistUiModel {
-        val duration = CommonUtils.getTotalDurationInMinutes(playlist.trackList)
-        val formattedDuration = CommonUtils.formatMinutesText(duration)
+        val duration = Utils.getTotalDurationInMinutes(playlist.trackList)
+        val formattedDuration = Utils.formatMinutesText(duration)
         val trackCount = playlist.trackList.size
-        val wordForm = CommonUtils.getTrackWordForm(trackCount)
+        val wordForm = Utils.getTrackWordForm(trackCount)
 
         return PlaylistUiModel(
             id = playlist.id,

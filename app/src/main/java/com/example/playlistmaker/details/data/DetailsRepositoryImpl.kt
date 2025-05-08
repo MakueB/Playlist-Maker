@@ -4,7 +4,7 @@ import com.example.playlistmaker.details.domain.api.DetailsRepository
 import com.example.playlistmaker.details.ui.ShareCommand
 import com.example.playlistmaker.details.ui.models.PlaylistUiModel
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.Utils
 
 class DetailsRepositoryImpl : DetailsRepository {
 
@@ -31,11 +31,11 @@ class DetailsRepositoryImpl : DetailsRepository {
             appendLine("Плейлист: $name")
             appendLine("Описание: $description")
             appendLine()
-            appendLine("${tracks.size} ${CommonUtils.getTrackWordForm(tracks.size)}")
+            appendLine("${tracks.size} ${Utils.getTrackWordForm(tracks.size)}")
         }
 
         val trackLines = tracks.mapIndexed { index, track ->
-            val duration = CommonUtils.toDurationInSeconds(track.trackDuration)
+            val duration = Utils.toDurationInSeconds(track.trackDuration)
             "${index + 1}. ${track.artistName} - ${track.trackName} (${duration})"
         }
         return header + "\n" + trackLines.joinToString("\n")

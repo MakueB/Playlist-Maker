@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.details.domain.api.DetailsInteractor
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.Utils
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -74,14 +74,14 @@ class DetailsViewModel(
         val updatedTracks = currentPlaylist.tracks.filter { it.trackId != track.trackId }
 
         val newCount = updatedTracks.size
-        val durationMinutes = CommonUtils.getTotalDurationInMinutes(updatedTracks)
-        val formattedDuration = CommonUtils.formatMinutesText(durationMinutes)
+        val durationMinutes = Utils.getTotalDurationInMinutes(updatedTracks)
+        val formattedDuration = Utils.formatMinutesText(durationMinutes)
 
         val updatedPlaylist = currentPlaylist.copy(
             trackCount = newCount,
             totalDuration = formattedDuration,
             tracks = updatedTracks,
-            trackWordForm = CommonUtils.getTrackWordForm(newCount)
+            trackWordForm = Utils.getTrackWordForm(newCount)
         )
         _uiState.value = DetailsUiState.Content(updatedPlaylist)
 

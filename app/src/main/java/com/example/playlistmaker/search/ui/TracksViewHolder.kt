@@ -3,7 +3,7 @@ package com.example.playlistmaker.search.ui
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.Utils
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.TrackViewBinding
 import com.example.playlistmaker.search.domain.models.Track
@@ -11,7 +11,7 @@ import com.example.playlistmaker.search.domain.models.Track
 class TracksViewHolder (private val binding: TrackViewBinding): RecyclerView.ViewHolder(binding.root) {
 
     fun bind (track: Track){
-        val cornersInPx = CommonUtils.dpToPx(2f, itemView.context)
+        val cornersInPx = Utils.dpToPx(2f, itemView.context)
 
         binding.trackNameTextView.text = track.trackName
         binding.artistNameTextView.text = track.artistName

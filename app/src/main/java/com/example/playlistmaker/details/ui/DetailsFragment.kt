@@ -18,8 +18,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentDetailsBinding
 import com.example.playlistmaker.details.ui.models.PlaylistUiModel
@@ -27,7 +25,8 @@ import com.example.playlistmaker.main.ui.MainActivity
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.search.ui.TrackActionListener
 import com.example.playlistmaker.search.ui.TrackAdapter
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.ImageLoader
+import com.example.playlistmaker.utils.Utils
 import com.example.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
@@ -157,13 +156,11 @@ class DetailsFragment : Fragment() {
             model.trackWordForm
         )
 
-        val corners = CommonUtils.dpToPx(8f, requireContext())
-        Glide.with(requireContext())
-            .load(model.imageUrl)
-            .placeholder(R.drawable.placeholder)
-            .centerCrop()
-            .transform(RoundedCorners(corners))
-            .into(playlistCoverImage)
+        ImageLoader.loadImage(
+            requireContext(),
+            playlistCoverImage,
+            model.imageUrl,
+        )
 
         adapter?.tracks = model.tracks.toMutableList()
         adapter?.notifyDataSetChanged()
@@ -172,7 +169,6 @@ class DetailsFragment : Fragment() {
     private fun setupListeners() {
         binding.apply {
             backArrow.setOnClickListener {
-                //requireActivity().onBackPressedDispatcher.onBackPressed()
                 findNavController().popBackStack()
             }
 
@@ -269,25 +265,17 @@ class DetailsFragment : Fragment() {
 
     private fun setupMenuBottomSheet(playlist: PlaylistUiModel) {
         binding.apply {
-            val corners = CommonUtils.dpToPx(8f, requireContext())
-
-            context?.let { Glide.with(it).clear(menuImage) }
-            if (!playlist.imageUrl.isNullOrEmpty()) {
-                Glide.with(requireContext())
-                    .load(playlist.imageUrl)
-                    .placeholder(R.drawable.placeholder)
-                    .centerCrop()
-                    .transform(RoundedCorners(corners))
-                    .into(menuImage)
-            } else {
-                menuImage.setImageResource(R.drawable.placeholder)
-            }
+            ImageLoader.loadImage(
+                requireContext(),
+                menuImage,
+                playlist.imageUrl,
+            )
 
             menuPlaylistName.text = playlist.name
             menuNumberOfTracks.text = getString(
                 R.string.track_count,
                 playlist.tracks.size,
-                CommonUtils.getTrackWordForm(playlist.tracks.size)
+                Utils.getTrackWordForm(playlist.tracks.size)
             )
 
             adjustTopLayoutHeight(menuBottomSheet, MENU_BOTTOM_SHEET_HEIGHT_PERCENT)
