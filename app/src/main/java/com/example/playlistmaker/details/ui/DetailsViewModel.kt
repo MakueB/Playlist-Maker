@@ -1,16 +1,17 @@
 package com.example.playlistmaker.details.ui
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
-import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.details.domain.api.DetailsInteractor
-import com.example.playlistmaker.details.ui.models.PlaylistUiModel
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
-import com.example.playlistmaker.utils.SingleLiveEvent
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class DetailsViewModel(
@@ -19,66 +20,74 @@ class DetailsViewModel(
     private val mapper: PlaylistMapper
 ) : ViewModel() {
 
-    private val _shareCommand = SingleLiveEvent<ShareCommand>()
-    val shareCommand: LiveData<ShareCommand> = _shareCommand
+    private val _uiState = MutableStateFlow(DetailsUiState())
+    val uiState: StateFlow<DetailsUiState> = _uiState.asStateFlow()
 
-    private val _state = MutableLiveData<PlaylistUiModel>()
-    val state: LiveData<PlaylistUiModel> = _state
+    private val _uiEffect = MutableSharedFlow<DetailsUiEffect>()
+    val uiEffect: SharedFlow<DetailsUiEffect> = _uiEffect.asSharedFlow()
 
     private var playlistId: Long = -1L
 
-    fun loadPlaylist(id: Long) {
+    fun onEvent(event: DetailsUiEvent) {
+        when (event) {
+            is DetailsUiEvent.LoadPlaylist -> loadPlaylist(event.id)
+            is DetailsUiEvent.RemoveTrack -> removeTrack(event.track)
+            is DetailsUiEvent.DeletePlaylist -> deletePlaylist()
+            is DetailsUiEvent.ShareClicked -> handleShare()
+        }
+    }
+
+    private fun loadPlaylist(id: Long) {
         playlistId = id
         viewModelScope.launch {
             playlistInteractor.getPlaylistsAll().collect { playlists ->
-                val playlist = playlists.find { it.id == id } ?: return@collect
-                _state.value = mapper.toUiModel(playlist)
+                playlists.find { it.id == id }?.let {
+                    _uiState.value = DetailsUiState.Content(mapper.toUiModel(it))
+                }
             }
         }
     }
 
-    fun updatePlaylist(updatedPlaylist: Playlist) {
-        _state.postValue(mapper.toUiModel(updatedPlaylist))
-    }
+    fun handleShare() {
+        val state = _uiState.value
+        if (state !is DetailsUiState.Content) return
 
-    fun onShareClicked() {
-        val playlist = _state.value ?: return
-        val command = detailsInteractor.getShareCommand(playlist)
-        _shareCommand.postValue(command)
+        val command = detailsInteractor.getShareCommand(state.playlist)
+        viewModelScope.launch {
+            when (command) {
+                is ShareCommand.SharePlaylist -> {
+                    _uiEffect.emit(DetailsUiEffect.Share(command.text))
+                }
+
+                is ShareCommand.ShowEmptyPlaylistMessage -> {
+                    _uiEffect.emit(DetailsUiEffect.ShowEmptyPlaylistToast)
+                }
+            }
+        }
     }
 
     fun removeTrack(track: Track) {
-        val current = _state.value ?: return
+        val state = _uiState.value
+        if (state !is DetailsUiState.Content) return
 
-        val updatedTracks = current.tracks.toMutableList().apply {
-            removeIf { it.trackId == track.trackId }
-        }
+        val currentPlaylist = state.playlist
+        val updatedTracks = currentPlaylist.tracks.filter { it.trackId != track.trackId }
 
         val newCount = updatedTracks.size
         val durationMinutes = CommonUtils.getTotalDurationInMinutes(updatedTracks)
         val formattedDuration = CommonUtils.formatMinutesText(durationMinutes)
 
-        val updatedState = current.copy(
-            tracks = updatedTracks,
+        val updatedPlaylist = currentPlaylist.copy(
             trackCount = newCount,
             totalDuration = formattedDuration,
+            tracks = updatedTracks,
             trackWordForm = CommonUtils.getTrackWordForm(newCount)
         )
-
-        _state.value = updatedState
+        _uiState.value = DetailsUiState.Content(updatedPlaylist)
 
         viewModelScope.launch {
-            detailsInteractor.removeTrackFromPlaylist(track.trackId, current.id)
-
-            updatePlaylist(
-                Playlist(
-                    id = current.id,
-                    name = current.name,
-                    description = current.description ?: "",
-                    imageUrl = current.imageUrl,
-                    trackList = updatedTracks
-                )
-            )
+            detailsInteractor.removeTrackFromPlaylist(track.trackId, currentPlaylist.id)
+            playlistInteractor.(updatedPlaylist)
         }
     }
 

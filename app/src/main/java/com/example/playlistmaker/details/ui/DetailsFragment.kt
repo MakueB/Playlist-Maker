@@ -154,7 +154,7 @@ class DetailsFragment : Fragment() {
             }
 
             shareIcon.setOnClickListener {
-                viewModel.onShareClicked()
+                viewModel.handleShare()
             }
 
             menuIcon.setOnClickListener {
@@ -166,7 +166,7 @@ class DetailsFragment : Fragment() {
 
             menuShare.setOnClickListener {
                 menuBottomSheet.isVisible = false
-                viewModel.onShareClicked()
+                viewModel.handleShare()
             }
 
             binding.menuDeletePlaylist.setOnClickListener {
