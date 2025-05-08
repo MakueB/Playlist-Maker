@@ -12,7 +12,9 @@ import android.widget.Toast
 import androidx.core.view.doOnLayout
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -29,6 +31,7 @@ import com.example.playlistmaker.utils.CommonUtils
 import com.example.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -59,11 +62,12 @@ class DetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.loadPlaylist(args.playlist.id)
+        viewModel.onEvent(DetailsUiEvent.LoadPlaylist(args.playlist.id))
+
         setupAdapter()
-        setupObservers()
         setupListeners()
         setupDebounce()
+        setupObservers()
         setupShareBottomSheetHeight()
     }
 
@@ -98,25 +102,46 @@ class DetailsFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.state.observe(viewLifecycleOwner) { model ->
-            renderUi(model)
-        }
-        viewModel.shareCommand.observe(viewLifecycleOwner) { command ->
-            when (command) {
-                is ShareCommand.ShowEmptyPlaylistMessage -> {
-                    Toast.makeText(
-                        requireContext(),
-                        "В этом плейлисте нет списка треков, которым можно поделиться",
-                        Toast.LENGTH_SHORT
-                    ).show()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                launch {
+                    viewModel.uiState.collect { state ->
+                        when (state) {
+                            is DetailsUiState.Content -> renderUi(state.playlist)
+                            is DetailsUiState.Loading -> {  } //  не забыть установить лоадер
+                        }
+                    }
                 }
 
-                is ShareCommand.SharePlaylist -> {
-                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                        putExtra(Intent.EXTRA_TEXT, command.text)
-                        type = "text/plain"
+                launch {
+                    viewModel.uiEffect.collect { effect ->
+                        when (effect) {
+                            is DetailsUiEffect.Share -> {
+                                val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                                    putExtra(Intent.EXTRA_TEXT, effect.text)
+                                    type = "text/plain"
+                                }
+                                startActivity(
+                                    Intent.createChooser(
+                                        shareIntent,
+                                        "Поделиться через:"
+                                    )
+                                )
+                            }
+
+                            DetailsUiEffect.NavigateBack -> {
+                                findNavController().popBackStack()
+                            }
+
+                            DetailsUiEffect.ShowEmptyPlaylistToast -> {
+                                Toast.makeText(
+                                    requireContext(),
+                                    "В этом плейлисте нет списка треков, которым можно поделиться",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
-                    startActivity(Intent.createChooser(shareIntent, "Поделиться через:"))
                 }
             }
         }
@@ -132,16 +157,13 @@ class DetailsFragment : Fragment() {
             model.trackWordForm
         )
 
-        context?.let { context ->
-            val corners = CommonUtils.dpToPx(8f, context)
-            val target = Glide.with(context)
-                .load(model.imageUrl)
-                .placeholder(R.drawable.placeholder)
-                .centerCrop()
-                .transform(RoundedCorners(corners))
-
-            target.into(playlistCoverImage)
-        }
+        val corners = CommonUtils.dpToPx(8f, requireContext())
+        Glide.with(requireContext())
+            .load(model.imageUrl)
+            .placeholder(R.drawable.placeholder)
+            .centerCrop()
+            .transform(RoundedCorners(corners))
+            .into(playlistCoverImage)
 
         adapter?.tracks = model.tracks.toMutableList()
         adapter?.notifyDataSetChanged()
@@ -150,23 +172,22 @@ class DetailsFragment : Fragment() {
     private fun setupListeners() {
         binding.apply {
             backArrow.setOnClickListener {
-                requireActivity().onBackPressedDispatcher.onBackPressed()
+                //requireActivity().onBackPressedDispatcher.onBackPressed()
+                findNavController().popBackStack()
             }
 
             shareIcon.setOnClickListener {
-                viewModel.handleShare()
+                viewModel.onEvent(DetailsUiEvent.ShareClicked)
             }
 
             menuIcon.setOnClickListener {
                 menuBottomSheet.isVisible = true
-                viewModel.state.value?.let { model ->
-                    setupMenuBottomSheet(model)
-                }
+                setupMenuBottomSheet((viewModel.uiState.value as DetailsUiState.Content).playlist)
             }
 
             menuShare.setOnClickListener {
                 menuBottomSheet.isVisible = false
-                viewModel.handleShare()
+                viewModel.onEvent(DetailsUiEvent.ShareClicked)
             }
 
             binding.menuDeletePlaylist.setOnClickListener {
@@ -216,104 +237,76 @@ class DetailsFragment : Fragment() {
     private fun setupShareBottomSheetHeight() {
         binding.actionIcons.doOnLayout {
             val actionIconsBottom = binding.actionIcons.bottom
-
             val parentHeight = (binding.root.parent as View).height
-
-            val extraOffsetInDp = 16
-            val extraOffsetInPx = TypedValue.applyDimension(
+            val offsetDp = 16
+            val offsetPx = TypedValue.applyDimension(
                 TypedValue.COMPLEX_UNIT_DIP,
-                extraOffsetInDp.toFloat(),
+                offsetDp.toFloat(),
                 resources.displayMetrics
             ).toInt()
 
-            val desiredPeekHeight =
-                parentHeight - actionIconsBottom - extraOffsetInPx
+            val peekHeight =
+                parentHeight - actionIconsBottom - offsetPx
 
             val bottomSheet = binding.bottomSheet
-            val bottomSheetBehavior = BottomSheetBehavior.from(bottomSheet)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+            val behavior = BottomSheetBehavior.from(bottomSheet).apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+                isFitToContents = true
+            }
+            behavior.peekHeight = peekHeight
 
-            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
+            behavior.addBottomSheetCallback(object : BottomSheetCallback() {
                 override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    when (newState) {
-                        BottomSheetBehavior.STATE_HIDDEN -> {
-                            binding.overlay.visibility = View.GONE
-                        }
-
-                        else -> {
-                            binding.overlay.visibility = View.VISIBLE
-                        }
-                    }
+                    binding.overlay.isVisible = newState != BottomSheetBehavior.STATE_HIDDEN
                 }
 
                 override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    val alpha = if (slideOffset < 0) 0f else slideOffset
-                    binding.overlay.alpha = alpha
+                    binding.overlay.alpha = slideOffset.coerceAtLeast(0f)
                 }
             })
-
-            bottomSheetBehavior.peekHeight = desiredPeekHeight
-
-            bottomSheetBehavior.isFitToContents = true
         }
     }
 
     private fun setupMenuBottomSheet(playlist: PlaylistUiModel) {
-        val cornersInPx = CommonUtils.dpToPx(8f, requireContext())
-
         binding.apply {
-            val menuBottomSheet = menuBottomSheet
-            context?.let { Glide.with(it).clear(menuImage) }
+            val corners = CommonUtils.dpToPx(8f, requireContext())
 
+            context?.let { Glide.with(it).clear(menuImage) }
             if (!playlist.imageUrl.isNullOrEmpty()) {
-                context?.let { context ->
-                    Glide.with(context)
-                        .load(playlist.imageUrl)
-                        .placeholder(R.drawable.placeholder)
-                        .centerCrop()
-                        .transform(RoundedCorners(cornersInPx))
-                        .into(menuImage)
-                }
+                Glide.with(requireContext())
+                    .load(playlist.imageUrl)
+                    .placeholder(R.drawable.placeholder)
+                    .centerCrop()
+                    .transform(RoundedCorners(corners))
+                    .into(menuImage)
             } else {
                 menuImage.setImageResource(R.drawable.placeholder)
             }
 
             menuPlaylistName.text = playlist.name
-
-            val tracksNumber = playlist.tracks.size
-            val trackCountText = getString(
+            menuNumberOfTracks.text = getString(
                 R.string.track_count,
-                tracksNumber,
-                CommonUtils.getTrackWordForm(tracksNumber)
+                playlist.tracks.size,
+                CommonUtils.getTrackWordForm(playlist.tracks.size)
             )
-            menuNumberOfTracks.text = trackCountText
-
-            val bottomSheetBehavior = BottomSheetBehavior.from(menuBottomSheet)
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    when (newState) {
-                        BottomSheetBehavior.STATE_HIDDEN -> {
-                            binding.overlay.visibility = View.GONE
-                        }
-
-                        else -> {
-                            binding.overlay.visibility = View.VISIBLE
-                        }
-                    }
-                }
-
-                override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                    val alpha = if (slideOffset < 0) 0f else slideOffset
-                    binding.overlay.alpha = alpha
-                }
-            })
 
             adjustTopLayoutHeight(menuBottomSheet, MENU_BOTTOM_SHEET_HEIGHT_PERCENT)
 
-            bottomSheetBehavior.isFitToContents = false
-            bottomSheetBehavior.isHideable = true
+            BottomSheetBehavior.from(menuBottomSheet).apply {
+                state = BottomSheetBehavior.STATE_COLLAPSED
+                isFitToContents = false
+                isHideable = true
+
+                addBottomSheetCallback(object : BottomSheetCallback() {
+                    override fun onStateChanged(bottomSheet: View, newState: Int) {
+                        overlay.isVisible = newState != BottomSheetBehavior.STATE_HIDDEN
+                    }
+
+                    override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                        overlay.alpha = slideOffset.coerceAtLeast(0f)
+                    }
+                })
+            }
         }
     }
 
@@ -324,5 +317,8 @@ class DetailsFragment : Fragment() {
         }
     }
 
-
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
+    }
 }

@@ -2,8 +2,8 @@ package com.example.playlistmaker.details.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.details.domain.api.DetailsInteractor
+import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.search.domain.models.Track
 import com.example.playlistmaker.utils.CommonUtils
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -20,7 +20,7 @@ class DetailsViewModel(
     private val mapper: PlaylistMapper
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(DetailsUiState())
+    private val _uiState = MutableStateFlow<DetailsUiState>(DetailsUiState.Loading)
     val uiState: StateFlow<DetailsUiState> = _uiState.asStateFlow()
 
     private val _uiEffect = MutableSharedFlow<DetailsUiEffect>()
@@ -48,7 +48,7 @@ class DetailsViewModel(
         }
     }
 
-    fun handleShare() {
+    private fun handleShare() {
         val state = _uiState.value
         if (state !is DetailsUiState.Content) return
 
@@ -87,7 +87,6 @@ class DetailsViewModel(
 
         viewModelScope.launch {
             detailsInteractor.removeTrackFromPlaylist(track.trackId, currentPlaylist.id)
-            playlistInteractor.(updatedPlaylist)
         }
     }
 
