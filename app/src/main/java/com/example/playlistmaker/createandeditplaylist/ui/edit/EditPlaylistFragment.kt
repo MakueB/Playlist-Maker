@@ -86,6 +86,7 @@ class EditPlaylistFragment : Fragment() {
             playlistNameEditText.setText(editPlaylistViewModel.playlistName.value)
             playlistDescriptionEditText.setText(editPlaylistViewModel.playlistDescription.value)
             playlistImage.setImageURI(editPlaylistViewModel.imageUri.value)
+            placeholder.isVisible = editPlaylistViewModel.imageUri.value == null
             createButton.text = getString(R.string.save)
         }
     }
