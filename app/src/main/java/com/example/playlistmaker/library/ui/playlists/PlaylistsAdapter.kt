@@ -4,9 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.playlistmaker.databinding.PlaylistViewBinding
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 
-class PlaylistsAdapter : RecyclerView.Adapter<PlaylistsViewHolder>() {
+class PlaylistsAdapter(
+    private val onItemClick: (Playlist) -> Unit,
+    private val onItemLongClick: (Playlist) -> Boolean
+) : RecyclerView.Adapter<PlaylistsViewHolder>() {
     var playlists: MutableList<Playlist> = mutableListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaylistsViewHolder {
         val layoutInspector = LayoutInflater.from(parent.context)
@@ -18,6 +21,13 @@ class PlaylistsAdapter : RecyclerView.Adapter<PlaylistsViewHolder>() {
     override fun onBindViewHolder(holder: PlaylistsViewHolder, position: Int) {
         val currentPlaylist = playlists[position]
         holder.bind(currentPlaylist)
-        //holder.itemView.setOnClickListener {  } //возможно, нужно будет добавить переход к плейлисту
+
+        holder.itemView.setOnClickListener {
+            onItemClick(currentPlaylist)
+        }
+
+        holder.itemView.setOnLongClickListener {
+            onItemLongClick(currentPlaylist)
+        }
     }
 }

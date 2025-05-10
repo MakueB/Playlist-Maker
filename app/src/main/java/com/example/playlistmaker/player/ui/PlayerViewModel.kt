@@ -8,10 +8,10 @@ import com.example.playlistmaker.R
 import com.example.playlistmaker.library.domain.favorites.api.FavoritesInteractor
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.library.ui.playlists.PlaylistsState
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.search.domain.models.Track
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.utils.Utils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -80,12 +80,12 @@ class PlayerViewModel(
         playerInteractor.preparePlayer(track,
             {
                 _playerState.value = PlayerState.PREPARED
-                _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
+                _elapsedTime.value = Utils.formatMillisToMmSs(0)
             },
             {
                 timerJob?.cancel()
                 _playerState.value = PlayerState.PREPARED
-                _elapsedTime.value = CommonUtils.formatMillisToMmSs(0)
+                _elapsedTime.value = Utils.formatMillisToMmSs(0)
             })
     }
 
@@ -123,7 +123,7 @@ class PlayerViewModel(
             while (_playerState.value == PlayerState.PLAYING) {
                 delay(DELAY_MILLIS)
                 _elapsedTime.value =
-                    CommonUtils.formatMillisToMmSs(playerInteractor.getCurrentPosition())
+                    Utils.formatMillisToMmSs(playerInteractor.getCurrentPosition())
             }
         }
     }

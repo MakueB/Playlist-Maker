@@ -6,10 +6,12 @@ import com.example.playlistmaker.library.data.favorites.FavoritesRepositoryImpl
 import com.example.playlistmaker.library.data.playlists.PlaylistsRepositoryImpl
 import com.example.playlistmaker.library.domain.favorites.api.FavoritesRepository
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsRepository
-import com.example.playlistmaker.newplaylist.data.NewPlaylistRepositoryImpl
-import com.example.playlistmaker.newplaylist.domain.api.NewPlaylistRepository
+import com.example.playlistmaker.createandeditplaylist.data.CreatePlaylistRepositoryImpl
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistRepository
 import com.example.playlistmaker.player.data.PlayerRepositoryImpl
 import com.example.playlistmaker.player.domain.api.PlayerRepository
+import com.example.playlistmaker.details.data.DetailsRepositoryImpl
+import com.example.playlistmaker.details.domain.api.DetailsRepository
 import com.example.playlistmaker.search.data.TracksRepositoryImpl
 import com.example.playlistmaker.search.data.storage.SearchHistoryRepositoryImpl
 import com.example.playlistmaker.search.domain.api.SearchHistoryRepository
@@ -53,11 +55,15 @@ val repositoryModule = module {
         FavoritesRepositoryImpl(get(), get())
     }
 
-    single<NewPlaylistRepository> {
-        NewPlaylistRepositoryImpl(get(), get())
+    single<CreatePlaylistRepository> {
+        CreatePlaylistRepositoryImpl(get(), get())
     }
 
     single <PlaylistsRepository> {
         PlaylistsRepositoryImpl(get(), get(), get(), get())
+    }
+
+    single <DetailsRepository> {
+        DetailsRepositoryImpl()
     }
 }

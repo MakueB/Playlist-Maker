@@ -1,5 +1,6 @@
-package com.example.playlistmaker.newplaylist.ui
+package com.example.playlistmaker.createandeditplaylist.ui.create
 
+import android.app.AlertDialog
 import android.content.ContentResolver
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -12,41 +13,45 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.example.playlistmaker.R
-import com.example.playlistmaker.databinding.FragmentNewPlaylistBinding
+import com.example.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 
-class NewPlaylistFragment : Fragment() {
-    private val newPlstViewModel by viewModel<NewPlaylistViewModel>()
+class CreatePlaylistFragment : Fragment() {
+    private val createPlstViewModel by viewModel<CreatePlaylistViewModel>()
 
-    private var _binding: FragmentNewPlaylistBinding? = null
-    private val binding: FragmentNewPlaylistBinding get() = _binding!!
+    private var _binding: FragmentCreatePlaylistBinding? = null
+    private val binding: FragmentCreatePlaylistBinding get() = _binding!!
 
-    //private val requester = PermissionRequester.instance()
     private lateinit var contentResolver: ContentResolver
     private var uri: Uri? = null
 
-
-    private val photoPicker =
-        registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri: Uri? ->
-            binding.playlistImage.setImageURI(uri)
-            this.uri = uri
-            newPlstViewModel.updateImageUri(uri)
-            binding.placeholder.isVisible = uri == null
+    private val photoPicker = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { pickedUri: Uri? ->
+        if (pickedUri != null) {
+            val savedUri = saveImageToPrivateStorage(pickedUri)
+            binding.playlistImage.setImageURI(savedUri)
+            createPlstViewModel.updateImageUri(savedUri)
+            binding.placeholder.isVisible = false
+        } else {
+            binding.placeholder.isVisible = true
         }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentNewPlaylistBinding.inflate(inflater, container, false)
+        _binding = FragmentCreatePlaylistBinding.inflate(inflater, container, false)
         contentResolver = requireContext().contentResolver
         return binding.root
     }
@@ -58,7 +63,7 @@ class NewPlaylistFragment : Fragment() {
         setupListeners()
 
         binding.apply {
-            newPlstViewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
+            createPlstViewModel.isSaveButtonEnabled.observe(viewLifecycleOwner) { isEnabled ->
                 createButton.isEnabled = isEnabled
             }
         }
@@ -86,11 +91,11 @@ class NewPlaylistFragment : Fragment() {
             }
 
             playlistNameEditText.addTextChangedListener {
-                newPlstViewModel.updatePlaylistName(it.toString())
+                createPlstViewModel.updatePlaylistName(it.toString())
             }
 
             playlistDescriptionEditText.addTextChangedListener {
-                newPlstViewModel.updatePlaylistDescription(it.toString())
+                createPlstViewModel.updatePlaylistDescription(it.toString())
             }
 
             playlistImage.setOnClickListener {
@@ -99,7 +104,7 @@ class NewPlaylistFragment : Fragment() {
 
             createButton.setOnClickListener {
                 uri?.let { saveImageToPrivateStorage(it) }
-                newPlstViewModel.savePlaylist()
+                createPlstViewModel.savePlaylist()
                 findNavController().navigateUp()
             }
         }
@@ -127,27 +132,28 @@ class NewPlaylistFragment : Fragment() {
         )
     }
 
-    private fun saveImageToPrivateStorage(uri: Uri) {
-        val filePath = File(
-            requireActivity().getExternalFilesDir(Environment.DIRECTORY_PICTURES), // Используем внешний каталог для изображений
-            "Images"
-        )
-        if (!filePath.exists()) {
-            filePath.mkdirs()
-        }
-        val file = File(filePath, "${newPlstViewModel.playlistName.value}_cover_${System.currentTimeMillis()}.jpg")
-        val inputStream = contentResolver.openInputStream(uri)
-        val outputStream = FileOutputStream(file)
-        BitmapFactory
-            .decodeStream(inputStream)
-            .compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+    open fun saveImageToPrivateStorage(uri: Uri): Uri {
+        val inputStream = requireContext().contentResolver.openInputStream(uri)
+            ?: throw IOException("Can't open input stream from URI")
 
-        inputStream?.close()
+        val filePath = File(
+            requireContext().getExternalFilesDir(Environment.DIRECTORY_PICTURES),
+            "Images"
+        ).apply { mkdirs() }
+
+        val file = File(filePath, "cover_${System.currentTimeMillis()}.jpg")
+        val outputStream = FileOutputStream(file)
+
+        BitmapFactory.decodeStream(inputStream).compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
+
+        inputStream.close()
         outputStream.close()
+
+        return file.toUri()
     }
 
     private fun showExitConfirmationDialog() {
-        MaterialAlertDialogBuilder(requireContext())
+        val dialog = MaterialAlertDialogBuilder(requireContext(), R.style.MyAlertDialogTheme)
             .setTitle(getString(R.string.exit_creation_title))
             .setMessage(getString(R.string.exit_creation_message))
             .setNegativeButton(getString(R.string.cancel)) { dialog, _ ->
@@ -157,12 +163,16 @@ class NewPlaylistFragment : Fragment() {
                 findNavController().navigateUp()
             }
             .show()
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textColor))
+        dialog.getButton(AlertDialog.BUTTON_NEGATIVE)
+            ?.setTextColor(ContextCompat.getColor(requireContext(), R.color.textColor))
     }
 
     private fun hasUnsavedChanges(): Boolean {
-        return !newPlstViewModel.playlistName.value.isNullOrEmpty() ||
-                !newPlstViewModel.playlistDescription.value.isNullOrEmpty() ||
-                newPlstViewModel.imageUri.value != null
+        return !createPlstViewModel.playlistName.value.isNullOrEmpty() ||
+                !createPlstViewModel.playlistDescription.value.isNullOrEmpty() ||
+                createPlstViewModel.imageUri.value != null
     }
 
     override fun onResume() {
@@ -174,5 +184,10 @@ class NewPlaylistFragment : Fragment() {
                     handleBackPressed()
                 }
             })
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

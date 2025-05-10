@@ -5,17 +5,17 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.PlaylistViewBinding
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
-import com.example.playlistmaker.utils.CommonUtils
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
+import com.example.playlistmaker.utils.Utils
 
 class PlaylistsViewHolder(private val binding: PlaylistViewBinding) :
     RecyclerView.ViewHolder(binding.root) {
     fun bind(playlist: Playlist) {
-        val cornersInPx = CommonUtils.dpToPx(8f, itemView.context)
+        val cornersInPx = Utils.dpToPx(8f, itemView.context)
         val tracksNumber = playlist.trackList.size
 
         binding.playlistName.text = playlist.name
-        binding.tracksNumber.text = "$tracksNumber ${CommonUtils.getTrackWordForm(tracksNumber)}"
+        binding.tracksNumber.text = "$tracksNumber ${Utils.getTrackWordForm(tracksNumber)}"
 
 
         if (playlist.imageUrl.isNullOrEmpty())

@@ -1,21 +1,29 @@
 package com.example.playlistmaker.library.ui.playlists
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.playlistmaker.R
 import com.example.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.example.playlistmaker.library.ui.LibraryFragmentDirections
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.main.ui.MainActivity
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
+import com.example.playlistmaker.utils.debounce
+import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
-class PlaylistsFragment  : Fragment() {
+class PlaylistsFragment : Fragment() {
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 
     private var _binding: FragmentPlaylistsBinding? = null
     private val binding: FragmentPlaylistsBinding get() = _binding!!
@@ -23,13 +31,14 @@ class PlaylistsFragment  : Fragment() {
     private val viewModel: PlaylistsViewModel by viewModel()
 
     private var adapter: PlaylistsAdapter? = null
+    private lateinit var onPlaylistClickDebounce: (Playlist) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPlaylistsBinding.inflate(inflater,container, false)
+        _binding = FragmentPlaylistsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -37,16 +46,53 @@ class PlaylistsFragment  : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.newPlaylistBtn.setOnClickListener {
-            findNavController().navigate(LibraryFragmentDirections.actionLibraryFragmentToNewPlaylistFragment())
+            findNavController().navigate(LibraryFragmentDirections.actionLibraryFragmentToNewPlaylistFragment(null))
         }
 
-        adapter = PlaylistsAdapter()
+        onPlaylistClickDebounce = debounce<Playlist>(
+            CLICK_DEBOUNCE_DELAY,
+            viewLifecycleOwner.lifecycleScope,
+            false
+        ) { playlist: Playlist ->
+            val action =
+                LibraryFragmentDirections.actionLibraryFragmentToPlaylistDetailsFragment(playlist)
+            findNavController().navigate(action)
+        }
+
+        adapter = PlaylistsAdapter(
+            onItemClick = { playlist: Playlist ->
+                (activity as MainActivity).animateBottomNavigationView()
+                onPlaylistClickDebounce(playlist)
+            },
+            onItemLongClick = { playlist: Playlist ->
+                AlertDialog.Builder(requireContext())
+                    .setTitle("Удаление плейлиста")
+                    .setMessage("Вы действительно хотите удалить плейлист \"${playlist.name}\"?")
+                    .setPositiveButton("Удалить") { dialog, _ ->
+                        deletePlaylist(playlist) // Вызов функции удаления
+                        dialog.dismiss()
+                    }
+                    .setNegativeButton("Отмена") { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .create()
+                    .show()
+                true
+            }
+        )
         binding.recyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
         binding.recyclerView.adapter = adapter
 
         viewModel.getPlaylistsAll()
         viewModel.state.observe(viewLifecycleOwner) {
             render(it)
+        }
+    }
+
+    private fun deletePlaylist(playlist: Playlist) {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.deletePlaylist(playlist)
+            adapter?.notifyDataSetChanged()
         }
     }
 

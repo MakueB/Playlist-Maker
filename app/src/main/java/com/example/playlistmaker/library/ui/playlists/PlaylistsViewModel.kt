@@ -1,12 +1,11 @@
 package com.example.playlistmaker.library.ui.playlists
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.R
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
-import com.example.playlistmaker.newplaylist.domain.models.Playlist
+import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
 class PlaylistsViewModel(
@@ -41,7 +40,7 @@ class PlaylistsViewModel(
 
     fun deletePlaylist(playlist: Playlist) {
         viewModelScope.launch {
-            interactor.deletePlaylist(playlist)
+            interactor.deletePlaylist(playlist.id)
             getPlaylistsAll()
         }
     }

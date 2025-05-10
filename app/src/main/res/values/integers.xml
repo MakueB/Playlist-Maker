@@ -2,4 +2,5 @@
 <resources>
     <integer name="font_weight_500">500</integer>
     <integer name="font_weight_400">400</integer>
+    <integer name="font_weight_700">700</integer>
 </resources>

@@ -4,10 +4,12 @@ import com.example.playlistmaker.library.domain.favorites.api.FavoritesInteracto
 import com.example.playlistmaker.library.domain.favorites.impl.FavoritesInteractorImpl
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.library.domain.playlists.impl.PlaylistsInteractorImpl
-import com.example.playlistmaker.newplaylist.domain.NewPlaylistInteractorImpl
-import com.example.playlistmaker.newplaylist.domain.api.NewPlaylistInteractor
+import com.example.playlistmaker.createandeditplaylist.domain.CreatePlaylistInteractorImpl
+import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
+import com.example.playlistmaker.details.domain.api.DetailsInteractor
+import com.example.playlistmaker.details.domain.impl.DetailsInteractorImpl
 import com.example.playlistmaker.search.domain.api.TracksInteractor
 import com.example.playlistmaker.search.domain.impl.TracksInteractorImpl
 import com.example.playlistmaker.settings.domain.api.SettingsInteractor
@@ -37,11 +39,15 @@ val interactorModule = module {
         FavoritesInteractorImpl(get())
     }
 
-    single<NewPlaylistInteractor> {
-        NewPlaylistInteractorImpl(get())
+    single<CreatePlaylistInteractor> {
+        CreatePlaylistInteractorImpl(get())
     }
 
     single <PlaylistsInteractor> {
         PlaylistsInteractorImpl(get())
+    }
+
+    single<DetailsInteractor> {
+        DetailsInteractorImpl(get(),get())
     }
 }

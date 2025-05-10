@@ -154,4 +154,31 @@
         <item name="cornerSize">8dp</item>
     </style>
 
+    <style name="MyAlertDialogTheme" parent="">
+        <item name="textColorAlertDialogListItem">@color/textColor</item>
+        <item name="android:textColorPrimary">@color/textColor</item>
+        <item name="android:buttonBarPositiveButtonStyle">@style/DialogButtonStyle</item>
+        <item name="android:buttonBarNegativeButtonStyle">@style/DialogButtonStyle</item>
+    </style>
+
+    <style name="DialogButtonStyle" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textColor">@color/textColor</item>
+    </style>
+
+    <style name="CustomAlertDialog" parent="ThemeOverlay.Material3.MaterialAlertDialog">
+        <item name="backgroundTint">@color/white</item>
+        <item name="android:textColorPrimary">@color/YPBlack</item>
+        <item name="buttonBarPositiveButtonStyle">@style/CustomDialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/CustomDialogButton</item>
+    </style>
+
+    <style name="CustomDialogButton" parent="Widget.Material3.Button.TextButton.Dialog">
+        <item name="android:textColor">@color/YPBlue</item>
+    </style>
+
+    <style name="DetailsStyle" parent="">
+        <item name="android:background">@color/details_background</item>
+
+    </style>
+
 </resources>
