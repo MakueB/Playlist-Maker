@@ -31,7 +31,8 @@ import java.io.IOException
 class EditPlaylistFragment : Fragment() {
 
     private var _binding: FragmentCreatePlaylistBinding? = null
-    val binding: FragmentCreatePlaylistBinding get() = _binding!!
+    val binding: FragmentCreatePlaylistBinding
+        get() = requireNotNull(_binding) { "Binding wasn't initialized!" }
 
     private val args by navArgs<DetailsFragmentArgs>()
     private var playlist: Playlist? = null
@@ -153,7 +154,7 @@ class EditPlaylistFragment : Fragment() {
             "Images"
         ).apply { mkdirs() }
 
-        val file = File(filePath, "cover_${System.currentTimeMillis()}.jpg")
+        val file = File(filePath, getString(R.string.cover_file_name_template, System.currentTimeMillis()))
         val outputStream = FileOutputStream(file)
 
         BitmapFactory.decodeStream(inputStream).compress(Bitmap.CompressFormat.JPEG, 100, outputStream)
@@ -169,5 +170,10 @@ class EditPlaylistFragment : Fragment() {
         binding.toolbar.setNavigationOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

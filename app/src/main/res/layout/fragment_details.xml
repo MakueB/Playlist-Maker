@@ -83,7 +83,7 @@
             android:fontFamily="@font/ys_display_regular"
             android:paddingStart="16dp"
             android:paddingTop="8dp"
-            android:text="300 минут • 98 треков"
+            android:text="@string/details_template_text"
             android:textColor="@color/YPBlack"
             android:textFontWeight="@integer/font_weight_400"
             android:textSize="@dimen/textSize_18"
@@ -107,14 +107,16 @@
                 android:layout_height="24dp"
                 android:layout_marginEnd="16dp"
                 android:src="@drawable/share"
-                app:tint="@color/YPBlack" />
+                app:tint="@color/YPBlack"
+                android:contentDescription="@string/share_icon" />
 
             <ImageView
                 android:id="@+id/menu_icon"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:src="@drawable/ic_more"
-                app:tint="@color/YPBlack" />
+                app:tint="@color/YPBlack"
+                android:contentDescription="@string/menu_icon"/>
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -255,7 +257,7 @@
             android:maxLines="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/menu_image"
-            android:text="Поделиться"
+            android:text="@string/share"
             />
 
         <TextView
@@ -273,7 +275,7 @@
             android:maxLines="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/menu_share"
-            android:text="Редактировать информацию"
+            android:text="@string/edit_info"
             />
 
         <TextView
@@ -291,7 +293,7 @@
             android:maxLines="1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/menu_edit_info"
-            android:text="Удалить плейлист"
+            android:text="@string/delete_playlist"
             />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
