@@ -1,16 +1,19 @@
 package com.example.playlistmaker.createandeditplaylist.ui.create
 
+import android.content.ContentResolver
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistInteractor
+import com.example.playlistmaker.createandeditplaylist.domain.api.ImageStorageInteractor
 import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
 open class CreatePlaylistViewModel (
-    protected val createPlaylistInteractor: CreatePlaylistInteractor
+    protected val createPlaylistInteractor: CreatePlaylistInteractor,
+    private val imageStorageInteractor: ImageStorageInteractor
 ) : ViewModel() {
     protected val _playlistName = MutableLiveData<String>()
     val playlistName: LiveData<String> get() = _playlistName
@@ -21,12 +24,8 @@ open class CreatePlaylistViewModel (
     protected val _imageUri = MutableLiveData<Uri?>()
     val imageUri: LiveData<Uri?> get() = _imageUri
 
-    protected val _isSaveButtonEnabled = MutableLiveData<Boolean>()
+    protected val _isSaveButtonEnabled = MutableLiveData<Boolean>(false)
     val isSaveButtonEnabled: LiveData<Boolean> get() = _isSaveButtonEnabled
-
-    init {
-        _isSaveButtonEnabled.value = false
-    }
 
     open fun updatePlaylistName(name: String) {
         _playlistName.value = name
@@ -50,5 +49,14 @@ open class CreatePlaylistViewModel (
         viewModelScope.launch {
             createPlaylistInteractor.savePlaylist(playlist)
         }
+    }
+
+    open fun hasUnsavedChanges(): Boolean {
+        return !_playlistName.value.isNullOrEmpty() ||
+                !_playlistDescription.value.isNullOrEmpty() ||
+                _imageUri.value != null
+    }
+
+    fun saveImageToPrivateStorage(uri: Uri, contentResolver: ContentResolver) {
     }
 }
