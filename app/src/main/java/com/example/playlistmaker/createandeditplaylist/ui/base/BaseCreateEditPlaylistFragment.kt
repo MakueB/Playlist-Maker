@@ -26,6 +26,7 @@ abstract class BaseCreateEditPlaylistFragment : Fragment() {
 
     protected abstract val viewModel: CreatePlaylistViewModel
     protected abstract fun onSubmitAction()
+
     open fun setupInitialUi() {}
 
     private val photoPicker =

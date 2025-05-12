@@ -5,7 +5,9 @@ import com.example.playlistmaker.library.domain.favorites.impl.FavoritesInteract
 import com.example.playlistmaker.library.domain.playlists.api.PlaylistsInteractor
 import com.example.playlistmaker.library.domain.playlists.impl.PlaylistsInteractorImpl
 import com.example.playlistmaker.createandeditplaylist.domain.CreatePlaylistInteractorImpl
+import com.example.playlistmaker.createandeditplaylist.domain.ImageStorageInteractorImpl
 import com.example.playlistmaker.createandeditplaylist.domain.api.CreatePlaylistInteractor
+import com.example.playlistmaker.createandeditplaylist.domain.api.ImageStorageInteractor
 import com.example.playlistmaker.player.domain.api.PlayerInteractor
 import com.example.playlistmaker.player.domain.impl.PlayerInteractorImpl
 import com.example.playlistmaker.details.domain.api.DetailsInteractor
@@ -49,5 +51,9 @@ val interactorModule = module {
 
     single<DetailsInteractor> {
         DetailsInteractorImpl(get(),get())
+    }
+
+    single <ImageStorageInteractor> {
+        ImageStorageInteractorImpl(get())
     }
 }

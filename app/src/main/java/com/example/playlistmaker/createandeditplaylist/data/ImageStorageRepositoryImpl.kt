@@ -37,5 +37,4 @@ class ImageStorageRepositoryImpl(private val context: Context) : ImageStorageRep
             file.toUri()
         }
     }
-
 }

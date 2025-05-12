@@ -1,131 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/playerBackgroundColor"
+    android:fillViewport="true"
     tools:context=".createandeditplaylist.ui.create.CreatePlaylistFragment">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/startBorder"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_begin="@dimen/margin_16" />
+        android:background="@color/playerBackgroundColor">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/endBorder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_end="@dimen/margin_16" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/topBorder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="@dimen/margin_16" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/bottomBorder"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_end="32dp" />
-
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/create_button"
-        android:layout_width="0dp"
-        style="@style/CreatePlaylistButtonStyle"
-        android:layout_height="wrap_content"
-        android:text="@string/create"
-        app:layout_constraintBottom_toTopOf="@id/bottomBorder"
-        app:layout_constraintEnd_toStartOf="@id/endBorder"
-        app:layout_constraintStart_toStartOf="@id/startBorder"
-        android:enabled="false"/>
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="@style/CreatePlaylistToolbarStyle"
-        android:layout_width="0dp"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/playerBackgroundColor"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:navigationIcon="?attr/homeAsUpIndicator"
-        app:title="@string/new_playlist"
-        app:titleTextAppearance="@style/CreatePlaylistToolbarTitleTextAppearance" />
-
-    <FrameLayout
-        android:id="@+id/imageFrameLayout"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginHorizontal="@dimen/margin_8"
-        android:layout_marginTop="@dimen/margin_8"
-        android:layout_marginBottom="@dimen/margin_8"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toStartOf="@id/endBorder"
-        app:layout_constraintStart_toStartOf="@id/startBorder"
-        app:layout_constraintTop_toBottomOf="@id/toolbar">
-
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/playlist_image"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/create_playlist_imageview_shape"
-            android:contentDescription="@string/cover_image"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/RoundedCornersImageView"/>
-
-        <ImageView
-            android:id="@+id/placeholder"
+        <!-- Границы -->
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/startBorder"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:contentDescription="@string/placeholder_image"
-            app:srcCompat="@drawable/photo_placeholder" />
-    </FrameLayout>
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/margin_16" />
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/playlistName"
-        style="@style/CustomOutlineBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_32"
-        android:hint="@string/playlist_name"
-        app:layout_constraintEnd_toStartOf="@id/endBorder"
-        app:layout_constraintStart_toStartOf="@id/startBorder"
-        app:layout_constraintTop_toBottomOf="@id/imageFrameLayout">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/playlistNameEditText"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/endBorder"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
-            android:textCursorDrawable="@drawable/cursor" />
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/margin_16" />
 
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/playlistDescription"
-        style="@style/CustomOutlineBox"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/margin_16"
-        android:hint="@string/playlist_description"
-        app:layout_constraintEnd_toStartOf="@id/endBorder"
-        app:layout_constraintStart_toStartOf="@id/startBorder"
-        app:layout_constraintTop_toBottomOf="@id/playlistName">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/playlistDescriptionEditText"
-            android:layout_width="match_parent"
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/topBorder"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/textColor"
-            android:textCursorDrawable="@drawable/cursor" />
-    </com.google.android.material.textfield.TextInputLayout>
+            android:orientation="horizontal"
+            app:layout_constraintGuide_begin="@dimen/margin_16" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/bottomBorder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_end="32dp" />
+
+        <!-- Toolbar с кнопкой назад -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="@style/CreatePlaylistToolbarStyle"
+            android:layout_width="0dp"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/playerBackgroundColor"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:navigationIcon="?attr/homeAsUpIndicator"
+            app:title="@string/new_playlist"
+            app:titleTextAppearance="@style/CreatePlaylistToolbarTitleTextAppearance" />
+
+        <!-- Обложка плейлиста -->
+        <FrameLayout
+            android:id="@+id/imageFrameLayout"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="@dimen/margin_8"
+            android:layout_marginTop="@dimen/margin_8"
+            android:layout_marginBottom="@dimen/margin_8"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
+            app:layout_constraintStart_toStartOf="@id/startBorder"
+            app:layout_constraintEnd_toStartOf="@id/endBorder"
+            app:layout_constraintDimensionRatio="1:1">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/playlist_image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/create_playlist_imageview_shape"
+                android:contentDescription="@string/cover_image"
+                android:scaleType="centerCrop"
+                app:shapeAppearanceOverlay="@style/RoundedCornersImageView" />
+
+            <ImageView
+                android:id="@+id/placeholder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:contentDescription="@string/placeholder_image"
+                app:srcCompat="@drawable/photo_placeholder" />
+        </FrameLayout>
+
+        <!-- Поле: имя -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/playlistName"
+            style="@style/CustomOutlineBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_32"
+            android:hint="@string/playlist_name"
+            app:layout_constraintTop_toBottomOf="@id/imageFrameLayout"
+            app:layout_constraintStart_toStartOf="@id/startBorder"
+            app:layout_constraintEnd_toStartOf="@id/endBorder">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/playlistNameEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
+                android:textCursorDrawable="@drawable/cursor" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Поле: описание -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/playlistDescription"
+            style="@style/CustomOutlineBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_16"
+            android:hint="@string/playlist_description"
+            app:layout_constraintTop_toBottomOf="@id/playlistName"
+            app:layout_constraintStart_toStartOf="@id/startBorder"
+            app:layout_constraintEnd_toStartOf="@id/endBorder">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/playlistDescriptionEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textColor"
+                android:textCursorDrawable="@drawable/cursor" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <!-- Кнопка: создать -->
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/create_button"
+            style="@style/CreatePlaylistButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_32"
+            android:enabled="false"
+            android:text="@string/create"
+            app:layout_constraintTop_toBottomOf="@id/playlistDescription"
+            app:layout_constraintStart_toStartOf="@id/startBorder"
+            app:layout_constraintEnd_toStartOf="@id/endBorder" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

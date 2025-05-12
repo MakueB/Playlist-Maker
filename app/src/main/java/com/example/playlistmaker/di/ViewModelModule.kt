@@ -33,13 +33,16 @@ val viewModelModule = module {
     }
 
     viewModel {
-        CreatePlaylistViewModel(get())
+        CreatePlaylistViewModel(get(), get())
     }
     viewModel {
         DetailsViewModel(get(),get(), get())
     }
 
     viewModel { (playlist: Playlist) ->
-        EditPlaylistViewModel(playlistToEdit = playlist, createPlaylistInteractor = get())
+        EditPlaylistViewModel(
+            playlistToEdit = playlist,
+            createPlaylistInteractor = get(),
+            imageStorageInteractor = get())
     }
 }

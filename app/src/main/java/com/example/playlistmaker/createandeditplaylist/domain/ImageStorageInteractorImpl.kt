@@ -12,5 +12,4 @@ class ImageStorageInteractorImpl(private val imageStorageRepository: ImageStorag
     ): Uri {
         return imageStorageRepository.saveToPrivateStorage(uri, contentResolver)
     }
-
 }

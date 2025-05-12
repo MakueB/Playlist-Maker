@@ -11,7 +11,7 @@ import com.example.playlistmaker.createandeditplaylist.domain.api.ImageStorageIn
 import com.example.playlistmaker.createandeditplaylist.domain.models.Playlist
 import kotlinx.coroutines.launch
 
-open class CreatePlaylistViewModel (
+open class CreatePlaylistViewModel(
     protected val createPlaylistInteractor: CreatePlaylistInteractor,
     private val imageStorageInteractor: ImageStorageInteractor
 ) : ViewModel() {
@@ -36,7 +36,7 @@ open class CreatePlaylistViewModel (
         _playlistDescription.value = description
     }
 
-    open fun updateImageUri (uri: Uri?) {
+    open fun updateImageUri(uri: Uri?) {
         _imageUri.value = uri
     }
 
@@ -58,5 +58,9 @@ open class CreatePlaylistViewModel (
     }
 
     fun saveImageToPrivateStorage(uri: Uri, contentResolver: ContentResolver) {
+        viewModelScope.launch {
+            val savedUri = imageStorageInteractor.saveToPrivateStorage(uri, contentResolver)
+            updateImageUri(savedUri)
+        }
     }
 }
