@@ -22,5 +22,5 @@ local.properties
 /gradle/wrapper/
 daemon
 daemon/8.6
-com/example/playlistmaker/ui/activities/search/OldSearchActivity.kt
+com/makiev/playlistmaker/ui/activities/search/OldSearchActivity.kt
 build.gradle.kts

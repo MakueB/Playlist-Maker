@@ -7,8 +7,9 @@ plugins {
 }
 
 android {
-    namespace = "com.example.playlistmaker"
+    namespace = "com.makiev.playlistmaker"
     compileSdk = 34
+
 
     packaging {
         resources {
@@ -28,7 +29,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.playlistmaker"
+        applicationId = "com.makiev.playlistmaker"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
@@ -39,15 +40,20 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            buildConfigField("String", "ITUNES_BASE_URL", "\"https://itunes.apple.com\"")
+            signingConfig = signingConfigs.getByName("debug")
         }
         debug {
             isDebuggable = true
             isMinifyEnabled  = false
+            applicationIdSuffix = ".debug"
+
+            buildConfigField("String", "ITUNES_BASE_URL", "\"https://itunes.apple.com\"")
         }
     }
     compileOptions {
@@ -59,6 +65,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
     buildToolsVersion = "34.0.0"
 }
