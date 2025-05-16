@@ -4,6 +4,7 @@ plugins {
     id ("kotlin-parcelize")
     id("com.google.devtools.ksp")
     id("androidx.navigation.safeargs.kotlin")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -94,7 +95,8 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.kotlinx.coroutines.android)
-    implementation (libs.peko)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
     annotationProcessor(libs.androidx.room.compiler)
     annotationProcessor(libs.compiler)
     testImplementation(libs.junit)

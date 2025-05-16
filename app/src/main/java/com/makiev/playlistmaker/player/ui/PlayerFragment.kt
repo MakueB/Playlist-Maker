@@ -25,6 +25,7 @@ import com.makiev.playlistmaker.utils.Utils
 import com.makiev.playlistmaker.utils.debounce
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetBehavior.BottomSheetCallback
+import com.google.firebase.analytics.*
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
@@ -60,6 +61,8 @@ class PlayerFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val analytics = FirebaseAnalytics.getInstance(requireContext())
 
         peekHeight = resources.getDimensionPixelSize(R.dimen.bottom_sheet_peek_height)
 
@@ -161,6 +164,9 @@ class PlayerFragment : Fragment() {
             track.let { it1 ->
                 if (it1 != null) {
                     viewModel.onFavoriteClicked(it1)
+                    analytics.logEvent("favorite_click", ) {
+                        param("track_name", it1.trackName)
+                    }
                 }
             }
         }
