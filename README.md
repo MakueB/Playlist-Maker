@@ -8,7 +8,7 @@
 
 <p align="center">
   <img src="https://github.com/MakueB/Playlist-Maker/blob/dev1/Screenshot_20250910_084617.png?raw=true" width="30%" alt="Search Screen"/>
-  <img src="https://github.com/MakueB/Playlist-Maker/Screenshot_20250910_084617.png" width="30%" alt="Playlist Screen"/>
+  <img src="https://github.com/MakueB/Playlist-Maker/blob/dev1/Screenshot_20250910_084447.png?raw=true" width="30%" alt="Playlist Screen"/>
 </p>
 
 ## 🚀 Возможности
