@@ -7,7 +7,7 @@
 **Playlist Maker** — это современное Android-приложение для поиска музыки и создания персональных плейлистов с использованием официального API iTunes Search. Пользователи могут искать треки, прослушивать превью, добавлять понравившиеся композиции в свой плейлист и делиться им.
 
 <p align="center">
-  <img src="https://github.com/MakueB/Playlist-Maker/Screenshot_20250910_084447.png" width="30%" alt="Search Screen"/>
+  <img src="https://github.com/MakueB/Playlist-Maker/blob/dev1/Screenshot_20250910_084617.png?raw=true" width="30%" alt="Search Screen"/>
   <img src="https://github.com/MakueB/Playlist-Maker/Screenshot_20250910_084617.png" width="30%" alt="Playlist Screen"/>
 </p>
 
